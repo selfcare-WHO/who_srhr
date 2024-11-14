@@ -1,4 +1,13 @@
 {
-  // https://v3.nuxtjs.org/concepts/typescript
-  "extends": "./.nuxt/tsconfig.json"
+  "extends": "./.nuxt/tsconfig.json",
+  "module": "ESNext",
+  "moduleResolution": "node",
+  "compilerOptions": {
+    "typeRoots": ["./types", "element-plus/global", "./node_modules/@types"],
+    "target": "ESNext"
+  },
+  "vueCompilerOptions": {
+    "plugins": ["@vue/language-plugin-pug"]
+  },
+  "includes": ["types/*.d.ts"]
 }

@@ -1,45 +1,81 @@
+import { fileURLToPath } from 'node:url'
+import { createRequire } from 'module'
+
+const prismaClientPath = createRequire(import.meta.url).resolve(
+  '@prisma/client'
+)
+
 export default defineNuxtConfig({
   app: {
     head: {
-      title: "Element Plus + Nuxt 3",
+      title: 'SRHR Country Profile',
       meta: [
-        { name: "viewport", content: "width=device-width, initial-scale=1" },
+        { name: 'viewport', content: 'width=device-width, initial-scale=1' },
         {
-          hid: "description",
-          name: "description",
-          content: "ElementPlus + Nuxt3",
-        },
+          hid: 'description',
+          name: 'description',
+          content: `World Health Organization
+            Sexual and Reproductive Health and Rights
+            Country Profiles
+          `
+        }
       ],
-      link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }],
-    },
+      link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]
+    }
   },
 
-  css: ["~/assets/scss/index.scss"],
+  alias: {
+    '@assets': fileURLToPath(new URL('./assets', import.meta.url)),
+    '@components': fileURLToPath(new URL('./components', import.meta.url)),
+    '@composables': fileURLToPath(new URL('./composables', import.meta.url)),
+    '@store': fileURLToPath(new URL('./store', import.meta.url)),
+    '@css': fileURLToPath(new URL('./assets/css', import.meta.url)),
+    '@server': fileURLToPath(new URL('./server', import.meta.url)),
+    '@lib': fileURLToPath(new URL('./lib', import.meta.url)),
+    '@utils': fileURLToPath(new URL('./utils', import.meta.url))
+  },
+
+  css: ['~/assets/scss/index.scss'],
 
   typescript: {
     strict: true,
-    shim: false,
+    shim: false
   },
 
-  modules: ["@vueuse/nuxt", "@pinia/nuxt", "@element-plus/nuxt"],
+  modules: ['@vueuse/nuxt', '@pinia/nuxt', '@element-plus/nuxt'],
 
   vueuse: {
-    ssrHandlers: true,
+    ssrHandlers: true
   },
 
   vite: {
+    // resolve: {
+    //   alias: {
+    //     '.prisma/client/index-browser': prismaClientPath.replace(
+    //       '@prisma/client/default.js',
+    //       '.prisma/client/index-browser.js'
+    //     )
+    //   }
+    // },
+    optimizeDeps: {
+      include: ['tailwind.config.cjs']
+    },
     css: {
       preprocessorOptions: {
         scss: {
+          api: 'modern-compiler',
           additionalData: `@use "@/assets/scss/element/index.scss" as element;`,
-        },
-      },
-    },
+          quietDeps: true
+        }
+      }
+    }
   },
 
   elementPlus: {
-    icon: "ElIcon",
-    importStyle: "scss",
-    themes: ["dark"],
+    icon: 'ElIcon',
+    importStyle: 'scss',
+    themes: ['dark']
   },
-});
+
+  compatibilityDate: '2024-11-14'
+})

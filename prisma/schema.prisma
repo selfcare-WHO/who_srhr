@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,4 +5,78 @@ generator client {
 datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
+}
+
+model Indicator {
+  id         Int         @id @map("Indicator")
+  name       String      @unique @map("KPI Name")
+  heading    String      @unique @map("Heading")
+  subheading String      @map("Subheading")
+  type       String      @map("Data type")
+  hasTarget  Boolean     @default(false) @map("Target")
+  domainId   Int         @map("domain_id")
+  domain     Domain      @relation(fields: [domainId], references: [id])
+  subgroups  Subgroup[]
+  dataPoints DataPoint[]
+  categories Category[]
+  tableView  Boolean     @default(false) @map("Table")
+  chartView  Boolean     @default(false) @map("Chart")
+  mapType    String?     @map("Map type")
+
+  // TODO: Add indexes
+  @@map("indicators")
+}
+
+model Domain {
+  id         Int         @id @default(autoincrement())
+  name       String      @unique @map("domain")
+  indicators Indicator[]
+
+  // TODO: Add indexes
+  @@map("domains")
+}
+
+model Subgroup {
+  id         Int         @id @default(autoincrement())
+  name       String      @map("KPI Split")
+  indicators Indicator[]
+  dataPoints DataPoint[]
+}
+
+model Category {
+  id         Int         @id @default(autoincrement())
+  name       String      @map("Category")
+  indicators Indicator[]
+}
+
+model DataPoint {
+  id                Int       @id @default(autoincrement())
+  indicator         Indicator @relation(fields: [indicatorId], references: [id])
+  indicatorId       Int
+  subgroup          Subgroup? @relation(fields: [subgroupId], references: [id])
+  subgroupId        Int?
+  country           Country   @relation(fields: [countryId], references: [id])
+  countryId         Int
+  currentYearSource String?   @map("Current Year source")
+  currentYear       Int?      @map("Current Year")
+  source            String?   @map("Source")
+  originalValue     String?   @map("Value")
+  parsedValue       Float?    @map("Value to use")
+  value             String?   @map("Value adv")
+  target            String?   @map("Change")
+  trend             String?   @map("Trend color")
+
+  // TODO: Add indexes
+  @@map("data_points")
+}
+
+model Country {
+  id         Int         @id @default(autoincrement())
+  name       String      @unique @map("Country")
+  code       String      @unique @map("Country code")
+  dataPoints DataPoint[]
+  incomeType String? @map("Country income type")
+
+  // TODO: Add indexes
+  @@map("countries")
 }
