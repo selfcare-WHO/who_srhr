@@ -23,10 +23,12 @@
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
+    "@tailwindcss/typography": "^0.5.15",
     "element-plus": "^2.8.7"
   },
   "devDependencies": {
     "@element-plus/nuxt": "^1.1.0",
+    "@nuxtjs/tailwindcss": "^6.12.2",
     "@pinia/nuxt": "^0.5.1",
     "@prisma/client": "^5.22.0",
     "@types/node": "^22.9.0",

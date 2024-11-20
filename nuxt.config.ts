@@ -6,6 +6,8 @@ const prismaClientPath = createRequire(import.meta.url).resolve(
 )
 
 export default defineNuxtConfig({
+  compatibilityDate: '2024-11-14',
+
   app: {
     head: {
       title: 'SRHR Country Profile',
@@ -42,7 +44,17 @@ export default defineNuxtConfig({
     shim: false
   },
 
-  modules: ['@vueuse/nuxt', '@pinia/nuxt', '@element-plus/nuxt'],
+  modules: [
+    '@vueuse/nuxt',
+    '@pinia/nuxt',
+    '@element-plus/nuxt',
+    '@nuxtjs/tailwindcss'
+  ],
+
+  tailwindcss: {
+    cssPath: './assets/css/tailwind.css',
+    exposeConfig: true
+  },
 
   vueuse: {
     ssrHandlers: true
@@ -60,6 +72,7 @@ export default defineNuxtConfig({
     optimizeDeps: {
       include: ['tailwind.config.cjs']
     },
+
     css: {
       preprocessorOptions: {
         scss: {
@@ -73,9 +86,6 @@ export default defineNuxtConfig({
 
   elementPlus: {
     icon: 'ElIcon',
-    importStyle: 'scss',
-    themes: ['dark']
-  },
-
-  compatibilityDate: '2024-11-14'
+    importStyle: 'scss'
+  }
 })
