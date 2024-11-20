@@ -14,7 +14,7 @@ export default {
     fontFamily: {
       sans: ['Nunito', 'sans-serif'],
       serif: ['Merriweather', 'serif'],
-      title: ['Ubuntu', 'sans-serif']
+      title: ['"Source Sans Pro', 'sans-serif']
     },
 
     extend: {
@@ -29,7 +29,12 @@ export default {
             h6: { fontFamily: theme('fontFamily.title').join(', ') }
           }
         }
-      })
+      }),
+
+      colors: {
+        primary: 'var(--el-color-primary)',
+        info: 'var(--el-color-info)'
+      }
     }
   },
 

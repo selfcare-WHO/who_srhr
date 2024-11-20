@@ -1,0 +1,33 @@
+$-colors: (
+  'primary': (
+    'base': #00205c
+  ),
+  'success': (
+    'base': #08c970
+  ),
+  'warning': (
+    'base': #ffa101
+  ),
+  'danger': (
+    'base': #f20000
+  ),
+  'error': (
+    'base': #f56c6c
+  ),
+  'info': (
+    'base': #00a5e8
+  )
+);
+
+$-text-color: (
+  'primary': #00205c,
+  'regular': #000000,
+  'secondary': #707070,
+  'placeholder': #a8abb2,
+  'disabled': #c0c4cc
+);
+
+@forward 'element-plus/theme-chalk/src/common/var.scss' with (
+  $colors: $-colors,
+  $text-color: $-text-color
+);

@@ -1,0 +1,6 @@
+:root {
+  --container-max-width: 1140px;
+  --narrow-container-max-width: 940px;
+  --content-width: min(100%, var(--container-max-width));
+  --narrow-content-width: min(100%, var(--narrow-container-max-width));
+}

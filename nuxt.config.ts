@@ -70,14 +70,14 @@ export default defineNuxtConfig({
     //   }
     // },
     optimizeDeps: {
-      include: ['tailwind.config.cjs']
+      include: ['tailwind.config.js']
     },
 
     css: {
       preprocessorOptions: {
         scss: {
           api: 'modern-compiler',
-          additionalData: `@use "@/assets/scss/element/index.scss" as element;`,
+          additionalData: `@use "@/assets/scss/element_plus.scss" as element;`,
           quietDeps: true
         }
       }
