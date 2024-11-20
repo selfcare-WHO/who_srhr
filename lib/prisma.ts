@@ -19,6 +19,6 @@ const config = {
 
 let prisma: PrismaClientType = isProd
   ? new PrismaClient(config)
-  : (global.cachedPrisma ?? (global.cachedPrisma = new PrismaClient(config)))
+  : global.cachedPrisma ?? (global.cachedPrisma = new PrismaClient(config))
 
 export default prisma

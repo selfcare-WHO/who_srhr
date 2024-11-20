@@ -8,6 +8,7 @@
   },
   "author": "Element Plus Team",
   "license": "MIT",
+  "type": "module",
   "private": true,
   "scripts": {
     "dev": "nuxi dev",
@@ -16,6 +17,9 @@
     "start": "node .output/server/index.mjs",
     "generate": "nuxi generate",
     "postinstall": "nuxi prepare"
+  },
+  "prisma": {
+    "seed": "node node_modules/.bin/tsx ./prisma/seed.ts"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",

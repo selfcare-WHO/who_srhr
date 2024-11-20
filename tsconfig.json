@@ -1,13 +1,18 @@
 {
   "extends": "./.nuxt/tsconfig.json",
-  "module": "ESNext",
-  "moduleResolution": "node",
   "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "node",
     "typeRoots": ["./types", "element-plus/global", "./node_modules/@types"],
-    "target": "ESNext"
+    "target": "ESNext",
+    "types": ["node"]
+  },
+  "paths": {
+    "*": ["./types/*"]
   },
   "vueCompilerOptions": {
     "plugins": ["@vue/language-plugin-pug"]
   },
-  "includes": ["types/*.d.ts"]
+  "include": ["**/*.ts", "types/*.d.ts"],
+  "exclude": ["node_modules"]
 }
