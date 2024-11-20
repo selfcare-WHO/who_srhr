@@ -1,13 +1,16 @@
-<template>
-  <div class="page-index">
-    <Logos />
-    <Examples />
-  </div>
+<template lang="pug">
+  div(
+    v-loading="isLoading"
+    class="landing-page h-screen w-screen max-w-full flex"
+  )
 </template>
 
-<style>
-.page-index {
-  padding-top: 60px;
-  text-align: center;
-}
+<script setup lang="ts">
+  definePageMeta({
+    layout: 'default'
+  })
+</script>
+
+<style lang="sass">
+  .landing-page
 </style>
