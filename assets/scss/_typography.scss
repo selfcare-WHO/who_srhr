@@ -1,0 +1,48 @@
+body {
+  font-family: Source Sans Pro;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 22px;
+}
+
+h1,
+h2,
+h3 {
+  font-family: Source Sans Pro;
+  color: var(--el-color-primary);
+}
+
+h1 {
+  font-size: 36px;
+  font-weight: 600;
+  line-height: 45px;
+  letter-spacing: 2px;
+}
+
+h2 {
+  font-size: 34px;
+  line-height: 42px;
+  font-weight: 700;
+}
+
+h3 {
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 37px;
+}
+
+button > span {
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 24px;
+  letter-spacing: 0px;
+}
+
+p {
+  margin: 20px 0;
+  font-family: Source Sans Pro;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 22.63px;
+  color: var(--el-text-color-secondary);
+}

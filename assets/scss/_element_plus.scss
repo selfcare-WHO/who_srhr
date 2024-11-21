@@ -3,19 +3,20 @@ $-colors: (
     'base': #00205c
   ),
   'success': (
-    'base': #08c970
+    'base': #1ac066
   ),
   'warning': (
-    'base': #ffa101
+    'base': #ff9900
   ),
   'danger': (
-    'base': #f20000
+    'base': #ed0000
   ),
   'error': (
     'base': #f56c6c
   ),
   'info': (
-    'base': #00a5e8
+    'base': #00a5e8,
+    'dark': #0077b6
   )
 );
 
@@ -27,7 +28,12 @@ $-text-color: (
   'disabled': #c0c4cc
 );
 
+$-bg-color: (
+  'page': #faf8f6
+);
+
 @forward 'element-plus/theme-chalk/src/common/var.scss' with (
   $colors: $-colors,
-  $text-color: $-text-color
+  $text-color: $-text-color,
+  $bg-color: $-bg-color
 );

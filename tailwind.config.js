@@ -1,4 +1,5 @@
 import Typography from '@tailwindcss/typography'
+import elementPlus from './assets/scss/_element_plus.scss'
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -33,7 +34,12 @@ export default {
 
       colors: {
         primary: 'var(--el-color-primary)',
-        info: 'var(--el-color-info)'
+        info: 'var(--el-color-info)',
+        'info-dark': 'var(--el-color-info-dark)'
+      },
+
+      backgroundColor: {
+        page: 'var(--el-bg-color-page)'
       }
     }
   },

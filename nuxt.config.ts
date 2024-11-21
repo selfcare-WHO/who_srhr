@@ -48,7 +48,9 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     '@pinia/nuxt',
     '@element-plus/nuxt',
-    '@nuxtjs/tailwindcss'
+    '@nuxtjs/tailwindcss',
+    '@nuxt/image',
+    '@nuxt/fonts'
   ],
 
   tailwindcss: {
