@@ -1,6 +1,6 @@
 <template lang="pug">
   .page-card
-    img(:src="imgSrc" alt="Card image" class="w-full h-28 object-cover")
+    img(:src="imgSrc" alt="Card image" class="w-full h-32 object-cover")
 
     .content
       h2 {{ title }}
@@ -31,5 +31,5 @@
     @apply rounded-2xl overflow-hidden h-[375px] max-w-[350px]
 
     > .content
-      @apply flex-1 flex flex-col justify-between px-7 pb-10 pt-6 gap-4
+      @apply flex-1 flex flex-col justify-between px-7 pb-10 pt-6
 </style>
