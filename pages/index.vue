@@ -27,7 +27,7 @@
       title: 'Country comparison',
       description: 'Tables, charts and maps comparing countries and regions',
       imgSrc: countriesRegions,
-      path: '/country-comparison'
+      path: 'country-comparison/table'
     },
     {
       title: 'Indicators & data',

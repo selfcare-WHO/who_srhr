@@ -35,7 +35,8 @@ export default {
       colors: {
         primary: 'var(--el-color-primary)',
         info: 'var(--el-color-info)',
-        'info-dark': 'var(--el-color-info-dark)'
+        'info-dark': 'var(--el-color-info-dark)',
+        secondary: 'var(--el-text-color-secondary)'
       },
 
       backgroundColor: {

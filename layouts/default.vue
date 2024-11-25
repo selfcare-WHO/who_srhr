@@ -34,7 +34,7 @@
           )
             | {{ item.name }}
     
-    .content(class="flex-1")
+    .content(class="flex-1 flex flex-col")
       slot
 
     .footer(class="bg-info-dark min-h-[135px] flex flex-col justify-end")
@@ -53,7 +53,7 @@
   const navItems = [
     { name: 'Home', path: '/' },
     { name: 'Country profiles', path: '/country-profiles' },
-    { name: 'Country comparison', path: '/country-comparison' },
+    { name: 'Country comparison', path: '/country-comparison/table' },
     { name: 'Indicators & data', path: '/indicators-data' }
   ]
 </script>

@@ -3,9 +3,8 @@
   "compilerOptions": {
     "module": "ESNext",
     "moduleResolution": "node",
-    "typeRoots": ["./types", "element-plus/global", "./node_modules/@types"],
     "target": "ESNext",
-    "types": ["node"]
+    "typeRoots": ["./types", "element-plus/global", "./node_modules/@types"]
   },
   "paths": {
     "*": ["./types/*"]
@@ -13,6 +12,5 @@
   "vueCompilerOptions": {
     "plugins": ["@vue/language-plugin-pug"]
   },
-  "include": ["**/*.ts", "types/*.d.ts"],
-  "exclude": ["node_modules"]
+  "includes": ["types/*.d.ts"]
 }

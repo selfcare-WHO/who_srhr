@@ -7,5 +7,6 @@ declare global {
     export type Subgroup = PrismaClient.Subgroup
     export type Indicator = PrismaClient.Indicator
     export type DataPoint = PrismaClient.DataPoint
+    export type Location = PrismaClient.Location
   }
 }

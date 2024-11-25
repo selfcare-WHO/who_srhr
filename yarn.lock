@@ -2087,6 +2087,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/tabulator-tables@npm:^6":
+  version: 6.2.3
+  resolution: "@types/tabulator-tables@npm:6.2.3"
+  checksum: 10c0/3b4081ae25796461adff6165027a985cf16bc8ba1a6999eed3f1fdb7c56191f59d44d65a0e9691a7f2b3b56131ce8618a4d9126d21e9d5850fc9a95ee29747cc
+  languageName: node
+  linkType: hard
+
 "@types/web-bluetooth@npm:^0.0.16":
   version: 0.0.16
   resolution: "@types/web-bluetooth@npm:0.0.16"
@@ -4105,6 +4112,7 @@ __metadata:
     "@prisma/client": "npm:^5.22.0"
     "@tailwindcss/typography": "npm:^0.5.15"
     "@types/node": "npm:^22.9.0"
+    "@types/tabulator-tables": "npm:^6"
     "@vue/language-plugin-pug": "npm:^2.1.10"
     "@vueuse/nuxt": "npm:^10.7.0"
     consola: "npm:^3.2.3"
@@ -4113,6 +4121,7 @@ __metadata:
     prisma: "npm:^5.22.0"
     pug: "npm:^3.0.3"
     sass: "npm:^1.69.5"
+    tabulator-tables: "npm:^6.3.0"
     tsx: "npm:^4.19.2"
     typescript: "npm:^5.6.3"
     xlsx: "npm:^0.18.5"
@@ -8909,6 +8918,13 @@ __metadata:
   version: 0.1.0
   resolution: "system-architecture@npm:0.1.0"
   checksum: 10c0/1969974ea5d31a9ac7c38f2657cfe8255b36f9e1d5ba3c58cb84c24fbeedf562778b8511f18a0abe6d70ae90148cfcaf145ecf26e37c0a53a3829076f3238cbb
+  languageName: node
+  linkType: hard
+
+"tabulator-tables@npm:^6.3.0":
+  version: 6.3.0
+  resolution: "tabulator-tables@npm:6.3.0"
+  checksum: 10c0/59e23ab263b0714845e048a636ae4b77ae43bef1524a65eab9045de7bb0bee43951980daaae625bea0b30a0e480b61a9263a22c56744a9b4d219501a2f2926a3
   languageName: node
   linkType: hard
 

@@ -24,7 +24,7 @@ $-text-color: (
   'primary': #00205c,
   'regular': #000000,
   'secondary': #707070,
-  'placeholder': #a8abb2,
+  'placeholder': #919191,
   'disabled': #c0c4cc
 );
 
@@ -37,3 +37,18 @@ $-bg-color: (
   $text-color: $-text-color,
   $bg-color: $-bg-color
 );
+
+.el-button.el-button + .el-button {
+  margin-left: 0;
+}
+
+.el-text {
+  align-self: unset;
+}
+
+.el-form-item__label {
+  font-family: Source Sans Pro !important;
+  font-size: 17px !important;
+  font-weight: 700 !important;
+  color: map-get($-text-color, 'primary') !important;
+}

@@ -24,7 +24,8 @@
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
     "@tailwindcss/typography": "^0.5.15",
-    "element-plus": "^2.8.7"
+    "element-plus": "^2.8.7",
+    "tabulator-tables": "^6.3.0"
   },
   "devDependencies": {
     "@element-plus/nuxt": "^1.1.0",
@@ -34,6 +35,7 @@
     "@pinia/nuxt": "^0.5.1",
     "@prisma/client": "^5.22.0",
     "@types/node": "^22.9.0",
+    "@types/tabulator-tables": "^6",
     "@vue/language-plugin-pug": "^2.1.10",
     "@vueuse/nuxt": "^10.7.0",
     "consola": "^3.2.3",

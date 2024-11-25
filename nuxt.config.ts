@@ -34,7 +34,8 @@ export default defineNuxtConfig({
     '@css': fileURLToPath(new URL('./assets/css', import.meta.url)),
     '@server': fileURLToPath(new URL('./server', import.meta.url)),
     '@lib': fileURLToPath(new URL('./lib', import.meta.url)),
-    '@utils': fileURLToPath(new URL('./utils', import.meta.url))
+    '@utils': fileURLToPath(new URL('./utils', import.meta.url)),
+    '@enums': fileURLToPath(new URL('./types/enums.ts', import.meta.url))
   },
 
   css: ['~/assets/scss/index.scss'],
@@ -52,6 +53,25 @@ export default defineNuxtConfig({
     '@nuxt/image',
     '@nuxt/fonts'
   ],
+
+  fonts: {
+    adobe: {
+      id: ['zpe4zmg']
+    },
+
+    families: [
+      {
+        name: 'Source Sans Pro',
+        provider: 'adobe',
+        weights: [400, 500, 600, 700]
+      },
+      {
+        name: 'Roboto',
+        provider: 'google',
+        weights: [400, 500, 600, 700]
+      }
+    ]
+  },
 
   tailwindcss: {
     cssPath: './assets/css/tailwind.css',

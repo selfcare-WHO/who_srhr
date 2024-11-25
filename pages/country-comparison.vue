@@ -1,12 +1,30 @@
 <template lang="pug">
-  div
-    
+  .flex.flex-col.flex-1.min-h-0
+    .country-comparison-page.u-content.pt-16.pb-8
+      h1 Countries & regions
+      p Gorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam eu turpis molestie, dictum est a, mattis tellus. Sed dignissim, metus nec fringilla accumsan, risus sem sollicitudin lacus, ut interdum tellus elit sed risus. Maecenas eget condimentum velit, sit amet feugiat lectus. Class aptent 
+
+      .flex.items-center.gap-3
+        h2.text-secondary.mr-3 Select view:
+        ElButton.w-32(type="primary" :plain="!mapView") Map
+        ElButton.w-32(type="primary" :plain="!chartsView") Charts
+        ElButton.w-32(type="primary" :plain="!tableView") Table
+
+    NuxtPage.flex-1
 </template>
 
 <script lang="ts" setup>
+  const route = useRoute()
 
+  const mapView = computed(() => {
+    return route.path === '/country-comparison/map'
+  })
+
+  const chartsView = computed(() => {
+    return route.path === '/country-comparison/charts'
+  })
+
+  const tableView = computed(() => {
+    return route.path === '/country-comparison/table'
+  })
 </script>
-
-<style lang="sass" scoped>
-
-</style>
