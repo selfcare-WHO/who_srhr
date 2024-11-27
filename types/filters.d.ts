@@ -6,21 +6,35 @@ declare namespace Filter {
     children?: Option[]
   }
 
-  type Value = string[] | number[] | string | number | undefined
-
-  type Label = 'Domain' | 'Indicator' | 'Year' | 'Target' | 'Aggregator'
+  type Label = 'Indicator' | 'Country'
 
   type Key = 'indicator' | 'country'
 
-  type Filter = {
-    key: Key
+  type Item<K extends Key = Key> = {
+    key: K
     label: Label
     placeholder?: string
-    value: Value
-    options: Option[] | ComputedRef<Option[]>
-    multiple: boolean | ComputedRef<boolean>
-    tree?: boolean | ComputedRef<boolean>
+    value: MaybeRef<string[]>
+    options: ComputedRef<Option[]>
+    multiple: MaybeRef<boolean>
+    tree?: MaybeRef<boolean>
     childrenKey?: Key
-    clearable: boolean | ComputedRef<boolean>
+    clearable: MaybeRef<boolean>
+  }
+
+  type Values = {
+    indicator: MaybeRef<string[]>
+    country: MaybeRef<string[]>
+  }
+
+  type ReadonlyValues = {
+    indicator: string[]
+    country: string[]
+  }
+
+  type Options = {
+    domains: Prisma.Domain[]
+    indicators: Prisma.IndicatorInclude[]
+    countries: Prisma.Country[]
   }
 }

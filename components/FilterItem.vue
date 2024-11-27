@@ -6,14 +6,13 @@
     tag-type="primary"
     tag-effect="dark"
     show-checkbox
-    collapse-tags
     fit-input-width
     default-expand-all
     :size="size"
     :check-on-click-node="true"
     :expand-on-click-node="false"
-    :loading="isFiltering"
-    :disabled="isFiltering"
+    :loading="isFetchingFilters"
+    :disabled="isFetchingFilters"
     :placeholder="placeholder || `All ${label}s`"
     :clearable="clearable"
     :multiple="multiple"
@@ -32,13 +31,12 @@
     tag-type="primary"
     tag-effect="dark"
     v-model="value"
-    collapse-tags
     fit-input-width
     :size="size"
     :clearable="clearable"
     :filterable="multiple"
-    :loading="isFiltering"
-    :disabled="isFiltering"
+    :loading="isFetchingFilters"
+    :disabled="isFetchingFilters"
     :placeholder="placeholder || `All ${label}s`"
     :multiple="multiple"
     @change="!multiple && $emit('change')"
@@ -56,7 +54,7 @@
 
 <script setup lang="ts">
   const dataStore = useFiltersStore()
-  const { isFiltering } = storeToRefs(dataStore)
+  const { isFetchingFilters } = storeToRefs(dataStore)
 
   const value = defineModel<Filter.Value>({ required: true })
 

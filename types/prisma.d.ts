@@ -1,12 +1,24 @@
-import { Prisma as PrismaClient } from '@prisma/client'
+import type {
+  Prisma as PrismaClient,
+  Domain as PrismaDomain,
+  Country as PrismaCountry,
+  Subgroup as PrismaSubgroup,
+  Indicator as PrismaIndicator,
+  DataPoint as PrismaDataPoint,
+  Location as PrismaLocation
+} from '@prisma/client'
 
 declare global {
   namespace Prisma {
-    export type Domain = PrismaClient.Domain
-    export type Country = PrismaClient.Country
-    export type Subgroup = PrismaClient.Subgroup
-    export type Indicator = PrismaClient.Indicator
-    export type DataPoint = PrismaClient.DataPoint
-    export type Location = PrismaClient.Location
+    export type Domain = PrismaDomain
+    export type Country = PrismaCountry
+    export type Subgroup = PrismaSubgroup
+    export type Indicator = PrismaIndicator
+    export type DataPoint = PrismaDataPoint
+    export type Location = PrismaLocation
+
+    export type IndicatorWithSubgroups = PrismaClient.IndicatorGetPayload<{
+      include: { subgroups: true }
+    }>
   }
 }

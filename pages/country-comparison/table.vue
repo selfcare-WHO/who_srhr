@@ -7,7 +7,7 @@
         label-position="top"
       )
         ElFormItem(
-          v-for="(filter, index) in filters"
+          v-for="filter in filters"
           :key="filter.label"
           class="w-[285px]"
           :label="filter.label"
@@ -20,10 +20,6 @@
             :tree="filter.tree"
             :placeholder="filter.placeholder"
             :clearable="!!filter?.clearable"
-            @blur="fetchFilterItems"
-            @clear="fetchFilterItems"
-            @remove-tag="fetchFilterItems"
-            @change="fetchFilterItems"
           )
 
       .key-section(class="flex items-center gap-4")
@@ -40,6 +36,8 @@
           )
 
           span {{ target.name }}
+
+      #table-element
 </template>
 
 <script lang="ts" setup>
@@ -47,38 +45,71 @@
   import { TabulatorFull as Tabulator } from 'tabulator-tables'
 
   const filtersStore = useFiltersStore()
-  const { filters } = storeToRefs(filtersStore)
-  const { fetchFilterItems } = filtersStore
+  const { fetchedFilters, isFetchingFilters } = storeToRefs(filtersStore)
+  const { fetchFilterOptions, filters } = filtersStore
 
-  let table: Tabulator
+  const dataStore = useDataStore()
+  const { isLoadingData } = storeToRefs(dataStore)
+
+  const isLoading = computed(
+    () => isFetchingFilters.value || isLoadingData.value
+  )
+
+  const { columns, data } = useTableData()
+  const tabulator = ref<Tabulator | null>(null)
 
   const initTable = () => {
-    let tableElement: HTMLElement | null = null
-
+    const tableElement = document.getElementById('table-element')
     const getElement = () => {
-      tableElement = document.getElementById('matrix-view')
-      // if (!tableElement) {
-      //   requestAnimationFrame(getElement)
-      // } else {
-      //   table = new Tabulator('#matrix-view', {
-      //     ajaxLoader: true,
-      //     reactiveData: true,
-      //     data: data.value,
-      //     columns: columns.value,
-      //     groupBy: 'domain',
-      //     groupHeader: value => value,
-      //     layout: 'fitDataFill',
-      //     maxHeight: '100%',
-      //     height: '100%',
-      //     selectable: false
-      //   })
-      // }
+      if (!tableElement) {
+        requestAnimationFrame(getElement)
+      } else {
+        tabulator.value = new Tabulator(tableElement, {
+          height: 700,
+          reactiveData: true,
+          renderHorizontal: 'basic',
+          renderVertical: 'basic',
+          data: data.value,
+          columns: columns.value,
+          layout: 'fitDataFill',
+          maxHeight: '100%',
+          selectable: false
+        })
+      }
     }
 
     getElement()
   }
 
-  onMounted(initTable)
+  if (!fetchedFilters.value) fetchFilterOptions()
+
+  onMounted(() => {
+    initTable()
+  })
+
+  const updateTable = () => {
+    if (
+      !tabulator ||
+      !tabulator.value?.setColumns ||
+      !tabulator.value?.setData
+    ) {
+      initTable()
+    }
+
+    tabulator.value?.setColumns(columns.value)
+    tabulator.value?.setData(data.value)
+  }
+
+  watch(isLoading, newValue => {
+    if (!newValue) {
+      initTable()
+      setTimeout(updateTable)
+    }
+  })
+
+  onBeforeRouteLeave(() => {
+    tabulator?.value?.destroy()
+  })
 </script>
 
 <style lang="sass" scoped></style>

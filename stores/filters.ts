@@ -1,17 +1,11 @@
 import { defineStore } from 'pinia'
-import type { Domain, Indicator, Country } from '@prisma/client'
 
 export const useFiltersStore = defineStore('Filters', () => {
-  const isFiltering = ref(false)
+  const isFetchingFilters = ref(false)
 
-  const availableDomains = ref<Domain[]>([])
-  const availableIndicators = ref<Indicator[]>([])
-  const availableCountries = ref<Country[]>([])
-
-  const emptyFilterValues = computed<Record<Filter.Key, Filter.Value>>(() => ({
-    country: [],
-    indicator: []
-  }))
+  const availableDomains = ref<Prisma.Domain[]>([])
+  const availableIndicators = ref<Prisma.IndicatorWithSubgroups[]>([])
+  const availableCountries = ref<Prisma.Country[]>([])
 
   const indicatorOptions = computed<Filter.Option[]>(() => {
     if (!availableDomains.value) return []
@@ -32,37 +26,72 @@ export const useFiltersStore = defineStore('Filters', () => {
 
   const countryOptions = computed<Filter.Option[]>(() =>
     availableCountries.value.map(country => ({
-      id: country.id,
+      id: String(country.id),
       name: country.name
     }))
   )
 
-  const filters = reactive<Filter.Filter[]>([
+  const indicatorFilterValue = ref<string[]>([])
+  const countryFilterValue = ref<string[]>([])
+
+  const filterValues = computed<Filter.Values>(() => ({
+    indicator: indicatorFilterValue.value,
+    country: countryFilterValue.value
+  }))
+
+  const filters: Filter.Item[] = [
     {
       key: 'indicator',
       childrenKey: 'indicator',
-      label: 'Indicator' as Filter.Label,
+      label: 'Indicator',
       placeholder: 'All Domains / Indicators',
-      value: emptyFilterValues.value.indicator,
+      value: indicatorFilterValue,
       tree: true,
-      multiple: computed(() => true),
-      clearable: computed(() => true),
+      multiple: true,
+      clearable: true,
       options: indicatorOptions
     },
     {
       key: 'country',
-      label: 'Location' as Filter.Label,
-      value: emptyFilterValues.value.country,
-      childrenKey: 'country',
+      label: 'Country',
+      placeholder: 'All Countries',
+      value: countryFilterValue,
       multiple: true,
       clearable: true,
       options: countryOptions
     }
-  ])
+  ]
 
-  const fetchFilterItems = async () => {
-    console.log('fetchFilterItems')
+  const fetchFilterOptions = async () => {
+    isFetchingFilters.value = true
+
+    const { domains, indicators, countries } = await $fetch<Filter.Options>(
+      '/api/filter-options'
+    )
+
+    availableDomains.value = domains
+    availableIndicators.value = indicators
+    availableCountries.value = countries
+
+    isFetchingFilters.value = false
   }
 
-  return { isFiltering, filters, fetchFilterItems }
+  const fetchedFilters = computed(
+    () =>
+      availableIndicators.value.length > 0 &&
+      availableCountries.value.length > 0
+  )
+
+  return {
+    isFetchingFilters,
+    filters,
+    filterValues,
+    fetchFilterOptions,
+    fetchedFilters,
+    availableDomains,
+    availableCountries,
+    availableIndicators,
+    indicatorFilterValue,
+    countryFilterValue
+  }
 })

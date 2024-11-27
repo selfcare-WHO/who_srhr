@@ -4,7 +4,8 @@
     "module": "ESNext",
     "moduleResolution": "node",
     "target": "ESNext",
-    "typeRoots": ["./types", "element-plus/global", "./node_modules/@types"]
+    "typeRoots": ["element-plus/global", "./node_modules/@types"],
+    "forceConsistentCasingInFileNames": true
   },
   "paths": {
     "*": ["./types/*"]
@@ -12,5 +13,5 @@
   "vueCompilerOptions": {
     "plugins": ["@vue/language-plugin-pug"]
   },
-  "includes": ["types/*.d.ts"]
+  "includes": ["types/*.d.ts", "types/filters.d.ts"]
 }

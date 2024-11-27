@@ -1,7 +1,6 @@
 import { fileURLToPath } from 'url'
 import prisma from '@lib/prisma'
 import xlsx from 'xlsx'
-import type { PrismaPromise } from '@prisma/client'
 
 async function resetDatabase() {
   await prisma.dataPoint.deleteMany({})
@@ -45,9 +44,20 @@ async function seedSubgroup(row: Data.DataRow) {
 }
 
 async function seedIndicator(row: Data.DataRow) {
+  const subgroups = await prisma.subgroup.findMany({
+    where: { indicators: { some: { id: String(row.kpi_id) } } }
+  })
+
   return prisma.indicator.upsert({
     where: { name: row.kpi_name },
-    update: {},
+    update: {
+      subgroups: {
+        connect: [
+          ...subgroups.map(subgroup => ({ name: subgroup.name })),
+          { name: row.kpi_subgroup }
+        ]
+      }
+    },
     create: {
       id: String(row.kpi_id),
       name: row.kpi_name,
@@ -55,6 +65,9 @@ async function seedIndicator(row: Data.DataRow) {
       subheading: row.kpi_subheading,
       domain: { connect: { id: row.domain_id } },
       type: row.kpi_data_type,
+      subgroups: {
+        connect: { name: row.kpi_subgroup }
+      },
       hasTarget: row.has_target === 'Yes',
       tableView: row.table_view === 'Yes',
       chartView: row.chart_view === 'Yes',
