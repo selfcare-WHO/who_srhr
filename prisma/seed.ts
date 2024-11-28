@@ -62,7 +62,8 @@ async function seedIndicator(row: Data.DataRow) {
       id: String(row.kpi_id),
       name: row.kpi_name,
       fullName: row.kpi_full_name,
-      subheading: row.kpi_subheading,
+      subheading:
+        row.kpi_subheading.trim() === '-' ? '' : row.kpi_subheading.trim(),
       domain: { connect: { id: row.domain_id } },
       type: row.kpi_data_type,
       subgroups: {
