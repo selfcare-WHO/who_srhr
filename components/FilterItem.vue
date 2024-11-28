@@ -8,6 +8,8 @@
     show-checkbox
     fit-input-width
     default-expand-all
+    collapse-tags
+    :max-collapse-tags="5"
     :size="size"
     :check-on-click-node="true"
     :expand-on-click-node="false"
@@ -32,6 +34,8 @@
     tag-effect="dark"
     v-model="value"
     fit-input-width
+    collapse-tags
+    :max-collapse-tags="5"
     :size="size"
     :clearable="clearable"
     :filterable="multiple"
