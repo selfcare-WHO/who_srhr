@@ -1,5 +1,5 @@
 <template lang="pug">
-  .bg-white.py-4
+  .table-view(class="bg-white py-4")
     div.u-content
       ElForm(
         class="filters-section flex gap-6"
@@ -37,12 +37,25 @@
 
           span {{ target.name }}
 
-      #table-element
+      div(
+        class="table-wrapper min-h-[500px]"
+        :class="{ 'mb-[200px]': isLoading || isBuildingTable }"	
+        v-loading="isLoading || isBuildingTable"
+      )
+        #table-element()
+    
+    //- ElTooltip(
+    //-   :content="tooltipContent"
+    //-   virtual-triggering
+    //-   :virtual-ref="triggerRef"
+    //- )
 </template>
 
 <script lang="ts" setup>
   import { TargetStatus } from '@enums'
   import { TabulatorFull as Tabulator } from 'tabulator-tables'
+
+  const TABLE_HEIGHT = 700
 
   const filtersStore = useFiltersStore()
   const { fetchedFilters, isFetchingFilters } = storeToRefs(filtersStore)
@@ -50,6 +63,8 @@
 
   const dataStore = useDataStore()
   const { isLoadingData } = storeToRefs(dataStore)
+
+  const isBuildingTable = ref(true)
 
   const isLoading = computed(
     () => isFetchingFilters.value || isLoadingData.value
@@ -59,33 +74,35 @@
   const tabulator = ref<Tabulator | null>(null)
 
   const initTable = () => {
-    const tableElement = document.getElementById('table-element')
     const getElement = () => {
+      const tableElement = document.getElementById('table-element')
+
       if (!tableElement) {
         requestAnimationFrame(getElement)
       } else {
         tabulator.value = new Tabulator(tableElement, {
-          height: 700,
-          reactiveData: true,
+          height: TABLE_HEIGHT,
+          columnHeaderVertAlign: 'bottom',
           renderHorizontal: 'basic',
           renderVertical: 'basic',
           data: data.value,
           columns: columns.value,
           layout: 'fitDataFill',
-          maxHeight: '100%',
           selectable: false
         })
+
+        tabulator.value.on('tableBuilt', () => {
+          isBuildingTable.value = false
+        })
+
+        return
       }
     }
 
-    getElement()
+    return getElement()
   }
 
   if (!fetchedFilters.value) fetchFilterOptions()
-
-  onMounted(() => {
-    initTable()
-  })
 
   const updateTable = () => {
     if (
@@ -94,17 +111,14 @@
       !tabulator.value?.setData
     ) {
       initTable()
+    } else {
+      tabulator.value?.setColumns(columns.value)
+      tabulator.value?.setData(data.value)
     }
-
-    tabulator.value?.setColumns(columns.value)
-    tabulator.value?.setData(data.value)
   }
 
   watch(isLoading, newValue => {
-    if (!newValue) {
-      initTable()
-      setTimeout(updateTable)
-    }
+    if (!newValue) nextTick(updateTable)
   })
 
   onBeforeRouteLeave(() => {
@@ -112,4 +126,6 @@
   })
 </script>
 
-<style lang="sass" scoped></style>
+<style lang="sass" scoped>
+  .table-view
+</style>

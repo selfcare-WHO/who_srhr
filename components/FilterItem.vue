@@ -56,7 +56,7 @@
   const dataStore = useFiltersStore()
   const { isFetchingFilters } = storeToRefs(dataStore)
 
-  const value = defineModel<Filter.Value>({ required: true })
+  const value = defineModel<string[]>({ required: true })
 
   const {
     label,

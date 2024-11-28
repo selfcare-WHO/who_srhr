@@ -38,27 +38,32 @@ export const useTableData = () => {
   })
 
   const columns = computed((): ColumnDefinition[] => {
-    const baseColumns = [
+    const baseColumns: ColumnDefinition[] = [
       {
+        title: '',
         field: 'country',
         width: 300,
         frozen: true,
         resizable: false,
         headerSort: false,
-        formatter: () => '',
         vertAlign: 'middle'
+        // headerWordWrap: true
       }
     ]
 
     const indicatorColumns = currentIndicators.value.map(indicator => ({
       title: indicator.name,
+      tooltip: true,
       titleFormatter: () => `
         <div class="flex flex-col gap-1">
-          <span class="text-primary font-bold text-sm">
+          <span
+            class="table-indicator-name text-primary font-bold text-sm
+              truncate line-clamp-3"
+          >
             ${indicator.fullName}
           </span>
 
-          <span class="">
+          <span class="truncate line-clamp-2">
             ${indicator.subheading === '-' ? '' : indicator.subheading}
           </span>
         </div>

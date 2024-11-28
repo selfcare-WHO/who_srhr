@@ -1,1 +1,8 @@
 @forward 'tabulator-tables/src/scss/themes/semanticui/tabulator_semanticui.scss';
+
+.tabulator
+  .tabulator-header
+  .tabulator-col.tabulator-col-group
+  .tabulator-col-group-cols {
+  border-top-color: transparent !important;
+}
