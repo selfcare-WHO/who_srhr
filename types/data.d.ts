@@ -26,4 +26,10 @@ declare namespace Data {
     country_code: string
     country_income_type?: string
   }
+
+  interface IndicatorTooltipData {
+    fullName?: string
+    subheading?: string
+    element?: HTMLElement
+  }
 }

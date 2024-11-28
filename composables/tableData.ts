@@ -5,7 +5,15 @@ interface MatrixRow {
   [key: string]: any
 }
 
-export const useTableData = () => {
+interface UseTableDataOptions {
+  onIndicatorHover: (event: MouseEvent) => void
+  onIndicatorLeave: (event: MouseEvent) => void
+}
+
+export const useTableData = ({
+  onIndicatorHover,
+  onIndicatorLeave
+}: UseTableDataOptions) => {
   const filtersStore = useFiltersStore()
   const {
     availableCountries,
@@ -54,20 +62,29 @@ export const useTableData = () => {
     const indicatorColumns = currentIndicators.value.map(indicator => ({
       title: indicator.name,
       tooltip: true,
-      titleFormatter: () => `
-        <div class="flex flex-col gap-1">
-          <span
-            class="table-indicator-name text-primary font-bold text-sm
-              truncate line-clamp-3"
-          >
-            ${indicator.fullName}
-          </span>
+      titleFormatter: () => {
+        const container = document.createElement('div')
+        container.className = 'flex gap-1 items-center'
 
-          <span class="truncate line-clamp-2">
-            ${indicator.subheading === '-' ? '' : indicator.subheading}
-          </span>
-        </div>
-      `,
+        const span = document.createElement('span')
+        span.className =
+          'table-indicator-name text-primary font-bold text-sm truncate'
+        span.textContent = indicator.name
+
+        const img: HTMLImageElement & Data.IndicatorTooltipData =
+          document.createElement('img')
+        img.src = new URL('/assets/icons/info-circle.svg', import.meta.url).href
+        img.className = 'table-indicator-info-icon w-4 h-4 cursor-pointer'
+        img.addEventListener('mouseover', onIndicatorHover)
+        img.addEventListener('mouseout', onIndicatorLeave)
+        img.fullName = indicator.fullName
+        img.subheading = indicator.subheading
+
+        container.appendChild(span)
+        container.appendChild(img)
+
+        return container
+      },
       resizable: false,
       headerSort: false,
       headerWordWrap: true,
@@ -75,7 +92,8 @@ export const useTableData = () => {
       vertAlign: 'middle',
       columns: indicator.subgroups.map(subgroup => ({
         width: 150,
-        title: subgroup.name === 'Data' ? '' : subgroup.name,
+        // title: subgroup.name === 'Data' ? '' : subgroup.name,
+        title: subgroup.name,
         field: `${indicator.id}-${subgroup.id}`,
         headerSort: false
       }))

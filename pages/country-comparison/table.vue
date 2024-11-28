@@ -44,11 +44,20 @@
       )
         #table-element()
     
-    //- ElTooltip(
-    //-   :content="tooltipContent"
-    //-   virtual-triggering
-    //-   :virtual-ref="triggerRef"
-    //- )
+    ElTooltip(
+      virtual-triggering
+      width="200px"
+      placement="top"
+      :visible="showTooltip"
+      :virtual-ref="tooltipData.element"
+      :key="tooltipData.element?.id"
+      :persistent="false"
+    )
+      template(#content)
+        .flex.flex-col.gap-1
+          span.font-bold {{ tooltipData.fullName }}
+
+          span(v-if="tooltipData.subheading") ({{ tooltipData.subheading }})
 </template>
 
 <script lang="ts" setup>
@@ -70,7 +79,27 @@
     () => isFetchingFilters.value || isLoadingData.value
   )
 
-  const { columns, data } = useTableData()
+  const tooltipData = reactive<Data.IndicatorTooltipData>({})
+  const showTooltip = ref(false)
+
+  const onIndicatorHover = (event: MouseEvent) => {
+    const element = event.target as HTMLElement & Prisma.Indicator
+    const { fullName, subheading } = element
+
+    tooltipData.fullName = fullName
+    tooltipData.subheading = subheading
+    tooltipData.element = element
+    showTooltip.value = true
+  }
+
+  const onIndicatorLeave = (event: MouseEvent) => {
+    showTooltip.value = false
+  }
+
+  const { columns, data } = useTableData({
+    onIndicatorHover,
+    onIndicatorLeave
+  })
   const tabulator = ref<Tabulator | null>(null)
 
   const initTable = () => {
@@ -123,9 +152,16 @@
 
   onBeforeRouteLeave(() => {
     tabulator?.value?.destroy()
+
+    const infoIcons: HTMLImageElement[] = Array.from(
+      document.querySelectorAll('.table-indicator-info-icon')
+    )
+
+    infoIcons.forEach(icon => {
+      icon.removeEventListener('mouseover', onIndicatorHover)
+      icon.removeEventListener('mouseout', onIndicatorLeave)
+    })
   })
 </script>
 
-<style lang="sass" scoped>
-  .table-view
-</style>
+<style lang="sass" scoped></style>
