@@ -20,6 +20,9 @@
             :tree="filter.tree"
             :placeholder="filter.placeholder"
             :clearable="!!filter?.clearable"
+            @blur="fetchData"
+            @remove-tag="fetchData"
+            @clear="fetchData"
           )
 
       .key-section(class="flex items-center gap-4")
@@ -72,6 +75,7 @@
 
   const dataStore = useDataStore()
   const { isLoadingData } = storeToRefs(dataStore)
+  const { fetchData } = dataStore
 
   const isBuildingTable = ref(true)
 
@@ -162,6 +166,8 @@
       icon.removeEventListener('mouseout', onIndicatorLeave)
     })
   })
+
+  fetchData()
 </script>
 
 <style lang="sass" scoped></style>

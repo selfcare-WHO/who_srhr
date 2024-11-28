@@ -8,13 +8,13 @@ export const useDataStore = defineStore('Data', () => {
   const isLoadingData = ref(false)
   const dataPoints = ref<DataPoint[]>([])
 
-  async function fetchData(filters: Filter.Values) {
+  async function fetchData() {
     isLoadingData.value = true
 
     const data = await $fetch<DataPoint[]>(`/api/data`, {
       method: 'POST',
       body: {
-        filters
+        filters: filterValues.value
       }
     })
 
@@ -22,8 +22,6 @@ export const useDataStore = defineStore('Data', () => {
 
     isLoadingData.value = false
   }
-
-  watch(filterValues, fetchData, { deep: true, immediate: true })
 
   return { isLoadingData, dataPoints, fetchData }
 })
