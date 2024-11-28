@@ -54,7 +54,7 @@
       :persistent="false"
     )
       template(#content)
-        .flex.flex-col.gap-1
+        div(class="flex flex-col gap-1 max-w-[200px]")
           span.font-bold {{ tooltipData.fullName }}
 
           span(v-if="tooltipData.subheading") ({{ tooltipData.subheading }})
