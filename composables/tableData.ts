@@ -86,7 +86,7 @@ export const useTableData = ({
         const dataPoint = cell.getValue()
 
         const element = document.createElement('div')
-        element.className = 'indicator-cell-container flex items-center gap-1'
+        element.className = 'indicator-cell-container flex items-center gap-2'
         element.style.width = '100%'
         element.style.height = '100%'
 
