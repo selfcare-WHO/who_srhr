@@ -1,4 +1,5 @@
 import type { ColumnDefinition } from 'tabulator-tables'
+import { TargetStatus } from '@enums'
 
 interface MatrixRow {
   country: string
@@ -8,14 +9,6 @@ interface MatrixRow {
 interface UseTableDataOptions {
   onIndicatorHover: (event: MouseEvent) => void
   onIndicatorLeave: (event: MouseEvent) => void
-}
-
-const getFormattedValue = (value: Data.Value, type?: string): string => {
-  const postfix = type === 'Percentage' ? '%' : ''
-
-  if (value === null || value === undefined) return 'n/d'
-
-  return `${value}${postfix}`
 }
 
 export const useTableData = ({
@@ -88,9 +81,50 @@ export const useTableData = ({
       width: 150,
       title: subgroup.name,
       field: `${indicator.id}-${subgroup.id}`,
-      headerSort: false
+      headerSort: false,
+      formatter: cell => {
+        const dataPoint = cell.getValue()
+
+        const element = document.createElement('div')
+        element.className = 'indicator-cell-container flex items-center gap-1'
+        element.style.width = '100%'
+        element.style.height = '100%'
+
+        const innerDiv: HTMLElement = document.createElement('div')
+
+        if (dataPoint?.target !== 'No target') {
+          innerDiv.className = 'indicator-target-circle w-4 h-4 rounded-full'
+
+          const targetStatus = Object.values(TargetStatus).find(
+            status => status.dbValue === dataPoint?.target
+          )
+
+          innerDiv.style.backgroundColor = targetStatus?.color || ''
+
+          element.appendChild(innerDiv)
+        }
+
+        const numberElement = document.createElement('span')
+        const value = dataPoint?.value
+        const { type } = dataPoint?.indicator || {}
+
+        numberElement.className = 'indicator-progress-value'
+        numberElement.textContent = getFormattedValue(value, type)
+
+        element.appendChild(numberElement)
+
+        return element
+      }
     }))
   })
+
+  const getFormattedValue = (value: Data.Value, type?: string): string => {
+    const postfix = type === 'Percentage' ? '%' : ''
+
+    if (value === null || value === undefined) return 'n/d'
+
+    return `${value}${postfix}`
+  }
 
   const columns = computed((): ColumnDefinition[] => {
     const baseColumns: ColumnDefinition[] = [
@@ -126,13 +160,9 @@ export const useTableData = ({
         indicator.subgroups.forEach(subgroup => {
           const key = `${country.id}-${indicator.id}-${subgroup.id}`
           const dataPoint = dataPointsMap.get(key)
-          const type = dataPoint?.indicator.type
 
           if (dataPoint) {
-            row[`${indicator.id}-${subgroup.id}`] = getFormattedValue(
-              dataPoint.value,
-              type
-            )
+            row[`${indicator.id}-${subgroup.id}`] = dataPoint
           }
         })
       })
