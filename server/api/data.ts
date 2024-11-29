@@ -1,7 +1,7 @@
 import prisma from '@lib/prisma'
 
 export default defineEventHandler(
-  async (event): Promise<Partial<Prisma.DataPoint>[]> => {
+  async (event): Promise<Prisma.DataPointWithType[]> => {
     const { filters }: { filters: Filter.ReadonlyValues } = await readBody(
       event
     )
@@ -24,19 +24,16 @@ export default defineEventHandler(
         whereConditions.countryId = { in: filters.country.map(Number) }
       }
 
-      const data: Partial<Prisma.DataPoint>[] = await prisma.dataPoint.findMany(
-        {
-          where: whereConditions,
-          select: {
-            id: true,
-            indicatorId: true,
-            countryId: true,
-            subgroupId: true,
-            value: true,
-            target: true
+      const data: Prisma.DataPointWithType[] = await prisma.dataPoint.findMany({
+        where: whereConditions,
+        include: {
+          indicator: {
+            select: {
+              type: true
+            }
           }
         }
-      )
+      })
 
       return data
     } catch (error) {

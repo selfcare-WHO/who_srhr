@@ -10,6 +10,14 @@ interface UseTableDataOptions {
   onIndicatorLeave: (event: MouseEvent) => void
 }
 
+const getFormattedValue = (value: Data.Value, type?: string): string => {
+  const postfix = type === 'Percentage' ? '%' : ''
+
+  if (value === null || value === undefined) return 'n/d'
+
+  return `${value}${postfix}`
+}
+
 export const useTableData = ({
   onIndicatorHover,
   onIndicatorLeave
@@ -105,7 +113,7 @@ export const useTableData = ({
   })
 
   const data = computed(() => {
-    const dataPointsMap = new Map<string, Prisma.DataPoint>()
+    const dataPointsMap = new Map<string, Prisma.DataPointWithType>()
 
     dataPoints.value.forEach(dp => {
       const key = `${dp.countryId}-${dp.indicatorId}-${dp.subgroupId}`
@@ -118,9 +126,13 @@ export const useTableData = ({
         indicator.subgroups.forEach(subgroup => {
           const key = `${country.id}-${indicator.id}-${subgroup.id}`
           const dataPoint = dataPointsMap.get(key)
+          const type = dataPoint?.indicator.type
 
           if (dataPoint) {
-            row[`${indicator.id}-${subgroup.id}`] = dataPoint.value
+            row[`${indicator.id}-${subgroup.id}`] = getFormattedValue(
+              dataPoint.value,
+              type
+            )
           }
         })
       })

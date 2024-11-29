@@ -20,5 +20,11 @@ declare global {
     export type IndicatorWithSubgroups = PrismaClient.IndicatorGetPayload<{
       include: { subgroups: true }
     }>
+
+    export type DataPointWithType = DataPoint & {
+      indicator: {
+        type: string
+      }
+    }
   }
 }

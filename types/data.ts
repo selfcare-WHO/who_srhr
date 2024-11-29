@@ -45,5 +45,7 @@ declare global {
       columns: ColumnDefinition[]
       data: TableRow[]
     }
+
+    type Value = number | string | null | undefined
   }
 }
