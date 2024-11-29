@@ -17,6 +17,8 @@ declare global {
     export type DataPoint = PrismaDataPoint
     export type Location = PrismaLocation
 
+    export type DataPointWhereInput = PrismaClient.DataPointWhereInput
+
     export type IndicatorWithSubgroups = PrismaClient.IndicatorGetPayload<{
       include: { subgroups: true }
     }>

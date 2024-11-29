@@ -1,33 +1,50 @@
-import type { DataPoint } from '@prisma/client'
 import prisma from '@lib/prisma'
-export default defineEventHandler(async (event): Promise<DataPoint[]> => {
-  const { filters }: { filters: Filter.ReadonlyValues } = await readBody(event)
 
-  if (!filters) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'Filters parameter is required'
-    })
-  }
+export default defineEventHandler(
+  async (event): Promise<Partial<Prisma.DataPoint>[]> => {
+    const { filters }: { filters: Filter.ReadonlyValues } = await readBody(
+      event
+    )
 
-  try {
-    const data: DataPoint[] = await prisma.dataPoint.findMany({
-      where: {
-        ...(filters?.indicator.length
-          ? { indicator: { id: { in: filters.indicator } } }
-          : {}),
-        ...(filters?.country.length
-          ? { country: { id: { in: filters.country.map(Number) } } }
-          : {})
+    if (!filters) {
+      throw createError({
+        statusCode: 400,
+        statusMessage: 'Filters parameter is required'
+      })
+    }
+
+    try {
+      const whereConditions: Prisma.DataPointWhereInput = {}
+
+      if (filters.indicator.length > 0) {
+        whereConditions.indicatorId = { in: filters.indicator }
       }
-    })
 
-    return data
-  } catch (error) {
-    throw createError({
-      statusCode: 500,
-      statusMessage: 'Failed to fetch data points',
-      stack: error instanceof Error ? error.stack : undefined
-    })
+      if (filters.country.length > 0) {
+        whereConditions.countryId = { in: filters.country.map(Number) }
+      }
+
+      const data: Partial<Prisma.DataPoint>[] = await prisma.dataPoint.findMany(
+        {
+          where: whereConditions,
+          select: {
+            id: true,
+            indicatorId: true,
+            countryId: true,
+            subgroupId: true,
+            value: true,
+            target: true
+          }
+        }
+      )
+
+      return data
+    } catch (error) {
+      throw createError({
+        statusCode: 500,
+        statusMessage: 'Failed to fetch data points',
+        stack: error instanceof Error ? error.stack : undefined
+      })
+    }
   }
-})
+)

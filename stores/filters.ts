@@ -18,7 +18,7 @@ export const useFiltersStore = defineStore('Filters', () => {
         .filter(indicator => indicator.domainId === domain.id)
         .map(indicator => ({
           id: indicator.id,
-          value: `[indicator]-${indicator.id}`,
+          value: indicator.id,
           label: indicator.name
         }))
     }))

@@ -23,7 +23,6 @@ model Indicator {
   mapView    Boolean     @default(false) @map("map_view")
   mapType    String?     @map("map_type")
 
-  // TODO: Add indexes
   @@map("indicators")
 }
 
@@ -32,7 +31,6 @@ model Domain {
   name       String      @unique @map("domain_name")
   indicators Indicator[]
 
-  // TODO: Add indexes
   @@map("domains")
 }
 
@@ -60,7 +58,9 @@ model DataPoint {
   target            String?   @map("change")
   trend             String?   @map("trend_color")
 
-  // TODO: Add indexes
+  @@index([indicatorId])
+  @@index([countryId])
+  @@index([indicatorId, countryId])
   @@map("data_points")
 }
 
@@ -71,6 +71,5 @@ model Country {
   dataPoints DataPoint[]
   incomeType String?     @map("country_income_type")
 
-  // TODO: Add indexes
   @@map("countries")
 }

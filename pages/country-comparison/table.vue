@@ -20,9 +20,9 @@
             :tree="filter.tree"
             :placeholder="filter.placeholder"
             :clearable="!!filter?.clearable"
-            @blur="fetchData"
-            @remove-tag="fetchData"
-            @clear="fetchData"
+            @blur="updateTable"
+            @remove-tag="updateTable"
+            @clear="updateTable"
           )
 
       .key-section(class="flex items-center gap-4")
@@ -116,6 +116,7 @@
         tabulator.value = new Tabulator(tableElement, {
           height: TABLE_HEIGHT,
           columnHeaderVertAlign: 'bottom',
+          reactiveData: true,
           renderHorizontal: 'basic',
           renderVertical: 'basic',
           data: data.value,
