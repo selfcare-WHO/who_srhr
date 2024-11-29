@@ -4,8 +4,7 @@ import type {
   Country as PrismaCountry,
   Subgroup as PrismaSubgroup,
   Indicator as PrismaIndicator,
-  DataPoint as PrismaDataPoint,
-  Location as PrismaLocation
+  DataPoint as PrismaDataPoint
 } from '@prisma/client'
 
 declare global {
@@ -15,7 +14,6 @@ declare global {
     export type Subgroup = PrismaSubgroup
     export type Indicator = PrismaIndicator
     export type DataPoint = PrismaDataPoint
-    export type Location = PrismaLocation
 
     export type DataPointWhereInput = PrismaClient.DataPointWhereInput
 

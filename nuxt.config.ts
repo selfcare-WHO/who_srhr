@@ -8,6 +8,8 @@ const prismaClientPath = createRequire(import.meta.url).resolve(
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-14',
 
+  ssr: false,
+
   app: {
     head: {
       title: 'SRHR Country Profile',
@@ -42,6 +44,7 @@ export default defineNuxtConfig({
 
   typescript: {
     strict: true,
+    typeCheck: true,
     shim: false
   },
 
