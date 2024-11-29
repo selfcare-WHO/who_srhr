@@ -40,11 +40,12 @@
 
           span {{ target.name }}
 
-      div(
-        class="table-wrapper min-h-[500px]"
-        :class="{ 'mb-[200px]': isLoading || isBuildingTable }"	
-        v-loading="isLoading || isBuildingTable"
-      )
+      div(class="table-wrapper relative min-h-[700px]")
+        .loader-overlay(
+          class="absolute inset-0 pointer-events-none"
+          v-loading="isLoading || isLoadingTable"
+        )
+
         #table-element()
     
     ElTooltip(
@@ -67,7 +68,7 @@
   import { TargetStatus } from '@enums'
   import { TabulatorFull as Tabulator } from 'tabulator-tables'
 
-  const TABLE_HEIGHT = 700
+  const TABLE_HEIGHT = 712
 
   const filtersStore = useFiltersStore()
   const { fetchedFilters, isFetchingFilters } = storeToRefs(filtersStore)
@@ -82,6 +83,16 @@
   const isLoading = computed(
     () => isFetchingFilters.value || isLoadingData.value
   )
+
+  const isLoadingTable = computed(
+    () =>
+      isLoadingTableData.value ||
+      isLoadingTableColumns.value ||
+      isBuildingTable.value
+  )
+
+  const isLoadingTableData = ref(true)
+  const isLoadingTableColumns = ref(true)
 
   const tooltipData = reactive<Data.IndicatorTooltipData>({})
   const showTooltip = ref(false)
@@ -118,15 +129,25 @@
           columnHeaderVertAlign: 'bottom',
           reactiveData: true,
           renderHorizontal: 'basic',
-          renderVertical: 'basic',
+          renderVertical: 'virtual',
           data: data.value,
           columns: columns.value,
           layout: 'fitDataFill',
-          selectable: false
+          selectable: false,
+          pagination: true,
+          paginationSize: 12
         })
 
         tabulator.value.on('tableBuilt', () => {
           isBuildingTable.value = false
+        })
+
+        tabulator.value.on('dataLoaded', () => {
+          isLoadingTableData.value = false
+        })
+
+        tabulator.value.on('columnsLoaded', () => {
+          isLoadingTableColumns.value = false
         })
 
         return
@@ -138,16 +159,15 @@
 
   if (!fetchedFilters.value) fetchFilterOptions()
 
-  const updateTable = () => {
-    if (
-      !tabulator ||
-      !tabulator.value?.setColumns ||
-      !tabulator.value?.setData
-    ) {
+  const updateTable = async () => {
+    if (!tabulator.value) {
       initTable()
     } else {
-      tabulator.value?.setColumns(columns.value)
-      tabulator.value?.setData(data.value)
+      isLoadingTableData.value = true
+      isLoadingTableColumns.value = true
+
+      await tabulator.value?.setColumns(columns.value)
+      await tabulator.value?.setData(data.value)
     }
   }
 
