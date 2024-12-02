@@ -1,19 +1,22 @@
 <template lang="pug">
   .default-layout(class="bg-page min-h-screen min-w-screen max-w-screen flex flex-col")
-    .header(class=" flex flex-col justify-center pt-4 px-6 pb-[100px] relative")
-      .logos(class="flex gap-5 mb-36")
+    .top-layout(class=" flex flex-col justify-center items-center sm:pt-4 sm:px-6 sm:pb-[100px] relative")
+      header(class="w-full flex gap-5 mb-36 flex-wrap h-[70px] bg-white sm:bg-transparent")
         img(
           src="@assets/images/WHO-Logo.png" alt="WHO Logo"
-          class="h-[42px] object-contain self-center"
+          class="h-[22px] sm:h-[42px] object-contain self-center"
         )
         img(
           src="@assets/images/HRP_logo_colour-1.png" alt="HRP Logo"
-          class="h-[46px] object-contain self-center"
+          class="h-[29px] sm:h-[46px] object-contain self-center"
         )
         img(
           src="@assets/images/Selfcare-SDG-logo.png" alt="Selfcare SDG Logo"
-          class="h-[54px] object-contain self-center"
+          class="h-[29px] sm:h-[54px] object-contain self-center"
         )
+
+        ElIcon(:size="16")
+          House
 
       .main(class="u-narrow-content flex flex-col gap-2")
         .flex
@@ -60,7 +63,7 @@
 
 <style lang="sass">
   .default-layout
-    > .header
+    > .top-layout
       @apply bg-[url('~/assets/images/Banner-2.jpg')] bg-cover bg-center
 
       > .navbar
