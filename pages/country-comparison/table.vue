@@ -68,7 +68,7 @@
   import { TargetStatus } from '@enums'
   import { TabulatorFull as Tabulator } from 'tabulator-tables'
 
-  const TABLE_HEIGHT = 738
+  const TABLE_HEIGHT = 763
 
   const filtersStore = useFiltersStore()
   const { fetchedFilters, isFetchingFilters } = storeToRefs(filtersStore)
