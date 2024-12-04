@@ -18,43 +18,65 @@
 
           p This country profile uses the latest data available that is less than 10 years old as of 30/09/2023 from reliable international data repositories. See endnotes for the year and source of each data point. “No data” means no data were available in the international data source used, but data may be available at the country level. It is acknowledged that intersectionality and people-centredness are not well reflected in available data, and that many categories of information currently collected are gender-binary.
 
-      .targets-section(class="mt-12")
-        h2(class="text-2xl font-bold mb-6") TARGETS
+      .targets-section-wrapper(class="bg-white py-8 px-10")
+        .targets-section(class="")
+          h2(class="font-medium") TARGETS
 
-        .targets-content(class="flex gap-8")
-          .targets-description(class="flex-1")
-            p Data points are tagged based on their alignment with global targets. This shows whether the KPI target has been achieved, whether challenges remain or whether major challenges remain. Some data points do not have a specific KPI target (no target), and for others, there is no data available within the last 10 years from reliable international data repositories.
+          ElDivider(class="!mt-0 !mb-8 !border-primary")
 
-          .targets-legend(class="flex-1")
-            .legend-item(class="bg-green-100 p-3 mb-2 text-center") Achieved
-            .legend-item(class="bg-orange-100 p-3 mb-2 text-center") Challenges remain
-            .legend-item(class="bg-red-100 p-3 mb-2 text-center") Major challenges remain
-            .legend-item(class="bg-gray-100 p-3 mb-2 text-center") No data
-            .legend-item(class="bg-blue-50 p-3 mb-2 text-center") No target
+          .targets-content(class="flex gap-10")
+            .targets-description(class="flex-1")
+              p Data points are tagged based on their alignment with global targets. This shows whether the KPI target has been achieved, whether challenges remain or whether major challenges remain. Some data points do not have a specific KPI target (no target), and for others, there is no data available within the last 10 years from reliable international data repositories.
 
-      .trends-section(class="mt-12")
-        h2(class="text-2xl font-bold mb-6") TRENDS
+            .targets-legend(class="flex-1 min-h-0 max-w-[400px]")
+              .legend-item(class="h-7 bg-success-100 mb-2 flex items-center justify-center")
+                span(class="text-success") Achieved
 
-        .trends-content(class="flex gap-8")
-          .trends-description(class="flex-1")
-            p The trends icons show whether the current numerical data value has increased, decreased or remained the same compared to the previous data point in the past 10 years. In cases where current data is unavailable or where there is no data point in the 10 years prior, "no data available" is indicated. Trend icons are only available for numerical data.
+              .legend-item(class="h-7 bg-warning-100 mb-2 flex items-center justify-center")
+                span(class="text-warning") Challenges remain
 
-          .trends-legend(class="flex-1")
-            .legend-item(class="flex items-center gap-2 mb-2")
-              .icon ↑
-              span Increased
+              .legend-item(class="h-7 bg-danger-100 mb-2 flex items-center justify-center")
+                span(class="text-danger") Major challenges remain
 
-            .legend-item(class="flex items-center gap-2 mb-2")
-              .icon →
-              span No change
+              .legend-item(class="h-7 bg-info-100 mb-2 flex items-center justify-center")
+                span(class="text-info") No data
 
-            .legend-item(class="flex items-center gap-2 mb-2")
-              .icon ↓
-              span Decreased
+              .legend-item(class="h-7 bg-primary-100 flex items-center justify-center")
+                span(class="text-primary") No target
 
-            .legend-item(class="flex items-center gap-2 mb-2")
-              .icon ⋮⋮
-              span No data available
+        .trends-section(class="mt-12")
+          h2(class="font-medium") TRENDS
+
+          ElDivider(class="!mt-0 !mb-8 !border-primary")
+
+          .trends-content(class="flex gap-10")
+            .trends-description(class="flex-1")
+              p The trends icons show whether the current numerical data value has increased, decreased or remained the same compared to the previous data point in the past 10 years. In cases where current data is unavailable or where there is no data point in the 10 years prior, "no data available" is indicated. Trend icons are only available for numerical data.
+
+            .trends-legend(class="flex-1 min-h-0 max-w-[400px]")
+              .legend-item(class="flex items-center gap-2 mb-2")
+                .image-wrapper(class="w-4 h-4 flex items-center justify-center")
+                  img(src="@assets/icons/arrow-up.svg" alt="Increased")
+
+                span(class="text-primary") Increased
+
+              .legend-item(class="flex items-center gap-2 mb-2")
+                .image-wrapper(class="w-4 h-4 flex items-center justify-center")
+                  img(src="@assets/icons/arrow-right.svg" alt="No change")
+
+                span(class="text-primary") No change
+
+              .legend-item(class="flex items-center gap-2 mb-2")
+                .image-wrapper(class="w-4 h-4 flex items-center justify-center")
+                  img(src="@assets/icons/arrow-down.svg" alt="Decreased")
+
+                span(class="text-primary") Decreased
+
+              .legend-item(class="flex items-center gap-2 mb-2")
+                .image-wrapper(class="w-4 h-4 flex items-center justify-center")
+                  img(src="@assets/icons/double-dot.svg" alt="No data available")
+
+                span(class="text-primary") No data available
 </template>
 
 <script lang="ts" setup></script>

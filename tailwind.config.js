@@ -33,9 +33,27 @@ export default {
       }),
 
       colors: {
-        primary: 'var(--el-color-primary)',
-        info: 'var(--el-color-info)',
-        'info-dark': 'var(--el-color-info-dark)',
+        primary: {
+          DEFAULT: 'var(--el-color-primary)',
+          100: 'var(--el-color-primary-light-9)'
+        },
+        info: {
+          DEFAULT: 'var(--el-color-info)',
+          dark: 'var(--el-color-info-dark)',
+          100: 'var(--el-color-info-light-9)'
+        },
+        success: {
+          DEFAULT: 'var(--el-color-success)',
+          100: 'var(--el-color-success-light-9)'
+        },
+        warning: {
+          DEFAULT: 'var(--el-color-warning)',
+          100: 'var(--el-color-warning-light-9)'
+        },
+        danger: {
+          DEFAULT: 'var(--el-color-danger)',
+          100: 'var(--el-color-danger-light-9)'
+        },
         secondary: 'var(--el-text-color-secondary)'
       },
 

@@ -15,9 +15,6 @@
           class="h-[29px] sm:h-[54px] object-contain self-center"
         )
 
-        ElIcon(:size="16")
-          House
-
       .main(class="u-narrow-content flex flex-col gap-2")
         .flex
           h1(class="text-white bg-info px-2")
