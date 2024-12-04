@@ -19,7 +19,7 @@ export const useFiltersStore = defineStore('Filters', () => {
         .map(indicator => ({
           id: indicator.id,
           value: indicator.id,
-          label: indicator.name
+          label: indicator.fullName
         }))
     }))
   })

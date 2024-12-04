@@ -68,7 +68,7 @@
   import { TargetStatus } from '@enums'
   import { TabulatorFull as Tabulator } from 'tabulator-tables'
 
-  const TABLE_HEIGHT = 712
+  const TABLE_HEIGHT = 738
 
   const filtersStore = useFiltersStore()
   const { fetchedFilters, isFetchingFilters } = storeToRefs(filtersStore)
@@ -159,15 +159,19 @@
 
   if (!fetchedFilters.value) fetchFilterOptions()
 
-  const updateTable = async () => {
+  const updateTable = () => {
     if (!tabulator.value) {
       initTable()
     } else {
       isLoadingTableData.value = true
       isLoadingTableColumns.value = true
 
-      await tabulator.value?.setColumns(columns.value)
-      await tabulator.value?.setData(data.value)
+      tabulator.value?.setColumns(columns.value)
+      tabulator.value?.setData(data.value)
+
+      nextTick(() => {
+        tabulator.value?.redraw()
+      })
     }
   }
 

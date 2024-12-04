@@ -4177,6 +4177,7 @@ __metadata:
     prisma: "npm:^5.22.0"
     pug: "npm:^3.0.3"
     sass: "npm:^1.69.5"
+    shave: "npm:^5.0.4"
     tabulator-tables: "npm:^6.3.0"
     tsx: "npm:^4.19.2"
     typescript: "npm:^5.6.3"
@@ -8565,6 +8566,13 @@ __metadata:
     tar-fs: "npm:^3.0.4"
     tunnel-agent: "npm:^0.6.0"
   checksum: 10c0/f6a756fec5051ef2f9341e0543cde1da4e822982dd5398010baad92e2262bd177e08b753eb19b2fbee30f2fcb0e8756f24088fafc48293a364e9a8f8dc65a300
+  languageName: node
+  linkType: hard
+
+"shave@npm:^5.0.4":
+  version: 5.0.4
+  resolution: "shave@npm:5.0.4"
+  checksum: 10c0/23912f14b28848f488254716a3e268fa730619a04fee6c94e44817e17d8fc23817126897ff248b35577f95e6211e7573460891897927c86b86629c5be37d1186
   languageName: node
   linkType: hard
 

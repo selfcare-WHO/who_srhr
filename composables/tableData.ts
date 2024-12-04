@@ -1,5 +1,6 @@
 import type { ColumnDefinition } from 'tabulator-tables'
 import { TargetStatus } from '@enums'
+import shave from 'shave'
 
 interface MatrixRow {
   country: string
@@ -47,28 +48,30 @@ export const useTableData = ({
   const createIndicatorColumns = (
     indicator: Prisma.IndicatorWithSubgroups
   ): ColumnDefinition => ({
-    title: indicator.name,
-    tooltip: true,
+    title: indicator.fullName,
     titleFormatter: () => {
       const container = document.createElement('div')
       container.className = 'flex gap-1 items-center'
 
       const span = document.createElement('span')
-      span.className =
-        'table-indicator-name text-primary font-bold text-sm truncate'
-      span.textContent = indicator.name
+      span.className = 'table-indicator-name text-primary font-bold text-sm'
+      span.id = `table-indicator-name-${indicator.id}`
+      span.textContent = indicator.fullName
 
-      const img: HTMLImageElement & Data.IndicatorTooltipData =
-        document.createElement('img')
-      img.src = new URL('/assets/icons/info-circle.svg', import.meta.url).href
-      img.className = 'table-indicator-info-icon w-4 h-4 cursor-pointer'
-      img.addEventListener('mouseover', onIndicatorHover)
-      img.addEventListener('mouseout', onIndicatorLeave)
-      img.fullName = indicator.fullName
-      img.subheading = indicator.subheading
+      // const img: HTMLImageElement & Data.IndicatorTooltipData =
+      //   document.createElement('img')
+      // img.src = new URL('/assets/icons/info-circle.svg', import.meta.url).href
+      // img.className = 'table-indicator-info-icon w-4 h-4 cursor-pointer'
+      // img.addEventListener('mouseover', onIndicatorHover)
+      // img.addEventListener('mouseout', onIndicatorLeave)
+      // img.fullName = indicator.fullName
+      // img.subheading = indicator.subheading
 
       container.appendChild(span)
-      container.appendChild(img)
+
+      useClamp({ id: span.id })
+
+      // container.appendChild(img)
 
       return container
     },
