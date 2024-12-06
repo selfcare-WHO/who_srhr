@@ -5,7 +5,9 @@ CREATE TABLE "indicators" (
     "kpi_full_name" TEXT NOT NULL,
     "kpi_subheading" TEXT NOT NULL,
     "kpi_data_type" TEXT NOT NULL,
-    "change" BOOLEAN NOT NULL DEFAULT false,
+    "has_target" BOOLEAN NOT NULL DEFAULT false,
+    "mask" TEXT,
+    "is_law" BOOLEAN NOT NULL DEFAULT false,
     "kpi_domain_id" INTEGER NOT NULL,
     "table_view" BOOLEAN NOT NULL DEFAULT false,
     "chart_view" BOOLEAN NOT NULL DEFAULT false,
@@ -69,6 +71,15 @@ CREATE UNIQUE INDEX "domains_domain_name_key" ON "domains"("domain_name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Subgroup_kpi_subgroup_key" ON "Subgroup"("kpi_subgroup");
+
+-- CreateIndex
+CREATE INDEX "data_points_indicatorId_idx" ON "data_points"("indicatorId");
+
+-- CreateIndex
+CREATE INDEX "data_points_countryId_idx" ON "data_points"("countryId");
+
+-- CreateIndex
+CREATE INDEX "data_points_indicatorId_countryId_idx" ON "data_points"("indicatorId", "countryId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "countries_country_key" ON "countries"("country");

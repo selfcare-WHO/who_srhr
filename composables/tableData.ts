@@ -1,5 +1,8 @@
 import type { ColumnDefinition } from 'tabulator-tables'
-import { TargetStatus } from '@enums'
+import { TargetStatus, ImpactOnSrhr } from '@enums'
+import StringMask from 'string-mask'
+import { ElIcon } from 'element-plus'
+import { createVNode, render } from 'vue'
 
 interface MatrixRow {
   country: string
@@ -85,7 +88,7 @@ export const useTableData = ({
       field: `${indicator.id}-${subgroup.id}`,
       headerSort: false,
       formatter: cell => {
-        const dataPoint = cell.getValue()
+        const dataPoint: Prisma.DataPoint = cell.getValue()
 
         const element = document.createElement('div')
         element.className = 'indicator-cell-container flex items-center gap-2'
@@ -94,11 +97,11 @@ export const useTableData = ({
 
         const innerDiv: HTMLElement = document.createElement('div')
 
-        if (dataPoint?.target !== 'No target') {
+        if (indicator.hasTarget && dataPoint?.change !== 'No target') {
           innerDiv.className = 'indicator-target-circle w-4 h-4 rounded-full'
 
           const targetStatus = Object.values(TargetStatus).find(
-            status => status.dbValue === dataPoint?.target
+            status => status.dbValue === dataPoint?.change
           )
 
           innerDiv.style.backgroundColor = targetStatus?.color || ''
@@ -106,12 +109,39 @@ export const useTableData = ({
           element.appendChild(innerDiv)
         }
 
+        if (indicator.isLaw) {
+          innerDiv.className =
+            'indicator-law-circle w-4 h-4 rounded-full border-2 flex items-center justify-center'
+
+          const impactOnSrhr = Object.values(ImpactOnSrhr).find(
+            status => status.dbValue === dataPoint?.change
+          )
+
+          innerDiv.style.backgroundColor = impactOnSrhr?.bgColor || ''
+          innerDiv.style.borderColor = impactOnSrhr?.borderColor || ''
+
+          const iconVNode = createVNode(
+            ElIcon,
+            {
+              color: impactOnSrhr?.iconColor,
+              size: '10'
+            },
+            {
+              default: () =>
+                impactOnSrhr?.icon ? createVNode(impactOnSrhr.icon) : null
+            }
+          )
+
+          render(iconVNode, innerDiv)
+          element.appendChild(innerDiv)
+        }
+
         const numberElement = document.createElement('span')
         const value = dataPoint?.value
-        const { type } = dataPoint?.indicator || {}
+        const { type, mask } = indicator || {}
 
         numberElement.className = 'indicator-progress-value'
-        numberElement.textContent = getFormattedValue(value, type)
+        numberElement.textContent = getFormattedValue({ value, mask, type })
 
         element.appendChild(numberElement)
 
@@ -120,10 +150,24 @@ export const useTableData = ({
     }))
   })
 
-  const getFormattedValue = (value: Data.Value, type?: string): string => {
+  const getFormattedValue = ({
+    value,
+    mask,
+    type
+  }: {
+    value: Data.Value
+    mask: string
+    type?: string
+  }): string => {
     const postfix = type === 'Percentage' ? '%' : ''
 
     if (value === null || value === undefined) return 'n/d'
+
+    if (mask) {
+      const maskedValue = StringMask.apply(value, mask, { reverse: true })
+
+      return `${maskedValue}${postfix}`
+    }
 
     return `${value}${postfix}`
   }

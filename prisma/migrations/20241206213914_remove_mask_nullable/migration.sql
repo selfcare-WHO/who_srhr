@@ -1,0 +1,31 @@
+/*
+  Warnings:
+
+  - Made the column `mask` on table `indicators` required. This step will fail if there are existing NULL values in that column.
+
+*/
+-- RedefineTables
+PRAGMA defer_foreign_keys=ON;
+PRAGMA foreign_keys=OFF;
+CREATE TABLE "new_indicators" (
+    "kpi_id" TEXT NOT NULL PRIMARY KEY,
+    "kpi_name" TEXT NOT NULL,
+    "kpi_full_name" TEXT NOT NULL,
+    "kpi_subheading" TEXT NOT NULL,
+    "kpi_data_type" TEXT NOT NULL,
+    "has_target" BOOLEAN NOT NULL DEFAULT false,
+    "mask" TEXT NOT NULL,
+    "is_law" BOOLEAN NOT NULL DEFAULT false,
+    "kpi_domain_id" INTEGER NOT NULL,
+    "table_view" BOOLEAN NOT NULL DEFAULT false,
+    "chart_view" BOOLEAN NOT NULL DEFAULT false,
+    "map_view" BOOLEAN NOT NULL DEFAULT false,
+    "map_type" TEXT,
+    CONSTRAINT "indicators_kpi_domain_id_fkey" FOREIGN KEY ("kpi_domain_id") REFERENCES "domains" ("domain_id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+INSERT INTO "new_indicators" ("chart_view", "has_target", "is_law", "kpi_data_type", "kpi_domain_id", "kpi_full_name", "kpi_id", "kpi_name", "kpi_subheading", "map_type", "map_view", "mask", "table_view") SELECT "chart_view", "has_target", "is_law", "kpi_data_type", "kpi_domain_id", "kpi_full_name", "kpi_id", "kpi_name", "kpi_subheading", "map_type", "map_view", "mask", "table_view" FROM "indicators";
+DROP TABLE "indicators";
+ALTER TABLE "new_indicators" RENAME TO "indicators";
+CREATE UNIQUE INDEX "indicators_kpi_name_key" ON "indicators"("kpi_name");
+PRAGMA foreign_keys=ON;
+PRAGMA defer_foreign_keys=OFF;

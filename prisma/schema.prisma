@@ -13,7 +13,9 @@ model Indicator {
   fullName   String      @map("kpi_full_name")
   subheading String      @map("kpi_subheading")
   type       String      @map("kpi_data_type")
-  hasTarget  Boolean     @default(false) @map("change")
+  hasTarget  Boolean     @default(false) @map("has_target")
+  mask       String      @map("mask")
+  isLaw      Boolean     @default(false) @map("is_law")
   domainId   Int         @map("kpi_domain_id")
   domain     Domain      @relation(fields: [domainId], references: [id])
   subgroups  Subgroup[]
@@ -55,7 +57,7 @@ model DataPoint {
   originalValue     String?   @map("original_value")
   parsedValue       String?   @map("value_to_use")
   value             String?   @map("value")
-  target            String?   @map("change")
+  change            String?   @map("change")
   trend             String?   @map("trend_color")
 
   @@index([indicatorId])

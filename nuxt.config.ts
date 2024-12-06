@@ -54,7 +54,8 @@ export default defineNuxtConfig({
     '@element-plus/nuxt',
     '@nuxtjs/tailwindcss',
     '@nuxt/image',
-    '@nuxt/fonts'
+    '@nuxt/fonts',
+    'nuxt-svgo'
   ],
 
   fonts: {

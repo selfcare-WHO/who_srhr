@@ -1,0 +1,50 @@
+<template lang="pug">
+.key-section(class="flex flex-col gap-4")
+  .status-keys(class="flex items-center gap-4")
+    span(class="text-primary font-bold text-sm")
+      | TARGET STATUS:
+
+    .key-item(
+      v-for="target in Object.values(TargetStatus)"
+      class="flex items-center gap-2"
+      :key="target.name"
+    )
+      div(
+        class="rounded-full h-4 w-4"
+        :style="{ backgroundColor: target.color }"
+      )
+
+      span {{ target.name }}
+
+  .impact-on-srhr-keys(class="flex items-center gap-4")
+    span(class="text-primary font-bold text-sm")
+      | IMPACT ON INTEGRATED SRHR:
+    
+    .key-item(
+      v-for="impact in Object.values(ImpactOnSrhr)"
+      class="flex items-center gap-2"
+      :key="impact.name"
+    )
+      div(
+        class="rounded-full h-4 w-4 border-2 flex items-center justify-center"
+        :style="{ backgroundColor: impact.bgColor, borderColor: impact.borderColor }"
+      )
+        ElIcon(
+          :color="impact.iconColor"
+          size="10"
+        )
+          component(:is="impact.icon")
+
+      span {{ impact.name }}
+
+</template>
+
+<script lang="ts" setup>
+  import { TargetStatus, ImpactOnSrhr } from '@enums'
+</script>
+
+<style lang="sass" scoped>
+  // .key-section
+  //   svg path
+  //     stroke-width: 20px
+</style>

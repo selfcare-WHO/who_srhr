@@ -28,6 +28,8 @@ declare global {
       country: string
       country_code: string
       country_income_type?: string
+      mask: string
+      is_law?: string
     }
 
     interface IndicatorTooltipData {

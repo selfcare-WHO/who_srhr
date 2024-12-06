@@ -69,7 +69,9 @@ async function seedIndicator(row: Data.DataRow) {
       subgroups: {
         connect: { name: row.kpi_subgroup }
       },
+      mask: row.mask,
       hasTarget: row.has_target === 'Yes',
+      isLaw: row.is_law === 'Yes',
       tableView: row.table_view === 'Yes',
       chartView: row.chart_view === 'Yes',
       mapView: row.map_view === 'Yes',
@@ -90,7 +92,7 @@ async function seedDataPoint(row: Data.DataRow) {
       originalValue: row.original_value?.toString(),
       parsedValue: row.value_to_use?.toString(),
       value: row.value?.toString(),
-      target: row.change,
+      change: row.change,
       trend: row.trend_color
     }
   })
@@ -101,7 +103,7 @@ async function main() {
 
   const path = fileURLToPath(new URL('./data.xlsx', import.meta.url))
   const workbook = xlsx.readFile(path)
-  const worksheet = workbook.Sheets['Data to use']
+  const worksheet = workbook.Sheets['Comparison data']
 
   const dataRows = xlsx.utils.sheet_to_json(worksheet) satisfies Data.DataRow[]
 

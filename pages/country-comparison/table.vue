@@ -25,20 +25,7 @@
             @clear="updateTable"
           )
 
-      .key-section(class="flex items-center gap-4")
-        span(class="text-primary font-bold text-sm")
-          | TARGET STATUS:
-
-        .key-item(
-          v-for="target in Object.values(TargetStatus)"
-          class="flex items-center gap-2"
-          :key="target.name"
-        )
-          .rounded-full.h-4.w-4(
-            :style="{ backgroundColor: target.color }"
-          )
-
-          span {{ target.name }}
+      KeySection
 
       div(class="table-wrapper relative min-h-[700px]")
         .loader-overlay(
@@ -65,7 +52,6 @@
 </template>
 
 <script lang="ts" setup>
-  import { TargetStatus } from '@enums'
   import { TabulatorFull as Tabulator } from 'tabulator-tables'
 
   const TABLE_HEIGHT = 763
