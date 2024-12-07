@@ -161,7 +161,7 @@ export const useTableData = ({
   }): string => {
     const postfix = type === 'Percentage' ? '%' : ''
 
-    if (value === null || value === undefined) return 'n/d'
+    if (value === null || value === undefined || value === '') return 'n/d'
 
     if (mask) {
       const maskedValue = StringMask.apply(value, mask, { reverse: true })
