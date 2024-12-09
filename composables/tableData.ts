@@ -84,7 +84,7 @@ export const useTableData = ({
     vertAlign: 'middle',
     columns: indicator.subgroups.map(subgroup => ({
       width: 150,
-      title: subgroup.name,
+      title: subgroup.fullName,
       field: `${indicator.id}-${subgroup.id}`,
       headerSort: false,
       formatter: cell => {
@@ -141,7 +141,11 @@ export const useTableData = ({
         const { type, mask } = indicator || {}
 
         numberElement.className = 'indicator-progress-value'
-        numberElement.textContent = getFormattedValue({ value, mask, type })
+        numberElement.textContent = getFormattedValue({
+          value,
+          mask: mask ?? undefined,
+          type
+        })
 
         element.appendChild(numberElement)
 
@@ -156,8 +160,8 @@ export const useTableData = ({
     type
   }: {
     value: Data.Value
-    mask: string
-    type?: string
+    mask?: string
+    type: string
   }): string => {
     const postfix = type === 'Percentage' ? '%' : ''
 

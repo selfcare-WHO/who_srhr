@@ -24,6 +24,7 @@ declare global {
     export type DataPointWithType = DataPoint & {
       indicator: {
         type: string
+        id: string
       }
     }
   }

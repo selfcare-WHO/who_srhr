@@ -81,6 +81,7 @@
   const isLoadingTableColumns = ref(true)
 
   const tooltipData = reactive<Data.IndicatorTooltipData>({})
+
   const showTooltip = ref(false)
 
   const onIndicatorHover = (event: MouseEvent) => {
@@ -88,7 +89,7 @@
     const { fullName, subheading } = element
 
     tooltipData.fullName = fullName
-    tooltipData.subheading = subheading
+    tooltipData.subheading = subheading ?? undefined
     tooltipData.element = element
     showTooltip.value = true
   }

@@ -11,10 +11,10 @@ model Indicator {
   id         String      @id @map("kpi_id")
   name       String      @unique @map("kpi_name")
   fullName   String      @map("kpi_full_name")
-  subheading String      @map("kpi_subheading")
+  subheading String?     @map("kpi_subheading")
   type       String      @map("kpi_data_type")
   hasTarget  Boolean     @default(false) @map("has_target")
-  mask       String      @map("mask")
+  mask       String?     @map("mask")
   isLaw      Boolean     @default(false) @map("is_law")
   domainId   Int         @map("kpi_domain_id")
   domain     Domain      @relation(fields: [domainId], references: [id])
@@ -39,6 +39,7 @@ model Domain {
 model Subgroup {
   id         Int         @id @default(autoincrement())
   name       String      @unique @map("kpi_subgroup")
+  fullName   String      @unique @map("kpi_subgroup_full")
   indicators Indicator[]
   dataPoints DataPoint[]
 }

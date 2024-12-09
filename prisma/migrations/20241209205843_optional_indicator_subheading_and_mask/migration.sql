@@ -1,9 +1,3 @@
-/*
-  Warnings:
-
-  - Made the column `mask` on table `indicators` required. This step will fail if there are existing NULL values in that column.
-
-*/
 -- RedefineTables
 PRAGMA defer_foreign_keys=ON;
 PRAGMA foreign_keys=OFF;
@@ -11,10 +5,10 @@ CREATE TABLE "new_indicators" (
     "kpi_id" TEXT NOT NULL PRIMARY KEY,
     "kpi_name" TEXT NOT NULL,
     "kpi_full_name" TEXT NOT NULL,
-    "kpi_subheading" TEXT NOT NULL,
+    "kpi_subheading" TEXT,
     "kpi_data_type" TEXT NOT NULL,
     "has_target" BOOLEAN NOT NULL DEFAULT false,
-    "mask" TEXT NOT NULL,
+    "mask" TEXT,
     "is_law" BOOLEAN NOT NULL DEFAULT false,
     "kpi_domain_id" INTEGER NOT NULL,
     "table_view" BOOLEAN NOT NULL DEFAULT false,

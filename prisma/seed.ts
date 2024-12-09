@@ -38,7 +38,8 @@ async function seedSubgroup(row: Data.DataRow) {
     where: { name: row.kpi_subgroup },
     update: {},
     create: {
-      name: row.kpi_subgroup
+      name: row.kpi_subgroup,
+      fullName: row.kpi_subgroup_full || ''
     }
   })
 }
@@ -63,7 +64,9 @@ async function seedIndicator(row: Data.DataRow) {
       name: row.kpi_name,
       fullName: row.kpi_full_name,
       subheading:
-        row.kpi_subheading.trim() === '-' ? '' : row.kpi_subheading.trim(),
+        row.kpi_subheading?.trim() === '-'
+          ? ''
+          : row.kpi_subheading?.trim() || '',
       domain: { connect: { id: row.domain_id } },
       type: row.kpi_data_type,
       subgroups: {

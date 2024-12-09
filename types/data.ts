@@ -16,6 +16,7 @@ declare global {
       domain_id: number
       domain_name: string
       kpi_subgroup: string
+      kpi_subgroup_full: string
       current_year_source?: string
       current_year?: number
       source?: string
