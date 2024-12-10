@@ -38,8 +38,8 @@
               .legend-item(class="h-7 bg-danger-100 mb-2 flex items-center justify-center")
                 span(class="text-danger") Major challenges remain
 
-              .legend-item(class="h-7 bg-info-100 mb-2 flex items-center justify-center")
-                span(class="text-info") No data
+              .legend-item(class="h-7 bg-secondary-100 mb-2 flex items-center justify-center")
+                span(class="text-secondary") No data
 
               .legend-item(class="h-7 bg-primary-100 flex items-center justify-center")
                 span(class="text-primary") No target
@@ -56,29 +56,34 @@
             .trends-legend(class="flex-1 min-h-0 max-w-[400px]")
               .legend-item(class="flex items-center gap-2 mb-2")
                 .image-wrapper(class="w-4 h-4 flex items-center justify-center")
-                  img(src="@assets/icons/arrow-up.svg" alt="Increased")
+                  ArrowUp
 
                 span(class="text-primary") Increased
 
               .legend-item(class="flex items-center gap-2 mb-2")
                 .image-wrapper(class="w-4 h-4 flex items-center justify-center")
-                  img(src="@assets/icons/arrow-right.svg" alt="No change")
+                  ArrowRight
 
                 span(class="text-primary") No change
 
               .legend-item(class="flex items-center gap-2 mb-2")
                 .image-wrapper(class="w-4 h-4 flex items-center justify-center")
-                  img(src="@assets/icons/arrow-down.svg" alt="Decreased")
+                  ArrowDown
 
                 span(class="text-primary") Decreased
 
               .legend-item(class="flex items-center gap-2 mb-2")
                 .image-wrapper(class="w-4 h-4 flex items-center justify-center")
-                  img(src="@assets/icons/double-dot.svg" alt="No data available")
+                  DoubleDot
 
                 span(class="text-primary") No data available
 </template>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+  import ArrowUp from '@assets/icons/arrow-up.svg'
+  import ArrowRight from '@assets/icons/arrow-right.svg'
+  import ArrowDown from '@assets/icons/arrow-down.svg'
+  import DoubleDot from '@assets/icons/double-dot.svg'
+</script>
 
 <style lang="sass" scoped></style>
