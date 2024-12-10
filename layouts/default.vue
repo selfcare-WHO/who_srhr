@@ -50,10 +50,16 @@
 </template>
 
 <script setup lang="ts">
+  const {
+    public: { comparisonFeatureActive }
+  } = useRuntimeConfig()
+
   const navItems = [
     { name: 'Home', path: '/' },
     { name: 'Country profiles', path: '/country-profiles' },
-    { name: 'Country comparison', path: '/country-comparison/table' },
+    ...(comparisonFeatureActive
+      ? [{ name: 'Country comparison', path: '/country-comparison/table' }]
+      : []),
     { name: 'Indicators & data', path: '/indicators-data' }
   ]
 </script>

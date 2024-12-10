@@ -14,6 +14,10 @@
 </template>
 
 <script lang="ts" setup>
+  definePageMeta({
+    middleware: ['country-comparison']
+  })
+
   const route = useRoute()
 
   const mapView = computed(() => {

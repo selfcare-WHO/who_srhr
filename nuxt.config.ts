@@ -1,14 +1,14 @@
 import { fileURLToPath } from 'node:url'
 import { createRequire } from 'module'
 
-const prismaClientPath = createRequire(import.meta.url).resolve(
-  '@prisma/client'
-)
-
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-14',
 
-  ssr: false,
+  runtimeConfig: {
+    public: {
+      comparisonFeatureActive: process.env.COMPARISON_FEATURE_ACTIVE === 'true'
+    }
+  },
 
   app: {
     head: {
@@ -87,14 +87,6 @@ export default defineNuxtConfig({
   },
 
   vite: {
-    // resolve: {
-    //   alias: {
-    //     '.prisma/client/index-browser': prismaClientPath.replace(
-    //       '@prisma/client/default.js',
-    //       '.prisma/client/index-browser.js'
-    //     )
-    //   }
-    // },
     optimizeDeps: {
       include: ['tailwind.config.js']
     },

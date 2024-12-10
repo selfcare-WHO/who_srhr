@@ -8,8 +8,14 @@
       p.text-gray-600.flex-1
         | {{ description }}
 
-      ElButton.w-full(type="info" round size="large" @click="navigateTo(path)")
-        | Explore now
+      ElButton.w-full(
+        type="info"
+        round
+        size="large"
+        @click="navigateTo(path)"
+        :disabled="!active"
+      )
+        | {{ buttonText }}
 </template>
 
 <script setup lang="ts">
@@ -18,7 +24,12 @@
     description: string
     imgSrc: string
     path: string
+    active: boolean
   }>()
+
+  const buttonText = computed(() => {
+    return props.active ? 'Explore now' : 'Coming soon'
+  })
 </script>
 
 <style lang="sass" scoped>
