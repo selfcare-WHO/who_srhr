@@ -12,6 +12,10 @@ export default defineNuxtConfig({
     }
   },
 
+  gtag: {
+    enabled: process.env.NODE_ENV === 'production'
+  },
+
   app: {
     head: {
       title: 'SRHR Country Profile',
@@ -57,7 +61,8 @@ export default defineNuxtConfig({
     '@nuxtjs/tailwindcss',
     '@nuxt/image',
     '@nuxt/fonts',
-    'nuxt-svgo'
+    'nuxt-svgo',
+    'nuxt-gtag'
   ],
 
   fonts: {

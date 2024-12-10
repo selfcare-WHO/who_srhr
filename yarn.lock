@@ -1315,7 +1315,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxt/kit@npm:3.14.1592, @nuxt/kit@npm:^3.12.1, @nuxt/kit@npm:^3.13.1, @nuxt/kit@npm:^3.13.2, @nuxt/kit@npm:^3.4.0, @nuxt/kit@npm:^3.9.0":
+"@nuxt/kit@npm:3.14.1592, @nuxt/kit@npm:^3.12.1, @nuxt/kit@npm:^3.13.1, @nuxt/kit@npm:^3.13.2, @nuxt/kit@npm:^3.14.1592, @nuxt/kit@npm:^3.4.0, @nuxt/kit@npm:^3.9.0":
   version: 3.14.1592
   resolution: "@nuxt/kit@npm:3.14.1592"
   dependencies:
@@ -4174,6 +4174,7 @@ __metadata:
     consola: "npm:^3.2.3"
     element-plus: "npm:^2.8.7"
     nuxt: "npm:^3.8.2"
+    nuxt-gtag: "npm:3.0.2"
     nuxt-svgo: "npm:4.0.9"
     prisma: "npm:^5.22.0"
     pug: "npm:^3.0.3"
@@ -6925,6 +6926,18 @@ __metadata:
     nuxt: bin/nuxi.mjs
     nuxt-cli: bin/nuxi.mjs
   checksum: 10c0/60a2760fd86af869342880ff85d07020386e806f8310087a0ae6ba1550be06560ab527774b18e0e5d9a3da52e2cd2345c51e996bb164a9f7b6fb2cdc4727e3f3
+  languageName: node
+  linkType: hard
+
+"nuxt-gtag@npm:3.0.2":
+  version: 3.0.2
+  resolution: "nuxt-gtag@npm:3.0.2"
+  dependencies:
+    "@nuxt/kit": "npm:^3.14.1592"
+    defu: "npm:^6.1.4"
+    pathe: "npm:^1.1.2"
+    ufo: "npm:^1.5.4"
+  checksum: 10c0/51816a40a62189e0848edfbaa6ff66c4b416d5b3bd3c53d90830e514faf265717fcbbfce919da2668250b2b5b3c752113e3769e608e1e6902a84c87185288bed
   languageName: node
   linkType: hard
 

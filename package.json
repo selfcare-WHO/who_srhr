@@ -42,6 +42,7 @@
     "@vueuse/nuxt": "^10.7.0",
     "consola": "^3.2.3",
     "nuxt": "^3.8.2",
+    "nuxt-gtag": "3.0.2",
     "nuxt-svgo": "4.0.9",
     "prisma": "^5.22.0",
     "pug": "^3.0.3",
