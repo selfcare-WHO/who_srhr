@@ -4,6 +4,8 @@ import { createRequire } from 'module'
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-14',
 
+  ssr: false,
+
   runtimeConfig: {
     public: {
       comparisonFeatureActive: process.env.COMPARISON_FEATURE_ACTIVE === 'true'
