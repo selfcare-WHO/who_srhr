@@ -34,6 +34,8 @@
 <script setup lang="ts">
   import LayoutHeader from '@components/layout/LayoutHeader.vue'
   import LayoutNavbar from '@components/layout/LayoutNavbar.vue'
+
+  const dialogVisible = ref(true)
 </script>
 
 <style lang="sass">
@@ -46,7 +48,7 @@
         @apply bg-cover bg-center bg-origin-content
 
         > .wrapper
-          @apply flex flex-col items-center gap-2 z-10
+          @apply flex flex-col items-center gap-2
           @apply pt-10 md:pt-36 px-6 pb-10 md:pb-24
 
       > .navbar

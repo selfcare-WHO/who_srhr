@@ -12,18 +12,8 @@
 </template>
 
 <script lang="ts" setup>
-  const {
-    public: { comparisonFeatureActive }
-  } = useRuntimeConfig()
-
-  const navItems = [
-    { name: 'Home', path: '/' },
-    { name: 'Country profiles', path: '/country-profiles' },
-    ...(comparisonFeatureActive
-      ? [{ name: 'Country comparison', path: '/country-comparison/table' }]
-      : []),
-    { name: 'Indicators & data', path: '/indicators-data' }
-  ]
+  const navigationStore = useNavigationStore()
+  const { navItems } = storeToRefs(navigationStore)
 </script>
 
 <style lang="sass" scoped></style>
