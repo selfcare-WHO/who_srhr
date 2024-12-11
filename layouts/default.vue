@@ -1,17 +1,18 @@
 <template lang="pug">
   .default-layout(class="bg-page min-h-screen min-w-screen max-w-screen flex flex-col")
-    .top-layout(class=" flex flex-col justify-center items-center relative")
-      LayoutHeader(class="")
+    .top-layout(class="flex flex-col justify-center items-center relative")
+      LayoutHeader(class="md:absolute md:top-0 md:left-0 w-full")
 
-      .main(class="u-narrow-content flex flex-col items-center gap-2 z-10 pt-10 md:pt-36 px-6 pb-10 md:pb-24")
-        hgroup
-          h1(class="text-white bg-info px-2 inline box-decoration-clone")
-            | Sexual and Reproductive Health and Rights
+      .main-header-content
+        .wrapper
+          hgroup
+            h1(class="text-3xl md:text-4xl text-white bg-info px-2 inline box-decoration-clone")
+              | Sexual and Reproductive Health and Rights
 
-          .mb-2
+            div(class="mb-2 md:mb-4")
 
-          h3(class="text-primary bg-[#FFFFFFE6] px-2 inline box-decoration-clone")
-            | Data Portal
+            h3(class="text-xl md:text-2xl text-primary bg-[#FFFFFFE6] px-2 inline box-decoration-clone")
+              | Data Portal
 
       LayoutNavbar(class="hidden md:block")
     
@@ -39,10 +40,14 @@
   .default-layout
     > .top-layout
 
-      @apply relative
-      @apply before:absolute before:bg-[url('~/assets/images/Banner-2.jpg')]
-      @apply before:bg-cover before:bg-center before:bg-origin-content
-      @apply before:w-full before:h-full before:z-0 before:pt-[86px] md:before:pt-0
+      > .main-header-content
+        @apply w-full
+        @apply bg-[url('~/assets/images/Banner-2.jpg')]
+        @apply bg-cover bg-center bg-origin-content
+
+        > .wrapper
+          @apply flex flex-col items-center gap-2 z-10
+          @apply pt-10 md:pt-36 px-6 pb-10 md:pb-24
 
       > .navbar
         font-family: Roboto

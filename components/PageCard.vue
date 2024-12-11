@@ -37,8 +37,9 @@
     box-shadow: 0px 4px 4px 0px #00000040
 
     @apply flex flex-col bg-white
-    @apply rounded-2xl overflow-hidden h-[375px] max-w-[350px]
+    @apply rounded-2xl overflow-hidden md:h-[375px] max-w-[350px]
 
     > .content
-      @apply flex-1 flex flex-col justify-between px-7 pb-10 pt-6
+      @apply flex-1 flex flex-col justify-between
+      @apply px-6 md:px-7 pb-6 md:pb-10 pt-4 md:pt-10
 </style>
