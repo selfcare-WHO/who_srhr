@@ -1,18 +1,23 @@
 <template lang="pug">
   .indicators-and-data-page(class="flex flex-col flex-1 min-h-0")
-    div(class="flex flex-col gap-6")
-      .srhr-indicators-section(class="flex gap-16")
-        .srhr-indicators-text(class="flex-1")
+    div(class="flex flex-col")
+      .srhr-indicators-section(class="flex flex-wrap gap-x-10 gap-y-2")
+        .srhr-indicators-text(class="flex-[1_1_50%] min-w-80")
           h1 The SRHR indicators
 
           p This country snapshot provides an overview of national data relating to sexual and reproductive health and rights (SRHR) throughout the life course. Realization of SRHR requires provision of comprehensive, people-centred services, that address the different elements of SRHR, and which are supported by an enabling environment, quality health systems, and meaningful community engagement. Multiple, synergistic cross-linkages exist within and between the different SRHR elements, leading to sequential outcome benefits throughout the life course.
 
           p By highlighting the national SRHR situation – including successes, areas for improvement, and data gaps – this snapshot can be used for determining priorities, planning of programmes, resource mobilization, and strengthening of health systems, service delivery and community engagement.
 
-        .indicators-diagram(class="flex-1 mr-20")
-          img(src="@assets/images/indicators_and_data_diagram.png" alt="The SRHR indicators diagram")
+        .indicators-diagram(class="flex-[1_1_30%] flex justify-center")
+          .image-wrapper(class="w-[300px] md:w-[420px]")
+            img(
+              src="@assets/images/indicators_and_data_diagram.png"
+              alt="The SRHR indicators diagram"
+              class="max-w-full h-auto "
+            )
 
-      .data-availability-section(class="flex flex-col gap-6")
+      .data-availability-section(class="flex flex-col gap-8 mt-10")
         .data-availability-text(class="flex-1")
           h1 Data availability
 
@@ -24,11 +29,11 @@
 
           ElDivider(class="!mt-0 !mb-8 !border-primary")
 
-          .targets-content(class="flex gap-10")
-            .targets-description(class="flex-1")
+          .targets-content(class="flex gap-x-10 gap-y-2 flex-wrap")
+            .targets-description(class="flex-[1_1_50%]")
               p Data points are tagged based on their alignment with global targets. This shows whether the KPI target has been achieved, whether challenges remain or whether major challenges remain. Some data points do not have a specific KPI target (no target), and for others, there is no data available within the last 10 years from reliable international data repositories.
 
-            .targets-legend(class="flex-1 min-h-0 max-w-[400px]")
+            .targets-legend(class="flex-[1_1_30%] min-h-0 min-w-60")
               .legend-item(class="h-7 bg-success-100 mb-2 flex items-center justify-center")
                 span(class="text-success") Achieved
 
@@ -49,11 +54,11 @@
 
           ElDivider(class="!mt-0 !mb-8 !border-primary")
 
-          .trends-content(class="flex gap-10")
-            .trends-description(class="flex-1")
+          .trends-content(class="flex gap-x-10 gap-y-2 flex-wrap")
+            .trends-description(class="flex-[1_1_50%]")
               p The trends icons show whether the current numerical data value has increased, decreased or remained the same compared to the previous data point in the past 10 years. In cases where current data is unavailable or where there is no data point in the 10 years prior, "no data available" is indicated. Trend icons are only available for numerical data.
 
-            .trends-legend(class="flex-1 min-h-0 max-w-[400px]")
+            .trends-legend(class="flex-[1_1_30%] min-h-0 min-w-60")
               .legend-item(class="flex items-center gap-2 mb-2")
                 .image-wrapper(class="w-4 h-4 flex items-center justify-center")
                   ArrowUp

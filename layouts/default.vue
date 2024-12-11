@@ -6,12 +6,12 @@
       .main-header-content
         .wrapper
           hgroup
-            h1(class="text-3xl md:text-4xl text-white bg-info px-2 inline box-decoration-clone")
+            h1(class="text-white bg-info px-2 inline box-decoration-clone")
               | Sexual and Reproductive Health and Rights
 
             div(class="mb-2 md:mb-4")
 
-            h3(class="text-xl md:text-2xl text-primary bg-[#FFFFFFE6] px-2 inline box-decoration-clone")
+            h3(class="text-primary bg-[#FFFFFFE6] px-2 inline box-decoration-clone")
               | Data Portal
 
       LayoutNavbar(class="hidden md:block")
