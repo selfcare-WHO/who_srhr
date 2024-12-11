@@ -1,37 +1,19 @@
 <template lang="pug">
   .default-layout(class="bg-page min-h-screen min-w-screen max-w-screen flex flex-col")
-    .top-layout(class=" flex flex-col justify-center items-center sm:pt-4 sm:px-6 sm:pb-[100px] relative")
-      header(class="w-full flex gap-5 mb-36 flex-wrap h-[70px] bg-white sm:bg-transparent")
-        img(
-          src="@assets/images/WHO-Logo.png" alt="WHO Logo"
-          class="h-[22px] sm:h-[42px] object-contain self-center"
-        )
-        img(
-          src="@assets/images/HRP_logo_colour-1.png" alt="HRP Logo"
-          class="h-[29px] sm:h-[46px] object-contain self-center"
-        )
-        img(
-          src="@assets/images/Selfcare-SDG-logo.png" alt="Selfcare SDG Logo"
-          class="h-[29px] sm:h-[54px] object-contain self-center"
-        )
+    .top-layout(class=" flex flex-col justify-center items-center relative")
+      LayoutHeader(class="")
 
-      .main(class="u-narrow-content flex flex-col items-center gap-2")
-        hgroup(class="flex flex-col items-start gap-2")
-          h1(class="text-white bg-info px-2")
+      .main(class="u-narrow-content flex flex-col items-center gap-2 z-10 pt-10 md:pt-36 px-6 pb-10 md:pb-24")
+        hgroup
+          h1(class="text-white bg-info px-2 inline box-decoration-clone")
             | Sexual and Reproductive Health and Rights
 
-          h3(class="text-primary bg-[#FFFFFFE6] px-2")
+          .mb-2
+
+          h3(class="text-primary bg-[#FFFFFFE6] px-2 inline box-decoration-clone")
             | Data Portal
 
-      .navbar(class="absolute bottom-0 left-0 w-full h-12 bg-info-dark")
-        div(class="u-narrow-content flex items-center justify-center gap-[74px] h-full")
-          NuxtLink(
-            v-for="item in navItems"
-            :key="item.path"
-            :to="item.path"
-            :class="['text-white', ...($route.path === item.path ? ['underline'] : [])]"
-          )
-            | {{ item.name }}
+      LayoutNavbar(class="hidden md:block")
     
     .content(class="flex-1 flex flex-col")
       slot
@@ -49,24 +31,18 @@
 </template>
 
 <script setup lang="ts">
-  const {
-    public: { comparisonFeatureActive }
-  } = useRuntimeConfig()
-
-  const navItems = [
-    { name: 'Home', path: '/' },
-    { name: 'Country profiles', path: '/country-profiles' },
-    ...(comparisonFeatureActive
-      ? [{ name: 'Country comparison', path: '/country-comparison/table' }]
-      : []),
-    { name: 'Indicators & data', path: '/indicators-data' }
-  ]
+  import LayoutHeader from '@components/layout/LayoutHeader.vue'
+  import LayoutNavbar from '@components/layout/LayoutNavbar.vue'
 </script>
 
 <style lang="sass">
   .default-layout
     > .top-layout
-      @apply bg-[url('~/assets/images/Banner-2.jpg')] bg-cover bg-center
+
+      @apply relative
+      @apply before:absolute before:bg-[url('~/assets/images/Banner-2.jpg')]
+      @apply before:bg-cover before:bg-center before:bg-origin-content
+      @apply before:w-full before:h-full before:z-0 before:pt-[86px] md:before:pt-0
 
       > .navbar
         font-family: Roboto

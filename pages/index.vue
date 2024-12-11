@@ -1,5 +1,5 @@
 <template lang="pug">
-  .home-page(class="flex flex-wrap justify-center gap-10 pt-14 pb-40 mx-auto")
+  .home-page
     PageCard(
       v-for="card in cards"
       :key="card.title"
@@ -46,3 +46,10 @@
     }
   ]
 </script>
+
+<style lang="sass" scoped>
+  .home-page
+    @apply flex flex-wrap justify-center mx-auto
+    @apply gap-6 pt-6 pb-10 px-6
+    @apply md:gap-10 md:pt-14 md:pb-40
+</style>
