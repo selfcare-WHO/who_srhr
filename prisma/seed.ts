@@ -36,8 +36,7 @@ async function seedCountry(row: Data.DataRow) {
 async function seedSubgroup(row: Data.DataRow) {
   return prisma.subgroup.upsert({
     where: {
-      name: row.kpi_subgroup,
-      fullName: row.kpi_subgroup_full
+      name: row.kpi_subgroup
     },
     update: {},
     create: {

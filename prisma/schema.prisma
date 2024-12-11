@@ -40,7 +40,7 @@ model Domain {
 model Subgroup {
   id         Int         @id @default(autoincrement())
   name       String      @unique @map("kpi_subgroup")
-  fullName   String      @unique @map("kpi_subgroup_full")
+  fullName   String      @map("kpi_subgroup_full")
   indicators Indicator[]
   dataPoints DataPoint[]
 }

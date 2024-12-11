@@ -36,21 +36,6 @@ export default defineEventHandler(
         }
       })
 
-      // data.sort((a, b) => {
-      //   const aId = a.indicator.id
-      //   const bId = b.indicator.id
-
-      //   // Split the ID into numeric and alphabetic parts
-      //   const [aNum, aLetter = ''] = aId.match(/(\d+)([a-z])?/i)?.slice(1) || []
-      //   const [bNum, bLetter = ''] = bId.match(/(\d+)([a-z])?/i)?.slice(1) || []
-
-      //   // Compare numeric parts first
-      //   const numCompare = parseInt(aNum) - parseInt(bNum)
-
-      //   // If numbers are equal, compare letters
-      //   return numCompare !== 0 ? numCompare : aLetter.localeCompare(bLetter)
-      // })
-
       return data
     } catch (error) {
       throw createError({
