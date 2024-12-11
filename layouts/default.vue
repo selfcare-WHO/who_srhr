@@ -23,7 +23,9 @@
       .footer-content(class="h-14 p-6 bg-primary flex justify-between items-center")
         NuxtLink(
           class="text-white"
-          to="/privacy-legal-notice"
+          to="https://www.who.int/about/policies/privacy"
+          target="_blank"
+          external
         )
           | Privacy Legal Notice
 
@@ -50,10 +52,4 @@
         > .wrapper
           @apply flex flex-col items-center gap-2
           @apply pt-10 md:pt-36 px-6 pb-10 md:pb-24
-
-      > .navbar
-        font-family: Roboto
-        font-size: 20px
-        font-weight: 500
-        line-height: 20px
 </style>
