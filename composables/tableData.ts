@@ -138,13 +138,14 @@ export const useTableData = ({
 
         const numberElement = document.createElement('span')
         const value = dataPoint?.value
-        const { type, mask } = indicator || {}
+        const { type, mask, translateValue } = indicator || {}
 
         numberElement.className = 'indicator-progress-value'
         numberElement.textContent = getFormattedValue({
           value,
           mask: mask ?? undefined,
-          type
+          type,
+          translateValue: translateValue ?? undefined
         })
 
         element.appendChild(numberElement)
@@ -157,15 +158,26 @@ export const useTableData = ({
   const getFormattedValue = ({
     value,
     mask,
-    type
+    type,
+    translateValue
   }: {
     value: Data.Value
     mask?: string
     type: string
+    translateValue?: string
   }): string => {
     const postfix = type === 'Percentage' ? '%' : ''
 
     if (value === null || value === undefined || value === '') return 'n/d'
+
+    if (translateValue) {
+      const translateObject = JSON.parse(translateValue)
+
+      if (translateObject[value]) {
+        const translatedValue = translateObject[value]
+        return `${translatedValue}${postfix}`
+      }
+    }
 
     if (mask) {
       const maskedValue = StringMask.apply(value, mask, { reverse: true })

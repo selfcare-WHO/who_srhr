@@ -31,6 +31,7 @@ declare global {
       country_income_type?: string
       mask: string
       is_law?: string
+      translate_value?: string
     }
 
     interface IndicatorTooltipData {

@@ -35,7 +35,10 @@ async function seedCountry(row: Data.DataRow) {
 
 async function seedSubgroup(row: Data.DataRow) {
   return prisma.subgroup.upsert({
-    where: { name: row.kpi_subgroup },
+    where: {
+      name: row.kpi_subgroup,
+      fullName: row.kpi_subgroup_full
+    },
     update: {},
     create: {
       name: row.kpi_subgroup,
@@ -73,6 +76,7 @@ async function seedIndicator(row: Data.DataRow) {
         connect: { name: row.kpi_subgroup }
       },
       mask: row.mask,
+      translateValue: row.translate_value,
       hasTarget: row.has_target === 'Yes',
       isLaw: row.is_law === 'Yes',
       tableView: row.table_view === 'Yes',
