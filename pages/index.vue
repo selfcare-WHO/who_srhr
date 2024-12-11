@@ -50,6 +50,5 @@
 <style lang="sass" scoped>
   .home-page
     @apply flex flex-wrap justify-center mx-auto
-    @apply gap-6 pt-6 pb-10 px-6
-    @apply md:gap-10 md:pt-14 md:pb-40
+    @apply gap-6 md:gap-10
 </style>

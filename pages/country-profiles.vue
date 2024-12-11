@@ -1,5 +1,5 @@
 <template lang="pug">
-  .country-profiles-page.u-content.py-16
+  .country-profiles-page
     h1
       | Country profiles
 
@@ -9,8 +9,8 @@
     p.mb-8
       | This snapshot uses the latest data publicly available at the publication date, from reputable international sources (see endnotes for the year and source of each data point).
 
-    .tableauPlaceholder#viz1732192344237(style='position: relative')
-      object.tableauViz(style='display:none')
+    #viz1732192344237.tableauPlaceholder.relative.overflow-hidden.max-w-full
+      object.tableauViz.display-none
         param(name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F')
         param(name='embed_code_version' value='3')
         param(name='site_root' value='')

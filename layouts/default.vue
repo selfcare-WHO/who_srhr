@@ -16,7 +16,7 @@
 
       LayoutNavbar(class="hidden md:block")
     
-    .content(class="flex-1 flex flex-col")
+    .layout-content
       slot
 
     .footer(class="bg-info-dark min-h-[135px] flex flex-col justify-end")
@@ -52,4 +52,8 @@
         > .wrapper
           @apply flex flex-col items-center gap-2
           @apply pt-10 md:pt-36 px-6 pb-10 md:pb-24
+
+    > .layout-content
+      @apply flex-1 flex flex-col u-content
+      @apply px-6 pt-10 pb-20 md:pt-16 md:pb-40
 </style>

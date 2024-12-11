@@ -1,6 +1,6 @@
 <template lang="pug">
   .indicators-and-data-page(class="flex flex-col flex-1 min-h-0")
-    div(class="u-content pt-16 pb-8 flex flex-col gap-6")
+    div(class="flex flex-col gap-6")
       .srhr-indicators-section(class="flex gap-16")
         .srhr-indicators-text(class="flex-1")
           h1 The SRHR indicators

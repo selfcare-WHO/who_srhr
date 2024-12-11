@@ -1,3 +1,4 @@
+import plugin from 'tailwindcss/plugin'
 import Typography from '@tailwindcss/typography'
 import elementPlus from './assets/scss/_element_plus.scss'
 
@@ -66,5 +67,21 @@ export default {
     }
   },
 
-  plugins: [Typography]
+  plugins: [
+    Typography,
+    plugin(function ({ addUtilities }) {
+      addUtilities({
+        '.u-content': {
+          width: 'var(--content-width)',
+          marginLeft: 'auto',
+          marginRight: 'auto'
+        },
+        '.u-narrow-content': {
+          width: 'var(--narrow-content-width)',
+          marginLeft: 'auto',
+          marginRight: 'auto'
+        }
+      })
+    })
+  ]
 }
