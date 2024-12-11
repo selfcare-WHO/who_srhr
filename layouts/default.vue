@@ -15,17 +15,16 @@
           class="h-[29px] sm:h-[54px] object-contain self-center"
         )
 
-      .main(class="u-narrow-content flex flex-col gap-2")
-        .flex
+      .main(class="u-narrow-content flex flex-col items-center gap-2")
+        hgroup(class="flex flex-col items-start gap-2")
           h1(class="text-white bg-info px-2")
             | Sexual and Reproductive Health and Rights
 
-        .flex
           h3(class="text-primary bg-[#FFFFFFE6] px-2")
             | Data Portal
 
       .navbar(class="absolute bottom-0 left-0 w-full h-12 bg-info-dark")
-        div(class="u-narrow-content flex items-center gap-[74px] h-full")
+        div(class="u-narrow-content flex items-center justify-center gap-[74px] h-full")
           NuxtLink(
             v-for="item in navItems"
             :key="item.path"
