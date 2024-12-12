@@ -30,7 +30,13 @@ export default defineNuxtConfig({
           `
         }
       ],
-      link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]
+      link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
+      script: [
+        {
+          type: 'module',
+          src: 'https://public.tableau.com/javascripts/api/tableau.embedding.3.2.0.min.js'
+        }
+      ]
     }
   },
 
@@ -112,5 +118,11 @@ export default defineNuxtConfig({
   elementPlus: {
     icon: 'ElIcon',
     importStyle: 'scss'
+  },
+
+  vue: {
+    compilerOptions: {
+      isCustomElement: tag => ['tableau-viz', 'iframe-style'].includes(tag)
+    }
   }
 })
