@@ -10,7 +10,7 @@
       | This snapshot uses the latest data publicly available at the publication date, from reputable international sources (see endnotes for the year and source of each data point).
 
     #viz1732192344237.tableauPlaceholder.relative.overflow-hidden.max-w-full
-      object.tableauViz.display-none
+      object.tableauViz.display-none.max-w-full
         param(name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F')
         param(name='embed_code_version' value='3')
         param(name='site_root' value='')

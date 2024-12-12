@@ -22,7 +22,8 @@
     .footer(class="bg-info-dark min-h-[135px] flex flex-col justify-end")
       .footer-content(class="h-14 p-6 bg-primary flex justify-between items-center")
         NuxtLink(
-          class="text-white"
+          class="privacy-link text-white"
+          style="font-size: 14px"
           to="https://www.who.int/about/policies/privacy"
           target="_blank"
           external

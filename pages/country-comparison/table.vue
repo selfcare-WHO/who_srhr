@@ -1,5 +1,5 @@
 <template lang="pug">
-  .table-view(class="bg-white py-4")
+  .table-view(class="bg-page py-4")
     div.u-content
       ElForm(
         class="filters-section flex gap-6"
