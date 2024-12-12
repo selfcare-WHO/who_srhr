@@ -32,6 +32,7 @@ declare global {
       mask: string
       is_law?: string
       translate_value?: string
+      display_value?: string
     }
 
     interface IndicatorTooltipData {

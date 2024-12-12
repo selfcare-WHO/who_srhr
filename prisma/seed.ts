@@ -81,7 +81,8 @@ async function seedIndicator(row: Data.DataRow) {
       tableView: row.table_view === 'Yes',
       chartView: row.chart_view === 'Yes',
       mapView: row.map_view === 'Yes',
-      mapType: row.map_type
+      mapType: row.map_type,
+      displayValue: row.display_value
     }
   })
 }

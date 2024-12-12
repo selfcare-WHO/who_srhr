@@ -137,16 +137,9 @@ export const useTableData = ({
         }
 
         const numberElement = document.createElement('span')
-        const value = dataPoint?.value
-        const { type, mask, translateValue } = indicator || {}
 
         numberElement.className = 'indicator-progress-value'
-        numberElement.textContent = getFormattedValue({
-          value,
-          mask: mask ?? undefined,
-          type,
-          translateValue: translateValue ?? undefined
-        })
+        numberElement.textContent = getFormattedValue({ indicator, dataPoint })
 
         element.appendChild(numberElement)
 
@@ -156,36 +149,44 @@ export const useTableData = ({
   })
 
   const getFormattedValue = ({
-    value,
-    mask,
-    type,
-    translateValue
+    indicator,
+    dataPoint
   }: {
-    value: Data.Value
-    mask?: string
-    type: string
-    translateValue?: string
+    indicator: Prisma.IndicatorWithSubgroups
+    dataPoint: Prisma.DataPoint
   }): string => {
+    const { type, translateValue, displayValue, mask } = indicator || {}
+    const { value, originalValue } = dataPoint || {}
+    const renderedValue =
+      displayValue === 'original_value' ? originalValue : value
+
     const postfix = type === 'Percentage' ? '%' : ''
 
-    if (value === null || value === undefined || value === '') return 'n/d'
+    if (
+      renderedValue === null ||
+      renderedValue === undefined ||
+      renderedValue === ''
+    )
+      return 'n/d'
 
     if (translateValue) {
       const translateObject = JSON.parse(translateValue)
 
-      if (translateObject[value]) {
-        const translatedValue = translateObject[value]
+      if (translateObject[renderedValue]) {
+        const translatedValue = translateObject[renderedValue]
         return `${translatedValue}${postfix}`
       }
     }
 
     if (mask) {
-      const maskedValue = StringMask.apply(value, mask, { reverse: true })
+      const maskedValue = StringMask.apply(renderedValue, mask, {
+        reverse: true
+      })
 
       return `${maskedValue}${postfix}`
     }
 
-    return `${value}${postfix}`
+    return `${renderedValue}${postfix}`
   }
 
   const columns = computed((): ColumnDefinition[] => {

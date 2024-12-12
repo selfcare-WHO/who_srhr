@@ -17,6 +17,7 @@ model Indicator {
   mask           String?     @map("mask")
   isLaw          Boolean     @default(false) @map("is_law")
   translateValue String?     @map("translate_value")
+  displayValue   String?     @map("display_value")
   domainId       Int         @map("kpi_domain_id")
   domain         Domain      @relation(fields: [domainId], references: [id])
   subgroups      Subgroup[]
