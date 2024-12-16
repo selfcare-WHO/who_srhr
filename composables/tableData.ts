@@ -72,7 +72,7 @@ export const useTableData = ({
         subheading.textContent = indicator.subheading
 
         container.appendChild(subheading)
-        useClamp({ id: subheading.id, length: 20 })
+        useClamp({ id: subheading.id, length: 25 })
       }
 
       return container
