@@ -72,7 +72,7 @@ export const useTableData = ({
         subheading.textContent = indicator.subheading
 
         container.appendChild(subheading)
-        useClamp({ id: subheading.id, length: 25 })
+        useClamp({ id: subheading.id, singleLine: true })
       }
 
       return container
@@ -84,6 +84,7 @@ export const useTableData = ({
     vertAlign: 'middle',
     columns: indicator.subgroups.map(subgroup => ({
       width: 150,
+      resizable: false,
       title: subgroup.fullName,
       field: `${indicator.id}-${subgroup.id}`,
       headerSort: false,
@@ -138,10 +139,13 @@ export const useTableData = ({
 
         const numberElement = document.createElement('span')
 
-        numberElement.className = 'indicator-progress-value'
+        numberElement.className = 'indicator-progress-value flex-1 min-w-0'
         numberElement.textContent = getFormattedValue({ indicator, dataPoint })
+        numberElement.id = `indicator-progress-value-${indicator.id}-${subgroup.id}-${dataPoint.countryId}`
 
         element.appendChild(numberElement)
+
+        useClamp({ id: numberElement.id, singleLine: true })
 
         return element
       }

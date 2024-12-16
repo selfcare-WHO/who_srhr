@@ -4,10 +4,12 @@ import { createVNode, render } from 'vue'
 
 export const useClamp = ({
   id,
-  length = 60
+  length = 60,
+  singleLine = false
 }: {
   id: string
   length?: number
+  singleLine?: boolean
 }) => {
   nextTick(() => {
     const element = document.getElementById(id)
@@ -15,9 +17,19 @@ export const useClamp = ({
 
     const originalText = element.textContent
 
-    shave(element, length)
+    if (singleLine) {
+      element.classList.add('truncate')
 
-    if (originalText === element.innerHTML) return
+      if (
+        element.scrollWidth <= element.clientWidth &&
+        element.scrollHeight <= element.clientHeight
+      )
+        return
+    } else {
+      shave(element, length)
+
+      if (originalText === element.innerHTML) return
+    }
 
     const tooltipVNode = createVNode(
       ElTooltip,
