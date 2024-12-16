@@ -1,13 +1,12 @@
 {
-  "name": "element-plus-nuxt-starter",
+  "name": "who-srhr-dashboard",
   "version": "0.1.0",
-  "description": "Element Plus with Nuxt 3 Minimal Starter",
+  "description": "WHO SRHR Dashboard",
   "repository": {
     "type": "git",
-    "url": "git://github.com/element-plus/element-plus-nuxt-starter"
+    "url": "git://github.com/lushomo-net/who_srhr"
   },
-  "author": "Element Plus Team",
-  "license": "MIT",
+  "author": "Lucas Bicudo",
   "type": "module",
   "private": true,
   "scripts": {

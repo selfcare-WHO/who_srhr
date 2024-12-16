@@ -4155,42 +4155,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"element-plus-nuxt-starter@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "element-plus-nuxt-starter@workspace:."
-  dependencies:
-    "@element-plus/icons-vue": "npm:^2.3.1"
-    "@element-plus/nuxt": "npm:^1.1.0"
-    "@nuxt/fonts": "npm:^0.10.2"
-    "@nuxt/image": "npm:^1.8.1"
-    "@nuxtjs/tailwindcss": "npm:^6.12.2"
-    "@pinia/nuxt": "npm:^0.5.1"
-    "@prisma/client": "npm:^5.22.0"
-    "@tailwindcss/typography": "npm:^0.5.15"
-    "@types/node": "npm:^22.9.0"
-    "@types/tabulator-tables": "npm:^6"
-    "@vue/language-plugin-pug": "npm:^2.1.10"
-    "@vueuse/nuxt": "npm:^10.7.0"
-    consola: "npm:^3.2.3"
-    element-plus: "npm:^2.8.7"
-    nuxt: "npm:^3.8.2"
-    nuxt-gtag: "npm:3.0.2"
-    nuxt-svgo: "npm:4.0.9"
-    prisma: "npm:^5.22.0"
-    pug: "npm:^3.0.3"
-    sass: "npm:^1.69.5"
-    shave: "npm:^5.0.4"
-    string-mask: "npm:^0.3.0"
-    tabulator-tables: "npm:^6.3.0"
-    tsx: "npm:^4.19.2"
-    typescript: "npm:^5.6.3"
-    vue-tsc: "npm:^2.1.10"
-    xlsx: "npm:^0.18.5"
-  peerDependencies:
-    pinia: ^2.1.6
-  languageName: unknown
-  linkType: soft
-
 "element-plus@npm:^2.8.7":
   version: 2.8.8
   resolution: "element-plus@npm:2.8.8"
@@ -10167,6 +10131,42 @@ __metadata:
   checksum: 10c0/449fa5c44ed120ccecfe18c433296a4978a7583bf2391c50abce13f76878d2476defde04d0f79db8165bdf432853c1f8389d0485ca6e8ebce3bbcded513d5e6a
   languageName: node
   linkType: hard
+
+"who-srhr-dashboard@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "who-srhr-dashboard@workspace:."
+  dependencies:
+    "@element-plus/icons-vue": "npm:^2.3.1"
+    "@element-plus/nuxt": "npm:^1.1.0"
+    "@nuxt/fonts": "npm:^0.10.2"
+    "@nuxt/image": "npm:^1.8.1"
+    "@nuxtjs/tailwindcss": "npm:^6.12.2"
+    "@pinia/nuxt": "npm:^0.5.1"
+    "@prisma/client": "npm:^5.22.0"
+    "@tailwindcss/typography": "npm:^0.5.15"
+    "@types/node": "npm:^22.9.0"
+    "@types/tabulator-tables": "npm:^6"
+    "@vue/language-plugin-pug": "npm:^2.1.10"
+    "@vueuse/nuxt": "npm:^10.7.0"
+    consola: "npm:^3.2.3"
+    element-plus: "npm:^2.8.7"
+    nuxt: "npm:^3.8.2"
+    nuxt-gtag: "npm:3.0.2"
+    nuxt-svgo: "npm:4.0.9"
+    prisma: "npm:^5.22.0"
+    pug: "npm:^3.0.3"
+    sass: "npm:^1.69.5"
+    shave: "npm:^5.0.4"
+    string-mask: "npm:^0.3.0"
+    tabulator-tables: "npm:^6.3.0"
+    tsx: "npm:^4.19.2"
+    typescript: "npm:^5.6.3"
+    vue-tsc: "npm:^2.1.10"
+    xlsx: "npm:^0.18.5"
+  peerDependencies:
+    pinia: ^2.1.6
+  languageName: unknown
+  linkType: soft
 
 "wide-align@npm:^1.1.2":
   version: 1.1.5
