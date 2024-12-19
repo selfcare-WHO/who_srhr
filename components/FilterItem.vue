@@ -9,6 +9,7 @@
     fit-input-width
     default-expand-all
     collapse-tags
+    collapse-tags-tooltip
     :max-collapse-tags="5"
     :size="size"
     :check-on-click-node="true"
@@ -35,6 +36,7 @@
     v-model="value"
     fit-input-width
     collapse-tags
+    collapse-tags-tooltip
     :max-collapse-tags="5"
     :size="size"
     :clearable="clearable"
@@ -60,7 +62,7 @@
   const dataStore = useFiltersStore()
   const { isFetchingFilters } = storeToRefs(dataStore)
 
-  const value = defineModel<string[]>({ required: true })
+  const value = defineModel<string[] | string>({ required: true })
 
   const {
     label,

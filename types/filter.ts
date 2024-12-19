@@ -7,15 +7,15 @@ declare global {
       children?: Option[]
     }
 
-    type Label = 'Indicator' | 'Country'
+    type Label = 'Indicator' | 'Country' | 'Data Type'
 
-    type Key = 'indicator' | 'country'
+    type Key = 'indicator' | 'country' | 'dataType'
 
     type Item<K extends Key = Key> = {
       key: K
       label: Label
       placeholder?: string
-      value: MaybeRef<string[]>
+      value: MaybeRef<string[] | string>
       options: ComputedRef<Option[]>
       multiple: MaybeRef<boolean>
       tree?: MaybeRef<boolean>
@@ -24,13 +24,15 @@ declare global {
     }
 
     type Values = {
-      indicator: MaybeRef<string[]>
-      country: MaybeRef<string[]>
+      indicator: string[]
+      country: string[]
+      dataType: string
     }
 
     type ReadonlyValues = {
       indicator: string[]
       country: string[]
+      dataType: string
     }
 
     type Options = {

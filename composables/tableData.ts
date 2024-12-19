@@ -52,6 +52,8 @@ export const useTableData = ({
   ): ColumnDefinition => ({
     title: indicator.fullName,
     titleFormatter: () => {
+      if (!indicator.fullName) return ''
+
       const container = document.createElement('div')
       container.className = 'flex flex-col gap-1'
 
@@ -90,6 +92,8 @@ export const useTableData = ({
       headerSort: false,
       formatter: cell => {
         const dataPoint: Prisma.DataPoint = cell.getValue()
+
+        if (!dataPoint) return ''
 
         const element = document.createElement('div')
         element.className = 'indicator-cell-container flex items-center gap-2'
@@ -215,6 +219,8 @@ export const useTableData = ({
 
   const data = computed(() => {
     const dataPointsMap = new Map<string, Prisma.DataPointWithType>()
+
+    if (!dataPoints.value.length) return []
 
     dataPoints.value.forEach(dp => {
       const key = `${dp.countryId}-${dp.indicatorId}-${dp.subgroupId}`

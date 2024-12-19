@@ -3,43 +3,92 @@ import { defineStore } from 'pinia'
 export const useFiltersStore = defineStore('Filters', () => {
   const isFetchingFilters = ref(false)
 
-  const availableDomains = ref<Prisma.Domain[]>([])
-  const availableIndicators = ref<Prisma.IndicatorWithSubgroups[]>([])
-  const availableCountries = ref<Prisma.Country[]>([])
+  const domains = ref<Prisma.Domain[]>([])
+  const indicators = ref<Prisma.IndicatorWithSubgroups[]>([])
+  const countries = ref<Prisma.Country[]>([])
+
+  const dataTypeOptions = computed<Filter.Option[]>(() => [
+    {
+      id: 'numerical_categorical',
+      name: 'Numerical & categorical data'
+    },
+    {
+      id: 'laws_policies',
+      name: 'Laws & policies'
+    }
+  ])
 
   const indicatorOptions = computed<Filter.Option[]>(() => {
-    if (!availableDomains.value) return []
+    if (!domains.value) return []
 
-    return availableDomains.value.map(domain => ({
-      id: domain.id,
-      value: `[domain]-${domain.id}`,
-      label: domain.name,
-      children: availableIndicators.value
-        .filter(indicator => indicator.domainId === domain.id)
+    return domains.value.reduce<Filter.Option[]>((acc, domain) => {
+      const filteredIndicators = indicators.value
+        .filter(indicator => {
+          const belongsToDomain = indicator.domainId === domain.id
+
+          if (dataTypeFilterValue.value === 'numerical_categorical') {
+            return belongsToDomain && !indicator.isLaw
+          } else {
+            return belongsToDomain && indicator.isLaw
+          }
+        })
         .map(indicator => ({
           id: indicator.id,
           value: indicator.id,
           label: indicator.fullName
         }))
-    }))
+
+      if (filteredIndicators.length) {
+        return [
+          ...acc,
+          {
+            id: domain.id,
+            value: `[domain]-${domain.id}`,
+            label: domain.name,
+            children: filteredIndicators
+          }
+        ]
+      }
+
+      return acc
+    }, [])
+  })
+
+  const availableIndicators = computed<Prisma.IndicatorWithSubgroups[]>(() => {
+    return indicators.value.filter(indicator => {
+      return dataTypeFilterValue.value === 'numerical_categorical'
+        ? !indicator.isLaw
+        : indicator.isLaw
+    })
   })
 
   const countryOptions = computed<Filter.Option[]>(() =>
-    availableCountries.value.map(country => ({
+    countries.value.map(country => ({
       id: String(country.id),
       name: country.name
     }))
   )
 
+  const dataTypeFilterValue = ref<string>('numerical_categorical')
   const indicatorFilterValue = ref<string[]>([])
   const countryFilterValue = ref<string[]>([])
 
   const filterValues = computed<Filter.Values>(() => ({
+    dataType: dataTypeFilterValue.value,
     indicator: indicatorFilterValue.value,
     country: countryFilterValue.value
   }))
 
   const filters: Filter.Item[] = [
+    {
+      key: 'dataType',
+      label: 'Data Type',
+      value: dataTypeFilterValue,
+      tree: false,
+      multiple: false,
+      clearable: false,
+      options: dataTypeOptions
+    },
     {
       key: 'indicator',
       childrenKey: 'indicator',
@@ -65,22 +114,22 @@ export const useFiltersStore = defineStore('Filters', () => {
   const fetchFilterOptions = async () => {
     isFetchingFilters.value = true
 
-    const { domains, indicators, countries } = await $fetch<Filter.Options>(
-      '/api/filter-options'
-    )
+    const data = await $fetch<Filter.Options>('/api/filter-options')
 
-    availableDomains.value = domains
-    availableIndicators.value = indicators
-    availableCountries.value = countries
+    domains.value = data.domains
+    indicators.value = data.indicators
+    countries.value = data.countries
 
     isFetchingFilters.value = false
   }
 
   const fetchedFilters = computed(
-    () =>
-      availableIndicators.value.length > 0 &&
-      availableCountries.value.length > 0
+    () => indicators.value.length > 0 && countries.value.length > 0
   )
+
+  watch(dataTypeFilterValue, () => {
+    indicatorFilterValue.value = []
+  })
 
   return {
     isFetchingFilters,
@@ -88,8 +137,8 @@ export const useFiltersStore = defineStore('Filters', () => {
     filterValues,
     fetchFilterOptions,
     fetchedFilters,
-    availableDomains,
-    availableCountries,
+    domains,
+    availableCountries: countries,
     availableIndicators,
     indicatorFilterValue,
     countryFilterValue

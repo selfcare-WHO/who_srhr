@@ -25,7 +25,7 @@
             @clear="updateTable"
           )
 
-      KeySection
+      KeySection(:dataType="filterValues.dataType")
 
       div(class="table-wrapper relative min-h-[700px]")
         .loader-overlay(
@@ -57,7 +57,8 @@
   const TABLE_HEIGHT = 763
 
   const filtersStore = useFiltersStore()
-  const { fetchedFilters, isFetchingFilters } = storeToRefs(filtersStore)
+  const { fetchedFilters, isFetchingFilters, filterValues } =
+    storeToRefs(filtersStore)
   const { fetchFilterOptions, filters } = filtersStore
 
   const dataStore = useDataStore()
@@ -162,8 +163,8 @@
     }
   }
 
-  watch(isLoading, newValue => {
-    if (!newValue) nextTick(updateTable)
+  watch([columns, data], () => {
+    if (!isLoading.value) nextTick(updateTable)
   })
 
   onBeforeRouteLeave(() => {
