@@ -4,48 +4,9 @@ import StringMask from 'string-mask'
 import { ElIcon } from 'element-plus'
 import { createVNode, render } from 'vue'
 
-interface MatrixRow {
-  country: string
-  [key: string]: any
-}
-
-interface UseTableDataOptions {
-  onIndicatorHover: (event: MouseEvent) => void
-  onIndicatorLeave: (event: MouseEvent) => void
-}
-
-export const useTableData = ({
-  onIndicatorHover,
-  onIndicatorLeave
-}: UseTableDataOptions) => {
+export const useTableColumns = () => {
   const filtersStore = useFiltersStore()
-  const {
-    availableCountries,
-    availableIndicators,
-    indicatorFilterValue,
-    countryFilterValue
-  } = storeToRefs(filtersStore)
-
-  const dataStore = useDataStore()
-  const { dataPoints } = storeToRefs(dataStore)
-
-  const currentCountries = computed<Prisma.Country[]>(() => {
-    const filteredCountryIds = countryFilterValue.value || []
-    return filteredCountryIds.length === 0
-      ? availableCountries.value
-      : availableCountries.value.filter(country =>
-          filteredCountryIds.includes(String(country.id))
-        )
-  })
-
-  const currentIndicators = computed<Prisma.IndicatorWithSubgroups[]>(() => {
-    const filteredIndicatorIds = indicatorFilterValue.value
-    return filteredIndicatorIds.length === 0
-      ? availableIndicators.value
-      : availableIndicators.value.filter(indicator =>
-          filteredIndicatorIds.includes(indicator.id)
-        )
-  })
+  const { filteredIndicators } = storeToRefs(filtersStore)
 
   const createIndicatorColumns = (
     indicator: Prisma.IndicatorWithSubgroups
@@ -210,42 +171,14 @@ export const useTableData = ({
       }
     ]
 
-    const indicatorColumns: ColumnDefinition[] = currentIndicators.value.map(
+    const indicatorColumns: ColumnDefinition[] = filteredIndicators.value.map(
       createIndicatorColumns
     )
 
     return [...baseColumns, ...indicatorColumns]
   })
 
-  const data = computed(() => {
-    const dataPointsMap = new Map<string, Prisma.DataPointWithType>()
-
-    if (!dataPoints.value.length) return []
-
-    dataPoints.value.forEach(dp => {
-      const key = `${dp.countryId}-${dp.indicatorId}-${dp.subgroupId}`
-      dataPointsMap.set(key, dp)
-    })
-
-    return currentCountries.value.map(country => {
-      const row: MatrixRow = { country: country.name }
-      currentIndicators.value.forEach(indicator => {
-        indicator.subgroups.forEach(subgroup => {
-          const key = `${country.id}-${indicator.id}-${subgroup.id}`
-          const dataPoint = dataPointsMap.get(key)
-
-          if (dataPoint) {
-            row[`${indicator.id}-${subgroup.id}`] = dataPoint
-          }
-        })
-      })
-
-      return row
-    })
-  })
-
   return {
-    columns,
-    data
+    columns
   }
 }

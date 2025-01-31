@@ -54,14 +54,6 @@ export const useFiltersStore = defineStore('Filters', () => {
     }, [])
   })
 
-  const availableIndicators = computed<Prisma.IndicatorWithSubgroups[]>(() => {
-    return indicators.value.filter(indicator => {
-      return dataTypeFilterValue.value === 'numerical_categorical'
-        ? !indicator.isLaw
-        : indicator.isLaw
-    })
-  })
-
   const countryOptions = computed<Filter.Option[]>(() =>
     countries.value.map(country => ({
       id: String(country.id),
@@ -111,6 +103,20 @@ export const useFiltersStore = defineStore('Filters', () => {
     }
   ]
 
+  const filteredIndicators = computed<Prisma.IndicatorWithSubgroups[]>(() => {
+    return indicators.value.filter(indicator => {
+      const belongsToDataType =
+        dataTypeFilterValue.value !== 'laws_policies' || indicator.isLaw
+
+      const belongsToFilteredIndicators =
+        indicatorFilterValue.value.length > 0
+          ? indicatorFilterValue.value.includes(indicator.id)
+          : true
+
+      return belongsToDataType && belongsToFilteredIndicators
+    })
+  })
+
   const fetchFilterOptions = async () => {
     isFetchingFilters.value = true
 
@@ -140,8 +146,7 @@ export const useFiltersStore = defineStore('Filters', () => {
     fetchFilterOptions,
     fetchedFilters,
     domains,
-    availableCountries: countries,
-    availableIndicators,
+    filteredIndicators,
     indicatorFilterValue,
     countryFilterValue
   }
