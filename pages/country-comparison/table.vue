@@ -33,7 +33,7 @@
           v-loading="isLoading || isLoadingTable"
         )
 
-        #table-element()
+        div(ref="tableElement")
     
     ElTooltip(
       virtual-triggering
@@ -57,13 +57,11 @@
   const TABLE_HEIGHT = 763
 
   const filtersStore = useFiltersStore()
-  const { fetchedFilters, isFetchingFilters, filterValues } =
-    storeToRefs(filtersStore)
-  const { fetchFilterOptions, filters } = filtersStore
+  const { isFetchingFilters, filterValues } = storeToRefs(filtersStore)
+  const { filters } = filtersStore
 
   const dataStore = useDataStore()
   const { isLoadingData } = storeToRefs(dataStore)
-  const { fetchData } = dataStore
 
   const isBuildingTable = ref(true)
 
@@ -104,15 +102,14 @@
     onIndicatorLeave
   })
   const tabulator = ref<Tabulator | null>(null)
+  const tableElement = ref<HTMLElement | null>(null)
 
   const initTable = () => {
     const getElement = () => {
-      const tableElement = document.getElementById('table-element')
-
-      if (!tableElement) {
+      if (!tableElement.value) {
         requestAnimationFrame(getElement)
       } else {
-        tabulator.value = new Tabulator(tableElement, {
+        tabulator.value = new Tabulator(tableElement.value, {
           height: TABLE_HEIGHT,
           columnHeaderVertAlign: 'bottom',
           reactiveData: true,
@@ -144,8 +141,6 @@
 
     return getElement()
   }
-
-  if (!fetchedFilters.value) fetchFilterOptions()
 
   const updateTable = () => {
     if (!tabulator.value) {
@@ -179,8 +174,6 @@
       icon.removeEventListener('mouseout', onIndicatorLeave)
     })
   })
-
-  fetchData()
 </script>
 
 <style lang="sass" scoped></style>

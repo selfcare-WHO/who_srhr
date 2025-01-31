@@ -10,17 +10,19 @@ export const useDataStore = defineStore('Data', () => {
   async function fetchData() {
     isLoadingData.value = true
 
-    const data = await $fetch<Prisma.DataPointWithType[]>(`/api/data`, {
+    const { data } = await useFetch<Prisma.DataPointWithType[]>(`/api/data`, {
       method: 'POST',
       body: {
         filters: filterValues.value
       }
     })
 
-    dataPoints.value = data
+    dataPoints.value = data.value ?? []
 
     isLoadingData.value = false
   }
+
+  fetchData()
 
   return { isLoadingData, dataPoints, fetchData }
 })

@@ -114,11 +114,11 @@ export const useFiltersStore = defineStore('Filters', () => {
   const fetchFilterOptions = async () => {
     isFetchingFilters.value = true
 
-    const data = await $fetch<Filter.Options>('/api/filter-options')
+    const { data } = await useFetch<Filter.Options>('/api/filter-options')
 
-    domains.value = data.domains
-    indicators.value = data.indicators
-    countries.value = data.countries
+    domains.value = data.value?.domains || []
+    indicators.value = data.value?.indicators || []
+    countries.value = data.value?.countries || []
 
     isFetchingFilters.value = false
   }
@@ -130,6 +130,8 @@ export const useFiltersStore = defineStore('Filters', () => {
   watch(dataTypeFilterValue, () => {
     indicatorFilterValue.value = []
   })
+
+  fetchFilterOptions()
 
   return {
     isFetchingFilters,
