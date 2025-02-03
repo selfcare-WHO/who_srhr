@@ -8,4 +8,12 @@
   .tabulator-col-group > .tabulator-col-content:first-child {
     padding-bottom: 0px !important;
   }
+
+  .tabulator-header .tabulator-col > .tabulator-col-content,
+  .tabulator-row .tabulator-cell {
+    padding: {
+      left: 0.5em !important;
+      right: 0.5em !important;
+    }
+  }
 }

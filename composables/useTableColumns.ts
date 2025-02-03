@@ -23,7 +23,7 @@ export const useTableColumns = () => {
       span.id = `table-indicator-name-${indicator.id}`
       span.textContent = indicator.fullName
       container.appendChild(span)
-      useClamp({ id: span.id })
+      // useClamp({ id: span.id })
 
       const hasSubheading = indicator.subheading && indicator.subheading !== '-'
 
@@ -35,7 +35,7 @@ export const useTableColumns = () => {
         subheading.textContent = indicator.subheading
 
         container.appendChild(subheading)
-        useClamp({ id: subheading.id, singleLine: true })
+        // useClamp({ id: subheading.id, singleLine: true })
       }
 
       return container
@@ -110,7 +110,7 @@ export const useTableColumns = () => {
 
         element.appendChild(numberElement)
 
-        useClamp({ id: numberElement.id, singleLine: true })
+        // useClamp({ id: numberElement.id, singleLine: true })
 
         return element
       }
