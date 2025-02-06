@@ -9,6 +9,7 @@ CREATE TABLE "indicators" (
     "mask" TEXT,
     "is_law" BOOLEAN NOT NULL DEFAULT false,
     "translate_value" TEXT,
+    "display_value" TEXT,
     "kpi_domain_id" INTEGER NOT NULL,
     "table_view" BOOLEAN NOT NULL DEFAULT false,
     "chart_view" BOOLEAN NOT NULL DEFAULT false,
@@ -73,9 +74,6 @@ CREATE UNIQUE INDEX "domains_domain_name_key" ON "domains"("domain_name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Subgroup_kpi_subgroup_key" ON "Subgroup"("kpi_subgroup");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Subgroup_kpi_subgroup_full_key" ON "Subgroup"("kpi_subgroup_full");
 
 -- CreateIndex
 CREATE INDEX "data_points_indicatorId_idx" ON "data_points"("indicatorId");

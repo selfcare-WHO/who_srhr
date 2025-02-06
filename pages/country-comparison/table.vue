@@ -51,7 +51,7 @@
 <script lang="ts" setup>
   import { TabulatorFull as Tabulator } from 'tabulator-tables'
 
-  const TABLE_HEIGHT = 768
+  const TABLE_HEIGHT = 757
 
   const filtersStore = useFiltersStore()
   const { filterValues } = storeToRefs(filtersStore)
@@ -78,7 +78,7 @@
           layout: 'fitDataFill',
           selectable: false,
           pagination: true,
-          paginationSize: 12,
+          paginationSize: 10,
           ajaxURL: '/api/paginated-data',
           paginationMode: 'remote',
           reactiveData: true,
