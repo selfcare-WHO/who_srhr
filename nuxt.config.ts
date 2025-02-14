@@ -1,5 +1,4 @@
 import { fileURLToPath } from 'node:url'
-import { createRequire } from 'module'
 
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-14',
@@ -68,7 +67,8 @@ export default defineNuxtConfig({
     '@nuxt/image',
     '@nuxt/fonts',
     'nuxt-svgo',
-    'nuxt-gtag'
+    'nuxt-gtag',
+    'nuxt-mapbox'
   ],
 
   fonts: {
@@ -113,6 +113,10 @@ export default defineNuxtConfig({
         }
       }
     }
+  },
+
+  mapbox: {
+    accessToken: process.env.VITE_MAPBOX_PUBLIC_KEY
   },
 
   elementPlus: {
