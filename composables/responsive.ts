@@ -6,5 +6,5 @@ export const useResponsive = () => {
   const isMobile = breakpoints.smallerOrEqual('md')
   const isDesktop = breakpoints.greaterOrEqual('xl')
 
-  return { isMobile, isDesktop }
+  return { breakpoints, isMobile, isDesktop }
 }

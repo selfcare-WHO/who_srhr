@@ -25,11 +25,6 @@
       KeySection(:dataType="filterValues.dataType")
 
       div(class="table-wrapper relative min-h-[700px]")
-        //- .loader-overlay(
-        //-   class="absolute inset-0 pointer-events-none"
-        //-   v-loading="isLoading || isLoadingTable"
-        //- )
-
         div(ref="tableElement")
     
     ElTooltip(
@@ -52,6 +47,8 @@
   import { TabulatorFull as Tabulator } from 'tabulator-tables'
 
   const TABLE_HEIGHT = 757
+
+  defineOptions({ name: 'CountryComparisonTable' })
 
   const filtersStore = useFiltersStore()
   const { filterValues } = storeToRefs(filtersStore)

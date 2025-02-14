@@ -6,9 +6,12 @@
 
       .flex.items-center.gap-3
         h2.text-secondary.mr-3 Select view:
-        ElButton.w-32(type="primary" :plain="!mapView") Map
-        ElButton.w-32(type="primary" :plain="!chartsView") Charts
-        ElButton.w-32(type="primary" :plain="!tableView") Table
+        NuxtLink(to="/country-comparison/map")
+          ElButton.w-32(type="primary" :plain="!mapView") Map
+        NuxtLink(to="/country-comparison/charts")
+          ElButton.w-32(type="primary" :plain="!chartsView") Charts
+        NuxtLink(to="/country-comparison/table")
+          ElButton.w-32(type="primary" :plain="!tableView") Table
 
     NuxtPage.flex-1
 </template>

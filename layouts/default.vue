@@ -56,5 +56,5 @@
 
     > .layout-content
       @apply flex-1 flex flex-col u-content
-      @apply px-6 pt-10 pb-20 md:pt-16 md:pb-40
+      @apply px-6 pt-10 pb-20 md:pt-16 md:pb-20
 </style>
