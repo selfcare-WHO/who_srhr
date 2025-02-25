@@ -50,9 +50,9 @@
 
   defineOptions({ name: 'CountryComparisonTable' })
 
-  const filtersStore = useFiltersStore()
-  const { filterValues } = storeToRefs(filtersStore)
-  const { filters } = filtersStore
+  const tableFiltersStore = useTableFiltersStore()
+  const { filterValues } = storeToRefs(tableFiltersStore)
+  const { filters } = tableFiltersStore
 
   const tooltipData = reactive<Data.IndicatorTooltipData>({})
   const showTooltip = ref(false)

@@ -27,5 +27,19 @@ declare global {
         id: string
       }
     }
+
+    // Type including the country relation
+    export type DataPointWithCountry = PrismaClient.DataPointGetPayload<{
+      include: { country: true }
+    }>
+
+    // Type for indicator with data points and country
+    export type IndicatorWithDataPoints = PrismaClient.IndicatorGetPayload<{
+      include: {
+        dataPoints: {
+          include: { country: true }
+        }
+      }
+    }>
   }
 }

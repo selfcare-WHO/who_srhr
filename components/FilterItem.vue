@@ -3,6 +3,7 @@
     v-if="tree"
     class="w-full mb-2"
     v-model="value"
+    ref="selectRef"
     tag-type="primary"
     tag-effect="dark"
     show-checkbox
@@ -21,8 +22,8 @@
     :multiple="multiple"
     :filterable="multiple"
     :data="options"
-    @check="!multiple && $emit('change')"
-    @change="!multiple && $emit('change')"
+    @check="onChange"
+    @change="onChange"
     @blur="multiple && $emit('blur')"
     @clear="$emit('clear')"
     @remove-tag="$emit('removeTag')"
@@ -34,6 +35,7 @@
     tag-type="primary"
     tag-effect="dark"
     v-model="value"
+    ref="selectRef"
     fit-input-width
     collapse-tags
     collapse-tags-tooltip
@@ -45,7 +47,7 @@
     :disabled="isFetchingFilters"
     :placeholder="placeholder || `All ${label}s`"
     :multiple="multiple"
-    @change="!multiple && $emit('change')"
+    @change="onChange"
     @blur="multiple && $emit('blur')"
     @clear="$emit('clear')"
     @remove-tag="$emit('removeTag')"
@@ -82,10 +84,19 @@
     size?: 'large' | 'small' | 'default'
   }>()
 
-  defineEmits<{
+  const emit = defineEmits<{
     blur: []
     clear: []
     removeTag: []
-    change: []
+    change: [string[] | string]
   }>()
+
+  const selectRef = ref()
+
+  function onChange(value: string[] | string) {
+    if (!multiple) {
+      emit('change', value)
+      selectRef.value?.blur()
+    }
+  }
 </script>

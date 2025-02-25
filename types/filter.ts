@@ -23,22 +23,24 @@ declare global {
       clearable: boolean
     }
 
-    type Values = {
+    type TableValues = {
       indicator: string[]
       country: string[]
       dataType: string
     }
 
     type ReadonlyValues = {
-      indicator: string[]
-      country: string[]
-      dataType: string
+      indicator?: string[]
+      country?: string[]
+      dataType?: string
     }
 
     type Options = {
-      domains: Prisma.Domain[]
-      indicators: Prisma.IndicatorWithSubgroups[]
-      countries: Prisma.Country[]
+      domains?: Prisma.Domain[]
+      indicators?: Prisma.IndicatorWithSubgroups[]
+      countries?: Prisma.Country[]
     }
+
+    type MapToggleFilter = 'heatmap' | 'targets'
   }
 }

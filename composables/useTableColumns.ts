@@ -5,8 +5,8 @@ import { ElIcon } from 'element-plus'
 import { createVNode, render } from 'vue'
 
 export const useTableColumns = () => {
-  const filtersStore = useFiltersStore()
-  const { filteredIndicators } = storeToRefs(filtersStore)
+  const tableFiltersStore = useTableFiltersStore()
+  const { filteredIndicators } = storeToRefs(tableFiltersStore)
 
   const createIndicatorColumns = (
     indicator: Prisma.IndicatorWithSubgroups
@@ -66,11 +66,7 @@ export const useTableColumns = () => {
         if (indicator.hasTarget && dataPoint?.change !== 'No target') {
           innerDiv.className = 'indicator-target-circle w-4 h-4 rounded-full'
 
-          const targetStatus = Object.values(TargetStatus).find(
-            status => status.dbValue === dataPoint?.change
-          )
-
-          innerDiv.style.backgroundColor = targetStatus?.color || ''
+          innerDiv.style.backgroundColor = getStatusColor(dataPoint?.change)
 
           element.appendChild(innerDiv)
         }

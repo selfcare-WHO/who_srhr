@@ -6,7 +6,7 @@ export default defineEventHandler(async (event: H3Event) => {
   const query = getQuery(event)
   const page = Number(query.page) || 1
   const size = Number(query.size) || 12
-  const filters = JSON.parse(query.filters as string) as Filter.Values
+  const filters = JSON.parse(query.filters as string) as Filter.TableValues
 
   const offset = (page - 1) * size
 

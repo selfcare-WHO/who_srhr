@@ -9,7 +9,7 @@ export const useNavigationStore = defineStore('Navigation', () => {
     { name: 'Home', path: '/' },
     { name: 'Country profiles', path: '/country-profiles' },
     ...(comparisonFeatureActive
-      ? [{ name: 'Country comparison', path: '/country-comparison/table' }]
+      ? [{ name: 'Country comparison', path: '/country-comparison/table-view' }]
       : []),
     { name: 'Indicators & data', path: '/indicators-data' }
   ])

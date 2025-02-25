@@ -6,11 +6,11 @@
 
       .flex.items-center.gap-3
         h2.text-secondary.mr-3 Select view:
-        NuxtLink(to="/country-comparison/map")
+        NuxtLink(to="/country-comparison/map-view")
           ElButton.w-32(type="primary" :plain="!mapView") Map
-        NuxtLink(to="/country-comparison/charts")
+        NuxtLink(to="/country-comparison/charts-view")
           ElButton.w-32(type="primary" :plain="!chartsView") Charts
-        NuxtLink(to="/country-comparison/table")
+        NuxtLink(to="/country-comparison/table-view")
           ElButton.w-32(type="primary" :plain="!tableView") Table
 
     NuxtPage.flex-1
@@ -24,14 +24,14 @@
   const route = useRoute()
 
   const mapView = computed(() => {
-    return route.path === '/country-comparison/map'
+    return route.path === '/country-comparison/map-view'
   })
 
   const chartsView = computed(() => {
-    return route.path === '/country-comparison/charts'
+    return route.path === '/country-comparison/charts-view'
   })
 
   const tableView = computed(() => {
-    return route.path === '/country-comparison/table'
+    return route.path === '/country-comparison/table-view'
   })
 </script>

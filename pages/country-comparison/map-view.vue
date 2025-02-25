@@ -1,5 +1,5 @@
 <template lang="pug">
-  .map-view(class="relative bg-page py-4 flex-1")
+  .map-view(class="relative bg-page py-4 flex-1" v-loading="isFetching")
     MapboxMap(
       ref="mapRef"
       class="h-full min-h-[80vh] rounded-lg"
@@ -15,11 +15,12 @@
 
       MapboxSource(
         source-id="who-world-features"
-        :source="WHOWorldShapefileSource"
+        :source="linkedFeaturesSource"
       )
       
       MapboxLayer(:layer="backgroundLayer")
       MapboxLayer(:layer="landLayer")
+      MapboxLayer(:layer="countriesLayer")
       MapboxLayer(:layer="admin0Layer")
       MapboxLayer(:layer="disputedTerritoriesLayer")
       MapboxLayer(:layer="disputedBordersLayer")
@@ -50,11 +51,6 @@
 </template>
 
 <script lang="ts" setup>
-  import type { GeoJSON } from 'geojson'
-  import WHOWorldGeoJSON from '~/assets/maps/general_2013.json'
-
-  defineOptions({ name: 'CountryComparisonMap' })
-
   import type {
     MapboxComponentOptions,
     MapboxInstancesObject
@@ -62,12 +58,42 @@
   import type {
     LayerSpecification,
     SourceSpecification,
-    DataDrivenPropertyValueSpecification,
-    GeoJSONSourceSpecification
+    DataDrivenPropertyValueSpecification
   } from 'mapbox-gl'
 
-  const filtersStore = useFiltersStore()
-  const { indicatorFilter } = storeToRefs(filtersStore)
+  definePageMeta({
+    name: 'CountryComparisonMap'
+  })
+
+  const mapFiltersStore = useMapFiltersStore()
+  const { indicatorFilter, indicatorFilterValue } = storeToRefs(mapFiltersStore)
+
+  const isFetching = ref(false)
+
+  const { data: mapData } = useFetch('/api/map-data', {
+    method: 'GET',
+    query: {
+      indicatorId: indicatorFilterValue
+    },
+    watch: [indicatorFilterValue],
+    immediate: false,
+    onRequest() {
+      isFetching.value = true
+    },
+    onResponse({ response }) {
+      response.ok && (isFetching.value = false)
+    }
+  })
+
+  const linkedGeoJSON = computed<GeoJSON.FeatureCollection>(() => ({
+    type: 'FeatureCollection',
+    features: mapData.value?.features || []
+  }))
+
+  const linkedFeaturesSource = computed<SourceSpecification>(() => ({
+    type: 'geojson',
+    data: linkedGeoJSON.value
+  }))
 
   const mapRef = ref<MapboxInstancesObject>()
 
@@ -90,16 +116,12 @@
     attributionControl: false
   }
 
+  const tilesUrl =
+    'https://tiles.arcgis.com/tiles/5T5nSi527N4F7luB/arcgis/rest/services/WHO_Polygon_Basemap_with_labels_VTP/VectorTileServer/tile/{z}/{y}/{x}.pbf'
+
   const WHOWorldBasemapSource: SourceSpecification = {
     type: 'vector',
-    tiles: [
-      'https://tiles.arcgis.com/tiles/5T5nSi527N4F7luB/arcgis/rest/services/WHO_Polygon_Basemap_with_labels_VTP/VectorTileServer/tile/{z}/{y}/{x}.pbf'
-    ]
-  }
-
-  const WHOWorldShapefileSource: GeoJSONSourceSpecification = {
-    type: 'geojson',
-    data: WHOWorldGeoJSON as unknown as GeoJSON
+    tiles: [tilesUrl]
   }
 
   const backgroundLayer: LayerSpecification = {
@@ -118,7 +140,7 @@
     source: 'who-world-basemap',
     'source-layer': 'Land (ADM0)',
     paint: {
-      'fill-color': '#F2F2F2'
+      'fill-color': parseCssVar('--el-bg-color-none')
     }
   }
 
@@ -141,7 +163,25 @@
     type: 'fill',
     source: 'who-world-features',
     paint: {
-      'fill-color': 'red'
+      'fill-opacity': [
+        'case',
+        ['boolean', ['feature-state', 'hover'], false],
+        1,
+        0.75
+      ],
+      'fill-color': [
+        'case',
+        ['==', ['get', 'change'], 'Achieved'],
+        getStatusColor('Achieved'),
+        ['==', ['get', 'change'], 'Challenges remain'],
+        getStatusColor('Challenges remain'),
+        ['==', ['get', 'change'], 'Major challenges remain'],
+        getStatusColor('Major challenges remain'),
+        ['==', ['get', 'change'], 'Data not available '],
+        getStatusColor('Data not available'),
+        // fallback color
+        getStatusColor('Data not available')
+      ]
     }
   }
 
@@ -196,25 +236,23 @@
     'source-layer': 'Country Names/label',
     minzoom: 1,
     layout: {
-      'text-font': ['Oswald Light'],
-      'text-size': 14,
+      'text-font': ['Oswald Regular'],
+      'text-size': 16,
       'text-field': '{_name}',
       'text-optional': true
     },
     paint: {
       'text-color': '#686868',
       'text-halo-color': '#FFFFFF',
-      'text-halo-width': 1
+      'text-halo-width': 2
     }
   }
 
   useMapbox('world-map', mapInstance => {
     mapInstance.on('load', () => {
-      const features = mapInstance.querySourceFeatures('who-world-features', {
-        sourceLayer: 'Admin2 Names/label'
-      })
-
-      console.log(features)
+      // const features = mapInstance.querySourceFeatures('who-world-features', {
+      //   sourceLayer: 'Admin2 Names/label'
+      // })
     })
   })
 </script>
