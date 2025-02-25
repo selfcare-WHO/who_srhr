@@ -71,37 +71,43 @@ export const useFiltersStore = defineStore('Filters', () => {
     country: countryFilterValue.value
   }))
 
-  const filters: Filter.Item[] = [
-    {
-      key: 'dataType',
-      label: 'Data Type',
-      value: dataTypeFilterValue,
-      tree: false,
-      multiple: false,
-      clearable: false,
-      options: dataTypeOptions
-    },
-    {
-      key: 'indicator',
-      childrenKey: 'indicator',
-      label: 'Indicator',
-      placeholder: 'All Domains / Indicators',
-      value: indicatorFilterValue,
-      tree: true,
-      multiple: true,
-      clearable: true,
-      options: indicatorOptions
-    },
-    {
-      key: 'country',
-      label: 'Country',
-      placeholder: 'All Countries',
-      value: countryFilterValue,
-      multiple: true,
-      clearable: true,
-      options: countryOptions
-    }
-  ]
+  const dataTypeFilter = reactive<Filter.Item>({
+    key: 'dataType',
+    label: 'Data Type',
+    value: dataTypeFilterValue,
+    tree: false,
+    multiple: false,
+    clearable: false,
+    options: dataTypeOptions
+  })
+
+  const indicatorFilter = reactive<Filter.Item>({
+    key: 'indicator',
+    childrenKey: 'indicator',
+    label: 'Indicator',
+    placeholder: 'All Domains / Indicators',
+    value: indicatorFilterValue,
+    tree: true,
+    multiple: true,
+    clearable: true,
+    options: indicatorOptions
+  })
+
+  const countryFilter = reactive<Filter.Item>({
+    key: 'country',
+    label: 'Country',
+    placeholder: 'All Countries',
+    value: countryFilterValue,
+    multiple: true,
+    clearable: true,
+    options: countryOptions
+  })
+
+  const filters = reactive<Filter.Item[]>([
+    dataTypeFilter,
+    indicatorFilter,
+    countryFilter
+  ])
 
   const filteredIndicators = computed<Prisma.IndicatorWithSubgroups[]>(() => {
     return indicators.value.filter(indicator => {
@@ -142,6 +148,7 @@ export const useFiltersStore = defineStore('Filters', () => {
   return {
     isFetchingFilters,
     filters,
+    indicatorFilter,
     filterValues,
     fetchFilterOptions,
     fetchedFilters,

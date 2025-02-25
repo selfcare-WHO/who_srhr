@@ -62,8 +62,15 @@ export default {
       },
 
       backgroundColor: {
-        page: 'var(--el-bg-color-page)'
+        page: 'var(--el-bg-color-page)',
+        secondary: 'var(--el-bg-color-secondary)'
       }
+    }
+  },
+
+  variants: {
+    extend: {
+      backgroundOpacity: ['active']
     }
   },
 

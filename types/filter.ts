@@ -15,12 +15,12 @@ declare global {
       key: K
       label: Label
       placeholder?: string
-      value: MaybeRef<string[] | string>
-      options: ComputedRef<Option[]>
-      multiple: MaybeRef<boolean>
-      tree?: MaybeRef<boolean>
+      value: MaybeRef<string> | MaybeRef<string[]>
+      options: MaybeRef<Option[]>
+      multiple: boolean
+      tree?: boolean
       childrenKey?: Key
-      clearable: MaybeRef<boolean>
+      clearable: boolean
     }
 
     type Values = {

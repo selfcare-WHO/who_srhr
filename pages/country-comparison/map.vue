@@ -1,8 +1,8 @@
 <template lang="pug">
-  .map-view(class="bg-page py-4 flex-1")
+  .map-view(class="relative bg-page py-4 flex-1")
     MapboxMap(
       ref="mapRef"
-      class="h-full relative min-h-[75vh] rounded-lg"
+      class="h-full min-h-[80vh] rounded-lg"
       map-id="world-map"
       :options="mapOptions"
       @wheel="() => {}"
@@ -12,33 +12,80 @@
         source-id="who-world-basemap"
         :source="WHOWorldBasemapSource"
       )
+
+      MapboxSource(
+        source-id="who-world-features"
+        :source="WHOWorldShapefileSource"
+      )
       
       MapboxLayer(:layer="backgroundLayer")
       MapboxLayer(:layer="landLayer")
       MapboxLayer(:layer="admin0Layer")
       MapboxLayer(:layer="disputedTerritoriesLayer")
       MapboxLayer(:layer="disputedBordersLayer")
-      //- MapboxLayer(:layer="countryNamesLayer")
+      MapboxLayer(:layer="countryNamesLayer")
+
+      div(class="absolute top-[80px] left-[50px] w-[285px] rounded-lg bg-secondary bg-opacity-20 p-4")
+        ElForm(
+          class="flex gap-6"
+          #default
+          label-position="top"
+        )
+          ElFormItem(
+            class="w-full"
+            label="Indicator"
+          )
+            FilterItem(
+              v-model="indicatorFilter.value"
+              :options="indicatorFilter.options"
+              :label="indicatorFilter.label"
+              :multiple="!!indicatorFilter?.multiple"
+              :tree="indicatorFilter.tree"
+              :placeholder="indicatorFilter.placeholder"
+              :clearable="!!indicatorFilter?.clearable"
+            )
+      
+
+
 </template>
 
 <script lang="ts" setup>
+  import type { GeoJSON } from 'geojson'
+  import WHOWorldGeoJSON from '~/assets/maps/general_2013.json'
+
   defineOptions({ name: 'CountryComparisonMap' })
 
   import type {
     MapboxComponentOptions,
     MapboxInstancesObject
   } from 'nuxt-mapbox'
-  import type { LayerSpecification, SourceSpecification } from 'mapbox-gl'
+  import type {
+    LayerSpecification,
+    SourceSpecification,
+    DataDrivenPropertyValueSpecification,
+    GeoJSONSourceSpecification
+  } from 'mapbox-gl'
 
-  import {} from 'nuxt-mapbox'
+  const filtersStore = useFiltersStore()
+  const { indicatorFilter } = storeToRefs(filtersStore)
 
   const mapRef = ref<MapboxInstancesObject>()
 
   const mapOptions: MapboxComponentOptions = {
-    center: [0, 0],
-
-    zoom: 2,
-    maxZoom: 8.5,
+    center: [20, 20],
+    maxBounds: [
+      [-200, -70],
+      [200, 80]
+    ],
+    style: {
+      version: 8,
+      sources: {},
+      layers: [],
+      glyphs: 'mapbox://fonts/mapbox/{fontstack}/{range}.pbf'
+    },
+    zoom: 1.5,
+    maxZoom: 4,
+    minZoom: 1,
     projection: 'mercator',
     attributionControl: false
   }
@@ -50,13 +97,18 @@
     ]
   }
 
+  const WHOWorldShapefileSource: GeoJSONSourceSpecification = {
+    type: 'geojson',
+    data: WHOWorldGeoJSON as unknown as GeoJSON
+  }
+
   const backgroundLayer: LayerSpecification = {
     id: 'background',
     type: 'fill',
     source: 'who-world-basemap',
     'source-layer': 'Background_VTP',
     paint: {
-      'fill-color': '#E8E9EC'
+      'fill-color': '#FFFFFF'
     }
   }
 
@@ -66,7 +118,30 @@
     source: 'who-world-basemap',
     'source-layer': 'Land (ADM0)',
     paint: {
-      'fill-color': '#FFFFFF'
+      'fill-color': '#F2F2F2'
+    }
+  }
+
+  const lineWidth: DataDrivenPropertyValueSpecification<number> = [
+    'interpolate',
+    ['linear'],
+    ['zoom'],
+    0,
+    1.5,
+    4,
+    2,
+    8,
+    3,
+    12,
+    4
+  ]
+
+  const countriesLayer: LayerSpecification = {
+    id: 'countries',
+    type: 'fill',
+    source: 'who-world-features',
+    paint: {
+      'fill-color': 'red'
     }
   }
 
@@ -81,20 +156,8 @@
       'line-join': 'round'
     },
     paint: {
-      'line-color': '#828282',
-      'line-width': [
-        'interpolate',
-        ['linear'],
-        ['zoom'],
-        0,
-        0.133333,
-        7,
-        1.33333,
-        12,
-        2.66667,
-        18,
-        8
-      ]
+      'line-color': '#FFFFFF',
+      'line-width': lineWidth
     }
   }
 
@@ -122,19 +185,7 @@
     paint: {
       'line-color': '#828282',
       'line-dasharray': [0.1, 2.5],
-      'line-width': [
-        'interpolate',
-        ['linear'],
-        ['zoom'],
-        0,
-        0.133333,
-        4,
-        1.33333,
-        8,
-        2.66667,
-        12,
-        4
-      ]
+      'line-width': lineWidth
     }
   }
 
@@ -145,8 +196,8 @@
     'source-layer': 'Country Names/label',
     minzoom: 1,
     layout: {
-      'text-font': ['Arial Regular'],
-      'text-size': 13.3333,
+      'text-font': ['Oswald Light'],
+      'text-size': 14,
       'text-field': '{_name}',
       'text-optional': true
     },
@@ -157,8 +208,15 @@
     }
   }
 
-  // useMapbox('world-map', mapInstance => {
-  // })
+  useMapbox('world-map', mapInstance => {
+    mapInstance.on('load', () => {
+      const features = mapInstance.querySourceFeatures('who-world-features', {
+        sourceLayer: 'Admin2 Names/label'
+      })
+
+      console.log(features)
+    })
+  })
 </script>
 
 <style lang="sass" scoped></style>
