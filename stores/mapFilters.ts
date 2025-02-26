@@ -4,13 +4,15 @@ export const useMapFiltersStore = defineStore('TableFilters', () => {
   const filtersStore = useFiltersStore()
   const { indicators, domains, isFetchingFilters } = storeToRefs(filtersStore)
 
-  const dataTypeOptions = computed<Filter.Option[]>(() => [
+  const dataTypeOptions = computed<Filter.MapToggleFilterOption[]>(() => [
     {
       id: 'heatmap',
+      value: false,
       name: 'Heatmap'
     },
     {
       id: 'targets',
+      value: true,
       name: 'Targets'
     }
   ])
@@ -23,7 +25,7 @@ export const useMapFiltersStore = defineStore('TableFilters', () => {
         .filter(indicator => {
           const belongsToDomain = indicator.domainId === domain.id
 
-          if (dataTypeFilterValue.value === 'targets') {
+          if (dataTypeFilterValue.value) {
             return belongsToDomain && indicator.hasTarget
           } else {
             return belongsToDomain && !indicator.hasTarget
@@ -51,10 +53,8 @@ export const useMapFiltersStore = defineStore('TableFilters', () => {
     }, [])
   })
 
-  const dataTypeFilterValue = ref<Filter.MapToggleFilter>('targets')
+  const dataTypeFilterValue = ref<boolean>(true)
   const indicatorFilterValue = ref<string>('')
-
-  const dataTypeFilter = ref<Filter.MapToggleFilter>('targets')
 
   const indicatorFilter = reactive<Filter.Item>({
     key: 'indicator',
@@ -67,22 +67,21 @@ export const useMapFiltersStore = defineStore('TableFilters', () => {
     options: indicatorOptions
   })
 
-  watch(dataTypeFilterValue, () => {
-    indicatorFilterValue.value = ''
-  })
-
-  watch(isFetchingFilters, val => {
-    if (!val)
-      indicatorFilterValue.value = String(
-        indicatorOptions.value[0]?.children?.[0]?.id
+  const currentIndicator = computed<Prisma.IndicatorWithSubgroups | undefined>(
+    () =>
+      indicators.value.find(
+        indicator => indicator.id === indicatorFilterValue.value
       )
-  })
+  )
 
+  watch(indicatorOptions, val => {
+    indicatorFilterValue.value = String(val[0]?.children?.[0]?.id)
+  })
   return {
     dataTypeOptions,
-    dataTypeFilter,
     indicatorFilter,
     dataTypeFilterValue,
-    indicatorFilterValue
+    indicatorFilterValue,
+    currentIndicator
   }
 })

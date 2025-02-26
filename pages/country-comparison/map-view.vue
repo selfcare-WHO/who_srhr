@@ -1,5 +1,5 @@
 <template lang="pug">
-  .map-view(class="relative bg-page py-4 flex-1" v-loading="isFetching")
+  .map-view(class="relative min-h-[80vh] bg-page my-4 flex-1" v-loading="isFetching")
     MapboxMap(
       ref="mapRef"
       class="h-full min-h-[80vh] rounded-lg"
@@ -26,27 +26,8 @@
       MapboxLayer(:layer="disputedBordersLayer")
       MapboxLayer(:layer="countryNamesLayer")
 
-      div(class="absolute top-[80px] left-[50px] w-[285px] rounded-lg bg-secondary bg-opacity-20 p-4")
-        ElForm(
-          class="flex gap-6"
-          #default
-          label-position="top"
-        )
-          ElFormItem(
-            class="w-full"
-            label="Indicator"
-          )
-            FilterItem(
-              v-model="indicatorFilter.value"
-              :options="indicatorFilter.options"
-              :label="indicatorFilter.label"
-              :multiple="!!indicatorFilter?.multiple"
-              :tree="indicatorFilter.tree"
-              :placeholder="indicatorFilter.placeholder"
-              :clearable="!!indicatorFilter?.clearable"
-            )
-      
-
+    MapFilters
+    MapLegend
 
 </template>
 
@@ -66,24 +47,28 @@
   })
 
   const mapFiltersStore = useMapFiltersStore()
-  const { indicatorFilter, indicatorFilterValue } = storeToRefs(mapFiltersStore)
+  const { indicatorFilterValue } = storeToRefs(mapFiltersStore)
 
   const isFetching = ref(false)
 
-  const { data: mapData } = useFetch('/api/map-data', {
-    method: 'GET',
-    query: {
-      indicatorId: indicatorFilterValue
-    },
-    watch: [indicatorFilterValue],
-    immediate: false,
-    onRequest() {
+  const { data: mapData } = useAsyncData<Map.DataPoints | null>(
+    '/api/map-data',
+    async () => {
+      if (!indicatorFilterValue.value) return Promise.resolve(null)
+
       isFetching.value = true
+      const data = await $fetch('/api/map-data', {
+        query: { indicatorId: indicatorFilterValue.value }
+      })
+      isFetching.value = false
+
+      return data
     },
-    onResponse({ response }) {
-      response.ok && (isFetching.value = false)
+    {
+      watch: [indicatorFilterValue],
+      immediate: false
     }
-  })
+  )
 
   const linkedGeoJSON = computed<GeoJSON.FeatureCollection>(() => ({
     type: 'FeatureCollection',
@@ -92,7 +77,8 @@
 
   const linkedFeaturesSource = computed<SourceSpecification>(() => ({
     type: 'geojson',
-    data: linkedGeoJSON.value
+    data: linkedGeoJSON.value,
+    tolerance: 0.5
   }))
 
   const mapRef = ref<MapboxInstancesObject>()
@@ -247,14 +233,6 @@
       'text-halo-width': 2
     }
   }
-
-  useMapbox('world-map', mapInstance => {
-    mapInstance.on('load', () => {
-      // const features = mapInstance.querySourceFeatures('who-world-features', {
-      //   sourceLayer: 'Admin2 Names/label'
-      // })
-    })
-  })
 </script>
 
 <style lang="sass" scoped></style>

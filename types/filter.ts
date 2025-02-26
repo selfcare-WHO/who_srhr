@@ -41,6 +41,10 @@ declare global {
       countries?: Prisma.Country[]
     }
 
-    type MapToggleFilter = 'heatmap' | 'targets'
+    type MapToggleFilterOption = {
+      id: 'heatmap' | 'targets'
+      value: boolean
+      name: string
+    }
   }
 }
