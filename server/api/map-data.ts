@@ -31,12 +31,9 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
           ...feature,
           properties: {
             ...feature.properties,
-            ...(dataPoint?.id && {
-              dataPointId: dataPoint?.id.toString()
-            }),
-            ...(dataPoint?.change && {
-              change: dataPoint?.change
-            })
+            dataPointId: dataPoint?.id.toString(),
+            change: dataPoint?.change,
+            originalValue: dataPoint?.originalValue
           }
         }
       }

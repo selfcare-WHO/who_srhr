@@ -1,6 +1,6 @@
 import type { ColumnDefinition } from 'tabulator-tables'
-import { TargetStatus, ImpactOnSrhr } from '@enums'
-import StringMask from 'string-mask'
+import { ImpactOnSrhr } from '@enums'
+
 import { ElIcon } from 'element-plus'
 import { createVNode, render } from 'vue'
 
@@ -101,7 +101,7 @@ export const useTableColumns = () => {
         const numberElement = document.createElement('span')
 
         numberElement.className = 'indicator-progress-value flex-1 min-w-0'
-        numberElement.textContent = getFormattedValue({ indicator, dataPoint })
+        numberElement.textContent = formatData({ indicator, dataPoint })
         numberElement.id = `indicator-progress-value-${indicator.id}-${subgroup.id}-${dataPoint.countryId}`
 
         element.appendChild(numberElement)
@@ -112,47 +112,6 @@ export const useTableColumns = () => {
       }
     }))
   })
-
-  const getFormattedValue = ({
-    indicator,
-    dataPoint
-  }: {
-    indicator: Prisma.IndicatorWithSubgroups
-    dataPoint: Prisma.DataPoint
-  }): string => {
-    const { type, translateValue, displayValue, mask } = indicator || {}
-    const { value, originalValue } = dataPoint || {}
-    const renderedValue =
-      displayValue === 'original_value' ? originalValue : value
-
-    const postfix = type === 'Percentage' ? '%' : ''
-
-    if (
-      renderedValue === null ||
-      renderedValue === undefined ||
-      renderedValue === ''
-    )
-      return 'n/d'
-
-    if (translateValue) {
-      const translateObject = JSON.parse(translateValue)
-
-      if (translateObject[renderedValue]) {
-        const translatedValue = translateObject[renderedValue]
-        return `${translatedValue}${postfix}`
-      }
-    }
-
-    if (mask) {
-      const maskedValue = StringMask.apply(renderedValue, mask, {
-        reverse: true
-      })
-
-      return `${maskedValue}${postfix}`
-    }
-
-    return `${renderedValue}${postfix}`
-  }
 
   const columns = computed((): ColumnDefinition[] => {
     const baseColumns: ColumnDefinition[] = [

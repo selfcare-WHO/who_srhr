@@ -26,8 +26,20 @@
       MapboxLayer(:layer="disputedBordersLayer")
       MapboxLayer(:layer="countryNamesLayer")
 
-    MapFilters
-    MapLegend
+      MapboxAttributionControl(
+        :options="{ compact: true }"
+        position="top-right"
+      )
+
+    MapFilters(class="absolute top-[20px] left-[20px]")
+
+    MapLegend(
+      class="absolute bottom-[20px] left-[20px]"
+      :min-value="dataMinValue"
+      :max-value="dataMaxValue"
+      :current-indicator="currentIndicator"
+      :data-type="dataTypeFilterValue"
+    )
 
 </template>
 
@@ -47,7 +59,8 @@
   })
 
   const mapFiltersStore = useMapFiltersStore()
-  const { indicatorFilterValue } = storeToRefs(mapFiltersStore)
+  const { indicatorFilterValue, dataTypeFilterValue, currentIndicator } =
+    storeToRefs(mapFiltersStore)
 
   const isFetching = ref(false)
 
@@ -99,7 +112,6 @@
     maxZoom: 4,
     minZoom: 1,
     projection: 'mercator',
-    attributionControl: false
   }
 
   const tilesUrl =
@@ -144,32 +156,76 @@
     4
   ]
 
-  const countriesLayer: LayerSpecification = {
+  const targetsPaint: LayerSpecification['paint'] = {
+    'fill-opacity': [
+      'case',
+      ['boolean', ['feature-state', 'hover'], false],
+      1,
+      0.75
+    ],
+    'fill-color': [
+      'case',
+      ['==', ['get', 'change'], 'Achieved'],
+      getStatusColor('Achieved'),
+      ['==', ['get', 'change'], 'Challenges remain'],
+      getStatusColor('Challenges remain'),
+      ['==', ['get', 'change'], 'Major challenges remain'],
+      getStatusColor('Major challenges remain'),
+      ['==', ['get', 'change'], 'Data not available '],
+      getStatusColor('Data not available'),
+      // fallback color
+      getStatusColor('Data not available')
+    ]
+  }
+
+  const dataMinValue = computed(() => {
+    if (!mapData.value?.features?.length) return 0
+
+    const values = mapData.value.features
+      .map(feature => feature.properties?.originalValue)
+      .filter(val => val !== undefined && val !== null)
+
+    return values.length ? Math.min(...values) : 0
+  })
+
+  const dataMaxValue = computed(() => {
+    if (!mapData.value?.features?.length) return 6
+
+    const values = mapData.value.features
+      .map(feature => feature.properties?.originalValue)
+      .filter(val => val !== undefined && val !== null)
+
+    return values.length ? Math.max(...values) : 6
+  })
+
+  const heatmapPaint = computed<LayerSpecification['paint']>(() => ({
+    'fill-color': [
+      'interpolate',
+      ['linear'],
+      ['to-number', ['get', 'originalValue']],
+      dataMinValue.value,
+      parseCssVar('--el-bg-color-heatmap-min'),
+      dataMaxValue.value,
+      parseCssVar('--el-bg-color-heatmap-max')
+    ]
+  }))
+
+  const countriesPaint = computed<LayerSpecification['paint']>(() => {
+    if (dataTypeFilterValue.value === 'targets') return targetsPaint
+    if (dataTypeFilterValue.value === 'nominal') return targetsPaint
+    if (dataTypeFilterValue.value === 'heatmap') return heatmapPaint.value
+
+    return {}
+  })
+
+  const countriesLayer = computed<LayerSpecification>(() => ({
     id: 'countries',
     type: 'fill',
     source: 'who-world-features',
     paint: {
-      'fill-opacity': [
-        'case',
-        ['boolean', ['feature-state', 'hover'], false],
-        1,
-        0.75
-      ],
-      'fill-color': [
-        'case',
-        ['==', ['get', 'change'], 'Achieved'],
-        getStatusColor('Achieved'),
-        ['==', ['get', 'change'], 'Challenges remain'],
-        getStatusColor('Challenges remain'),
-        ['==', ['get', 'change'], 'Major challenges remain'],
-        getStatusColor('Major challenges remain'),
-        ['==', ['get', 'change'], 'Data not available '],
-        getStatusColor('Data not available'),
-        // fallback color
-        getStatusColor('Data not available')
-      ]
+      ...countriesPaint.value
     }
-  }
+  }))
 
   const admin0Layer: LayerSpecification = {
     id: 'admin-0',
@@ -235,4 +291,8 @@
   }
 </script>
 
-<style lang="sass" scoped></style>
+<style lang="sass">
+  .map-view
+    .mapboxgl-ctrl-logo
+      display: none !important
+</style>

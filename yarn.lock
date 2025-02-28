@@ -1896,6 +1896,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@prettier/plugin-pug@npm:^3.2.1":
+  version: 3.2.1
+  resolution: "@prettier/plugin-pug@npm:3.2.1"
+  dependencies:
+    pug-lexer: "npm:^5.0.1"
+  peerDependencies:
+    prettier: ^3.0.0
+  checksum: 10c0/f361496e1669e308e1e74b3de2f524ba92364904142b23cf496bc26531f8cab3ccea965d0cb32b6272656c0415f0dbfe422aa6dc844f56f89cbdbdc815899390
+  languageName: node
+  linkType: hard
+
 "@prisma/client@npm:^5.22.0":
   version: 5.22.0
   resolution: "@prisma/client@npm:5.22.0"
@@ -4667,6 +4678,13 @@ __metadata:
   version: 1.2.2
   resolution: "didyoumean@npm:1.2.2"
   checksum: 10c0/95d0b53d23b851aacff56dfadb7ecfedce49da4232233baecfeecb7710248c4aa03f0aa8995062f0acafaf925adf8536bd7044a2e68316fd7d411477599bc27b
+  languageName: node
+  linkType: hard
+
+"diff@npm:5.1.0":
+  version: 5.1.0
+  resolution: "diff@npm:5.1.0"
+  checksum: 10c0/77a0d9beb9ed54796154ac2511872288432124ac90a1cabb1878783c9b4d81f1847f3b746a0630b1e836181461d2c76e1e6b95559bef86ed16294d114862e364
   languageName: node
   linkType: hard
 
@@ -9007,6 +9025,100 @@ __metadata:
   languageName: node
   linkType: hard
 
+"prettier-plugin-classnames@npm:^0.7.6":
+  version: 0.7.6
+  resolution: "prettier-plugin-classnames@npm:0.7.6"
+  peerDependencies:
+    prettier: ^2 || ^3
+    prettier-plugin-astro: "*"
+    prettier-plugin-svelte: "*"
+  peerDependenciesMeta:
+    prettier-plugin-astro:
+      optional: true
+    prettier-plugin-svelte:
+      optional: true
+  checksum: 10c0/97c9d168e688842764b9ab57cf839b2c0862d089f31290abefb2ea1a89cba5525394ef9a7114badcbffbd5c87439ba90435ccbe09bedd8de7bd029592fe04d1c
+  languageName: node
+  linkType: hard
+
+"prettier-plugin-merge@npm:^0.7.2":
+  version: 0.7.2
+  resolution: "prettier-plugin-merge@npm:0.7.2"
+  dependencies:
+    diff: "npm:5.1.0"
+  peerDependencies:
+    prettier: ^2 || ^3
+  checksum: 10c0/f78b91ad8164d365f8e088080ce59056b9ada79b0878e1f2864856ae159d39d2b4c297eeb869e6e40f0f7d02bc17cb0e32152b18918074b2aee866903f5649d2
+  languageName: node
+  linkType: hard
+
+"prettier-plugin-tailwindcss@npm:^0.6.11":
+  version: 0.6.11
+  resolution: "prettier-plugin-tailwindcss@npm:0.6.11"
+  peerDependencies:
+    "@ianvs/prettier-plugin-sort-imports": "*"
+    "@prettier/plugin-pug": "*"
+    "@shopify/prettier-plugin-liquid": "*"
+    "@trivago/prettier-plugin-sort-imports": "*"
+    "@zackad/prettier-plugin-twig": "*"
+    prettier: ^3.0
+    prettier-plugin-astro: "*"
+    prettier-plugin-css-order: "*"
+    prettier-plugin-import-sort: "*"
+    prettier-plugin-jsdoc: "*"
+    prettier-plugin-marko: "*"
+    prettier-plugin-multiline-arrays: "*"
+    prettier-plugin-organize-attributes: "*"
+    prettier-plugin-organize-imports: "*"
+    prettier-plugin-sort-imports: "*"
+    prettier-plugin-style-order: "*"
+    prettier-plugin-svelte: "*"
+  peerDependenciesMeta:
+    "@ianvs/prettier-plugin-sort-imports":
+      optional: true
+    "@prettier/plugin-pug":
+      optional: true
+    "@shopify/prettier-plugin-liquid":
+      optional: true
+    "@trivago/prettier-plugin-sort-imports":
+      optional: true
+    "@zackad/prettier-plugin-twig":
+      optional: true
+    prettier-plugin-astro:
+      optional: true
+    prettier-plugin-css-order:
+      optional: true
+    prettier-plugin-import-sort:
+      optional: true
+    prettier-plugin-jsdoc:
+      optional: true
+    prettier-plugin-marko:
+      optional: true
+    prettier-plugin-multiline-arrays:
+      optional: true
+    prettier-plugin-organize-attributes:
+      optional: true
+    prettier-plugin-organize-imports:
+      optional: true
+    prettier-plugin-sort-imports:
+      optional: true
+    prettier-plugin-style-order:
+      optional: true
+    prettier-plugin-svelte:
+      optional: true
+  checksum: 10c0/e5688a86f457b4eaa682d83a86702826d2d828db4cfc153b8b1f0b8409c94530a4bde8deb3e819497ba8e4bd0eda08ed55468a41a8138f82db43d633cf332121
+  languageName: node
+  linkType: hard
+
+"prettier@npm:^3.5.2":
+  version: 3.5.2
+  resolution: "prettier@npm:3.5.2"
+  bin:
+    prettier: bin/prettier.cjs
+  checksum: 10c0/d7b597ed33f39c32ace675896ad187f06a3e48dc8a1e80051b5c5f0dae3586d53981704b8fda5ac3b080e6c2e0e197d239131b953702674f044351621ca5e1ac
+  languageName: node
+  linkType: hard
+
 "pretty-bytes@npm:^6.1.1":
   version: 6.1.1
   resolution: "pretty-bytes@npm:6.1.1"
@@ -11789,6 +11901,7 @@ __metadata:
     "@nuxt/image": "npm:^1.8.1"
     "@nuxtjs/tailwindcss": "npm:^6.12.2"
     "@pinia/nuxt": "npm:^0.5.1"
+    "@prettier/plugin-pug": "npm:^3.2.1"
     "@prisma/client": "npm:^5.22.0"
     "@tailwindcss/typography": "npm:^0.5.15"
     "@types/node": "npm:^22.9.0"
@@ -11802,6 +11915,10 @@ __metadata:
     nuxt-gtag: "npm:3.0.2"
     nuxt-mapbox: "npm:1.6.2"
     nuxt-svgo: "npm:4.0.9"
+    prettier: "npm:^3.5.2"
+    prettier-plugin-classnames: "npm:^0.7.6"
+    prettier-plugin-merge: "npm:^0.7.2"
+    prettier-plugin-tailwindcss: "npm:^0.6.11"
     prisma: "npm:^5.22.0"
     pug: "npm:^3.0.3"
     sass: "npm:^1.69.5"

@@ -2,17 +2,19 @@ import { defineStore } from 'pinia'
 
 export const useMapFiltersStore = defineStore('TableFilters', () => {
   const filtersStore = useFiltersStore()
-  const { indicators, domains, isFetchingFilters } = storeToRefs(filtersStore)
+  const { indicators, domains } = storeToRefs(filtersStore)
 
-  const dataTypeOptions = computed<Filter.MapToggleFilterOption[]>(() => [
+  const dataTypeOptions = computed<Filter.MapDataTypeOption[]>(() => [
     {
       id: 'heatmap',
-      value: false,
       name: 'Heatmap'
     },
     {
+      id: 'nominal',
+      name: 'Nominal'
+    },
+    {
       id: 'targets',
-      value: true,
       name: 'Targets'
     }
   ])
@@ -23,12 +25,12 @@ export const useMapFiltersStore = defineStore('TableFilters', () => {
     return domains.value.reduce<Filter.Option[]>((acc, domain) => {
       const filteredIndicators = indicators.value
         .filter(indicator => {
-          const belongsToDomain = indicator.domainId === domain.id
-
-          if (dataTypeFilterValue.value) {
-            return belongsToDomain && indicator.hasTarget
-          } else {
-            return belongsToDomain && !indicator.hasTarget
+          if (!indicator.mapView || indicator.domainId !== domain.id) return false
+          
+          switch (dataTypeFilterValue.value) {
+            case 'targets': return indicator.hasTarget
+            case 'nominal': return indicator.type === 'Nominal'
+            default: return !indicator.hasTarget && indicator.type !== 'Nominal'
           }
         })
         .map(indicator => ({
@@ -53,7 +55,7 @@ export const useMapFiltersStore = defineStore('TableFilters', () => {
     }, [])
   })
 
-  const dataTypeFilterValue = ref<boolean>(true)
+  const dataTypeFilterValue = ref<Filter.MapDataType>('heatmap')
   const indicatorFilterValue = ref<string>('')
 
   const indicatorFilter = reactive<Filter.Item>({
