@@ -22,7 +22,7 @@
             :clearable="!!filter?.clearable"
           )
 
-      KeySection(:dataType="filterValues.dataType")
+      TableKeySection(:dataType="filterValues?.dataType")
 
       div(class="table-wrapper relative min-h-[700px]")
         div(ref="tableElement")
