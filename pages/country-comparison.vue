@@ -14,7 +14,6 @@
           ElButton.w-32(type="primary" :plain="!chartsView") Charts
         NuxtLink(to="/country-comparison/table-view")
           ElButton.w-32(type="primary" :plain="!tableView") Table
-
     NuxtPage.flex-1(v-if="isDesktop")
 </template>
 

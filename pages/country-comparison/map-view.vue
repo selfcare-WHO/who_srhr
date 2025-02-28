@@ -59,40 +59,48 @@
   })
 
   const mapFiltersStore = useMapFiltersStore()
-  const { indicatorFilterValue, dataTypeFilterValue, currentIndicator } =
-    storeToRefs(mapFiltersStore)
+  const {
+    indicatorFilterValue,
+    dataTypeFilterValue,
+    currentIndicator
+  } = storeToRefs(mapFiltersStore)
 
   const isFetching = ref(false)
 
-  const { data: mapData } = useAsyncData<Map.DataPoints | null>(
-    '/api/map-data',
-    async () => {
-      if (!indicatorFilterValue.value) return Promise.resolve(null)
+  const { data: mapData } =
+    useAsyncData<Map.DataPoints | null>(
+      '/api/map-data',
+      async () => {
+        if (!indicatorFilterValue.value)
+          return Promise.resolve(null)
 
-      isFetching.value = true
-      const data = await $fetch('/api/map-data', {
-        query: { indicatorId: indicatorFilterValue.value }
-      })
-      isFetching.value = false
+        isFetching.value = true
+        const data = await $fetch('/api/map-data', {
+          query: { indicatorId: indicatorFilterValue.value }
+        })
+        isFetching.value = false
 
-      return data
-    },
-    {
-      watch: [indicatorFilterValue],
-      immediate: false
-    }
+        return data
+      },
+      {
+        watch: [indicatorFilterValue],
+        immediate: false
+      }
+    )
+
+  const linkedGeoJSON = computed<GeoJSON.FeatureCollection>(
+    () => ({
+      type: 'FeatureCollection',
+      features: mapData.value?.features || []
+    })
   )
 
-  const linkedGeoJSON = computed<GeoJSON.FeatureCollection>(() => ({
-    type: 'FeatureCollection',
-    features: mapData.value?.features || []
-  }))
-
-  const linkedFeaturesSource = computed<SourceSpecification>(() => ({
-    type: 'geojson',
-    data: linkedGeoJSON.value,
-    tolerance: 0.5
-  }))
+  const linkedFeaturesSource =
+    computed<SourceSpecification>(() => ({
+      type: 'geojson',
+      data: linkedGeoJSON.value,
+      tolerance: 0.5
+    }))
 
   const mapRef = ref<MapboxInstancesObject>()
 
@@ -106,12 +114,13 @@
       version: 8,
       sources: {},
       layers: [],
-      glyphs: 'mapbox://fonts/mapbox/{fontstack}/{range}.pbf'
+      glyphs:
+        'mapbox://fonts/mapbox/{fontstack}/{range}.pbf'
     },
     zoom: 1.5,
     maxZoom: 4,
     minZoom: 1,
-    projection: 'mercator',
+    projection: 'mercator'
   }
 
   const tilesUrl =
@@ -142,19 +151,20 @@
     }
   }
 
-  const lineWidth: DataDrivenPropertyValueSpecification<number> = [
-    'interpolate',
-    ['linear'],
-    ['zoom'],
-    0,
-    1.5,
-    4,
-    2,
-    8,
-    3,
-    12,
-    4
-  ]
+  const lineWidth: DataDrivenPropertyValueSpecification<number> =
+    [
+      'interpolate',
+      ['linear'],
+      ['zoom'],
+      0,
+      1.5,
+      4,
+      2,
+      8,
+      3,
+      12,
+      4
+    ]
 
   const targetsPaint: LayerSpecification['paint'] = {
     'fill-opacity': [
@@ -198,7 +208,9 @@
     return values.length ? Math.max(...values) : 6
   })
 
-  const heatmapPaint = computed<LayerSpecification['paint']>(() => ({
+  const heatmapPaint = computed<
+    LayerSpecification['paint']
+  >(() => ({
     'fill-color': [
       'interpolate',
       ['linear'],
@@ -210,22 +222,29 @@
     ]
   }))
 
-  const countriesPaint = computed<LayerSpecification['paint']>(() => {
-    if (dataTypeFilterValue.value === 'targets') return targetsPaint
-    if (dataTypeFilterValue.value === 'nominal') return targetsPaint
-    if (dataTypeFilterValue.value === 'heatmap') return heatmapPaint.value
+  const countriesPaint = computed<
+    LayerSpecification['paint']
+  >(() => {
+    if (dataTypeFilterValue?.value === 'targets')
+      return targetsPaint
+    if (dataTypeFilterValue?.value === 'nominal')
+      return targetsPaint
+    if (dataTypeFilterValue?.value === 'heatmap')
+      return heatmapPaint.value
 
     return {}
   })
 
-  const countriesLayer = computed<LayerSpecification>(() => ({
-    id: 'countries',
-    type: 'fill',
-    source: 'who-world-features',
-    paint: {
-      ...countriesPaint.value
-    }
-  }))
+  const countriesLayer = computed<LayerSpecification>(
+    () => ({
+      id: 'countries',
+      type: 'fill',
+      source: 'who-world-features',
+      paint: {
+        ...countriesPaint.value
+      }
+    })
+  )
 
   const admin0Layer: LayerSpecification = {
     id: 'admin-0',

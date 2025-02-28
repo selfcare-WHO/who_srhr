@@ -1,36 +1,41 @@
 import { defineStore } from 'pinia'
 
-export const useFiltersStore = defineStore('Filters', () => {
-  const isFetchingFilters = ref(false)
+export const useFiltersStore = defineStore(
+  'Filters',
+  () => {
+    const isFetchingFilters = ref(true)
 
-  const domains = ref<Prisma.Domain[]>([])
-  const indicators = ref<Prisma.IndicatorWithSubgroups[]>([])
-  const countries = ref<Prisma.Country[]>([])
+    const { data, refresh: refreshFilterOptions } =
+      useAsyncData<Filter.Options>(
+        'filter-options',
+        async () => {
+          isFetchingFilters.value = true
+          const res = await $fetch('/api/filter-options')
+          isFetchingFilters.value = false
 
-  const fetchFilterOptions = async () => {
-    isFetchingFilters.value = true
+          return res
+        },
+        {
+          server: false
+        }
+      )
 
-    const { data } = await useFetch<Filter.Options>('/api/filter-options')
+    const domains = computed<Prisma.Domain[]>(
+      () => data.value?.domains || []
+    )
+    const indicators = computed<
+      Prisma.IndicatorWithSubgroups[]
+    >(() => data.value?.indicators || [])
+    const countries = computed<Prisma.Country[]>(
+      () => data.value?.countries || []
+    )
 
-    domains.value = data.value?.domains || []
-    indicators.value = data.value?.indicators || []
-    countries.value = data.value?.countries || []
-
-    isFetchingFilters.value = false
+    return {
+      isFetchingFilters,
+      refreshFilterOptions,
+      domains,
+      indicators,
+      countries
+    }
   }
-
-  const fetchedFilters = computed(
-    () => indicators.value.length > 0 && countries.value.length > 0
-  )
-
-  fetchFilterOptions()
-
-  return {
-    isFetchingFilters,
-    fetchFilterOptions,
-    fetchedFilters,
-    domains,
-    indicators,
-    countries
-  }
-})
+)
