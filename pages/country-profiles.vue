@@ -9,9 +9,7 @@
     p.mb-8
       | This snapshot uses the latest data publicly available at the publication date, from reputable international sources (see endnotes for the year and source of each data point).
 
-    ElEmpty(v-if="!isDesktop")
-      template(#description)
-        p This dashboard is optimized for desktop view.
+    LayoutMobileEmptyState(v-if="!isDesktop")
 
     tableau-viz(
       v-else

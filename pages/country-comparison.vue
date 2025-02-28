@@ -4,7 +4,9 @@
       h1 Country comparison
       p Compare data across countries through maps, charts and tables. The chart view only shows numeric data, while the map and table views show numeric and categorical data.
 
-      .flex.items-center.gap-3
+      LayoutMobileEmptyState(v-if="!isDesktop")
+
+      .flex.items-center.gap-3(v-else)
         h2.text-secondary.mr-3 Select view:
         NuxtLink(to="/country-comparison/map-view")
           ElButton.w-32(type="primary" :plain="!mapView") Map
@@ -13,13 +15,15 @@
         NuxtLink(to="/country-comparison/table-view")
           ElButton.w-32(type="primary" :plain="!tableView") Table
 
-    NuxtPage.flex-1
+    NuxtPage.flex-1(v-if="isDesktop")
 </template>
 
 <script lang="ts" setup>
   definePageMeta({
     middleware: ['country-comparison']
   })
+
+  const { isDesktop } = useResponsive()
 
   const route = useRoute()
 
