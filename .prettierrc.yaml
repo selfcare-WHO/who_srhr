@@ -2,17 +2,11 @@ semi: false
 singleQuote: true
 trailingComma: none
 tabWidth: 2
-printWidth: 60
+printWidth: 80
 arrowParens: avoid
 endOfLine: lf
 vueIndentScriptAndStyle: true
 pugSingleQuote: false
 pugAttributeSeparator: none
 pugClassNotation: literal
-htmlWhitespaceSensitivity: strict
 tsxBracketSameLine: true
-plugins:
-  - 'prettier-plugin-classnames'
-  - '@prettier/plugin-pug'
-  - 'prettier-plugin-tailwindcss'
-  - 'prettier-plugin-merge'
