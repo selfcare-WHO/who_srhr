@@ -7,7 +7,7 @@
         label-position="top"
       )
         ElFormItem(
-          v-for="filter in filters"
+          v-for="filter in tableFilters"
           :key="filter.label"
           class="w-[285px]"
           :label="filter.label"
@@ -52,11 +52,9 @@
 
   const tableFiltersStore = useTableFiltersStore()
   const { filterValues } = storeToRefs(tableFiltersStore)
-  const { filters } = tableFiltersStore
+  const { tableFilters } = tableFiltersStore
 
-  const tooltipData = reactive<Data.IndicatorTooltipData>(
-    {}
-  )
+  const tooltipData = reactive<Data.IndicatorTooltipData>({})
   const showTooltip = ref(false)
 
   const { columns } = useTableColumns()
@@ -65,52 +63,55 @@
   const tableElement = ref<HTMLElement | null>(null)
 
   const isFetching = ref(false)
+  const initializedTable = ref(false)
 
-  const initTable = () => {
-    const getElement = () => {
-      if (!tableElement.value) {
-        requestAnimationFrame(getElement)
-      } else {
-        tabulator.value = new Tabulator(
-          tableElement.value,
-          {
-            height: TABLE_HEIGHT,
-            columnHeaderVertAlign: 'bottom',
-            renderHorizontal: 'basic',
-            renderVertical: 'virtual',
-            layout: 'fitDataFill',
-            selectable: false,
-            pagination: true,
-            paginationSize: 10,
-            ajaxURL: '/api/paginated-data',
-            paginationMode: 'remote',
-            reactiveData: true,
-            ajaxParams: () => ({
-              filters: JSON.stringify(filterValues.value)
-            }),
-            ajaxRequesting: (url, params) => {
-              isFetching.value = true
-              return true
-            },
-            ajaxResponse: (url, params, response) => {
-              isFetching.value = false
-              return response
-            }
-          }
-        )
-
-        return
-      }
-    }
-
-    return getElement()
+  const setColumns = () => {
+    if (tabulator.value && columns.value?.length)
+      tabulator.value?.setColumns(columns.value)
   }
 
-  onMounted(() => {
-    nextTick(initTable)
+  const initTable = () => {
+    if (!tableElement.value || !filterValues.value) {
+      requestAnimationFrame(initTable)
+      return
+    }
+
+    tabulator.value = new Tabulator(tableElement.value, {
+      height: TABLE_HEIGHT,
+      columnHeaderVertAlign: 'bottom',
+      renderHorizontal: 'basic',
+      renderVertical: 'virtual',
+      layout: 'fitDataFill',
+      selectable: false,
+      pagination: true,
+      paginationSize: 10,
+      ajaxURL: '/api/paginated-data',
+      paginationMode: 'remote',
+      reactiveData: true,
+      ajaxParams: () => ({
+        filters: JSON.stringify(filterValues.value)
+      }),
+      ajaxRequesting: () => {
+        isFetching.value = true
+        return true
+      },
+      ajaxResponse: (url, params, response) => {
+        isFetching.value = false
+        return response
+      }
+    })
+
+    tabulator.value.on('tableBuilt', () => {
+      setColumns()
+      initializedTable.value = true
+    })
+  }
+
+  onActivated(() => {
+    if (!initializedTable.value) initTable()
   })
 
-  watch(columns, val => {
-    tabulator.value?.setColumns(val)
+  watchEffect(() => {
+    if (filterValues.value) initTable()
   })
 </script>

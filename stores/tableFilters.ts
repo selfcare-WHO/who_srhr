@@ -99,7 +99,7 @@ export const useTableFiltersStore = defineStore('TableFilters', () => {
     options: countryOptions
   })
 
-  const filters = reactive<Filter.Item[]>([
+  const tableFilters = reactive<Filter.Item[]>([
     dataTypeFilter,
     indicatorFilter,
     countryFilter
@@ -124,7 +124,7 @@ export const useTableFiltersStore = defineStore('TableFilters', () => {
   })
 
   return {
-    filters,
+    tableFilters,
     indicatorFilter,
     filterValues,
     filteredIndicators,

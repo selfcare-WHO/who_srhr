@@ -126,9 +126,9 @@ export const useTableColumns = () => {
       }
     ]
 
-    const indicatorColumns: ColumnDefinition[] = filteredIndicators.value.map(
-      createIndicatorColumns
-    )
+    const indicatorColumns: ColumnDefinition[] = (
+      filteredIndicators?.value || []
+    ).map(createIndicatorColumns)
 
     return [...baseColumns, ...indicatorColumns]
   })

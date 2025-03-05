@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 
-export const useMapFiltersStore = defineStore('TableFilters', () => {
+export const useMapFiltersStore = defineStore('MapFilters', () => {
   const filtersStore = useFiltersStore()
   const { indicators, domains } = storeToRefs(filtersStore)
 
@@ -25,12 +25,16 @@ export const useMapFiltersStore = defineStore('TableFilters', () => {
     return domains.value.reduce<Filter.Option[]>((acc, domain) => {
       const filteredIndicators = indicators.value
         .filter(indicator => {
-          if (!indicator.mapView || indicator.domainId !== domain.id) return false
-          
+          if (!indicator.mapView || indicator.domainId !== domain.id)
+            return false
+
           switch (dataTypeFilterValue.value) {
-            case 'targets': return indicator.hasTarget
-            case 'nominal': return indicator.type === 'Nominal'
-            default: return !indicator.hasTarget && indicator.type !== 'Nominal'
+            case 'targets':
+              return indicator.hasTarget
+            case 'nominal':
+              return indicator.type === 'Nominal'
+            default:
+              return !indicator.hasTarget && indicator.type !== 'Nominal'
           }
         })
         .map(indicator => ({
@@ -76,11 +80,13 @@ export const useMapFiltersStore = defineStore('TableFilters', () => {
       )
   )
 
-  watch(indicatorOptions, val => {
+  watchImmediate(indicatorOptions, val => {
     indicatorFilterValue.value = String(val[0]?.children?.[0]?.id)
   })
+
   return {
     dataTypeOptions,
+    indicatorOptions,
     indicatorFilter,
     dataTypeFilterValue,
     indicatorFilterValue,

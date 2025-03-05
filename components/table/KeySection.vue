@@ -50,7 +50,7 @@
   import { TargetStatus, ImpactOnSrhr } from '@enums'
 
   const { dataType } = defineProps<{
-    dataType: string
+    dataType?: string
   }>()
 
   const showTargetStatus = computed(() => dataType === 'numerical_categorical')
