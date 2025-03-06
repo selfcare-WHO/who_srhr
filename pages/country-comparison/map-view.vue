@@ -46,11 +46,13 @@
       MapboxAttributionControl(
         :options="{ compact: true }"
         position="top-right"
+        @mouseenter="hidePopover"
       )
 
       MapboxNavigationControl(
         :options="{ showCompass: false, visualizePitch: false }"
         position="bottom-right"
+        @mouseenter="hidePopover"
       )
 
       ElButton(
@@ -60,9 +62,13 @@
         plain
         :icon="Aim"
         @click="onCenterMap"
+        @mouseenter="hidePopover"
       )
 
-    MapFilters(class="absolute top-[20px] left-[20px]")
+    MapFilters(
+      class="absolute top-[20px] left-[20px]"
+      @mouseenter="hidePopover"
+    )
 
     MapLegend(
       class="absolute bottom-[20px] left-[20px]"
@@ -70,6 +76,7 @@
       :max-value="dataMaxValue"
       :current-indicator="currentIndicator"
       :data-type="dataTypeFilterValue"
+      @mouseenter="hidePopover"
     )
 
 </template>
@@ -408,6 +415,10 @@
 
     hoveredFeatureId.value = ''
     map.getCanvas().style.cursor = ''
+    showPopover.value = false
+  }
+
+  const hidePopover = () => {
     showPopover.value = false
   }
 
