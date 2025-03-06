@@ -4,5 +4,12 @@ declare global {
       features: GeoJSON.Feature[]
       dataPoints: Prisma.DataPoint[]
     }
+
+    type PopoverData = {
+      country?: Prisma.Country
+      value?: string
+      element?: HTMLElement
+      lngLat?: mapboxgl.LngLatLike
+    }
   }
 }

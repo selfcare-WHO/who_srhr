@@ -33,7 +33,7 @@ $-bg-color: (
   'secondary': #ebebebcc,
   'none': #f2f2f2,
   'heatmap-min': #f7fbff,
-  'heatmap-max': #08306B
+  'heatmap-max': #08306b
 );
 
 @forward 'element-plus/theme-chalk/src/common/var.scss' with (
@@ -44,6 +44,21 @@ $-bg-color: (
 
 .el-button.el-button + .el-button {
   margin-left: 0;
+}
+
+.el-button.el-button {
+  &:not(.el-button--primary),
+  &:not(.el-button--success),
+  &:not(.el-button--warning),
+  &:not(.el-button--danger),
+  &:not(.el-button--info) {
+    border-color: rgb(229, 231, 235) !important;
+
+    &:hover {
+      border-color: rgb(229, 231, 235) !important;
+      background-color: #f2f2f2 !important;
+    }
+  }
 }
 
 .el-text {

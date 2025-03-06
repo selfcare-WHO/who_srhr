@@ -1,12 +1,25 @@
 <template lang="pug">
   .map-view(class="relative min-h-[80vh] bg-page my-4 flex-1" v-loading="isFetching")
+    MapDetailsPopover(
+      v-model="showPopover"
+      :popover-data="popoverData"
+    )
+
+    div(
+      class="virtual-element absolute"
+      ref="virtualElementRef"
+      :style="coordinatesStyle"
+      :id="String(popoverData?.country?.id)"
+      :key="String(popoverData?.country?.id)"
+    )
+
     MapboxMap(
       ref="mapRef"
       class="h-full min-h-[80vh] rounded-lg"
       map-id="world-map"
       :options="mapOptions"
-      @wheel="() => {}"
-      @drag="() => {}"
+      @wheel="onWheel"
+      @drag="showPopover = false"
     )
       MapboxSource(
         source-id="who-world-basemap"
@@ -20,7 +33,11 @@
       
       MapboxLayer(:layer="backgroundLayer")
       MapboxLayer(:layer="landLayer")
-      MapboxLayer(:layer="countriesLayer")
+      MapboxLayer(
+        :layer="countriesLayer"
+        @mousemove="onMouseMove"
+        @mouseleave="onMouseLeave"
+      )
       MapboxLayer(:layer="admin0Layer")
       MapboxLayer(:layer="disputedTerritoriesLayer")
       MapboxLayer(:layer="disputedBordersLayer")
@@ -29,6 +46,20 @@
       MapboxAttributionControl(
         :options="{ compact: true }"
         position="top-right"
+      )
+
+      MapboxNavigationControl(
+        :options="{ showCompass: false, visualizePitch: false }"
+        position="bottom-right"
+      )
+
+      ElButton(
+        class=`absolute top-[10px] right-[10px] w-[29px] h-[29px]
+          shadow-[0_0_0_1px_rgba(0,0,0,0.1)]
+        `
+        plain
+        :icon="Aim"
+        @click="onCenterMap"
       )
 
     MapFilters(class="absolute top-[20px] left-[20px]")
@@ -48,11 +79,8 @@
     MapboxComponentOptions,
     MapboxInstancesObject
   } from 'nuxt-mapbox'
-  import type {
-    LayerSpecification,
-    SourceSpecification,
-    DataDrivenPropertyValueSpecification
-  } from 'mapbox-gl'
+
+  import { Aim } from '@element-plus/icons-vue'
 
   defineOptions({ name: 'CountryComparisonMap' })
 
@@ -86,7 +114,7 @@
     features: mapData.value?.features || []
   }))
 
-  const linkedFeaturesSource = computed<SourceSpecification>(() => ({
+  const linkedFeaturesSource = computed<mapboxgl.SourceSpecification>(() => ({
     type: 'geojson',
     data: linkedGeoJSON.value,
     tolerance: 0.5
@@ -115,12 +143,12 @@
   const tilesUrl =
     'https://tiles.arcgis.com/tiles/5T5nSi527N4F7luB/arcgis/rest/services/WHO_Polygon_Basemap_with_labels_VTP/VectorTileServer/tile/{z}/{y}/{x}.pbf'
 
-  const WHOWorldBasemapSource: SourceSpecification = {
+  const WHOWorldBasemapSource: mapboxgl.SourceSpecification = {
     type: 'vector',
     tiles: [tilesUrl]
   }
 
-  const backgroundLayer: LayerSpecification = {
+  const backgroundLayer: mapboxgl.LayerSpecification = {
     id: 'background',
     type: 'fill',
     source: 'who-world-basemap',
@@ -130,7 +158,7 @@
     }
   }
 
-  const landLayer: LayerSpecification = {
+  const landLayer: mapboxgl.LayerSpecification = {
     id: 'land',
     type: 'fill',
     source: 'who-world-basemap',
@@ -140,7 +168,7 @@
     }
   }
 
-  const lineWidth: DataDrivenPropertyValueSpecification<number> = [
+  const lineWidth: mapboxgl.DataDrivenPropertyValueSpecification<number> = [
     'interpolate',
     ['linear'],
     ['zoom'],
@@ -154,7 +182,7 @@
     4
   ]
 
-  const targetsPaint: LayerSpecification['paint'] = {
+  const targetsPaint: mapboxgl.LayerSpecification['paint'] = {
     'fill-opacity': [
       'case',
       ['boolean', ['feature-state', 'hover'], false],
@@ -196,7 +224,7 @@
     return values.length ? Math.max(...values) : 6
   })
 
-  const heatmapPaint = computed<LayerSpecification['paint']>(() => ({
+  const heatmapPaint = computed<mapboxgl.LayerSpecification['paint']>(() => ({
     'fill-color': [
       'interpolate',
       ['linear'],
@@ -208,7 +236,7 @@
     ]
   }))
 
-  const countriesPaint = computed<LayerSpecification['paint']>(() => {
+  const countriesPaint = computed<mapboxgl.LayerSpecification['paint']>(() => {
     if (dataTypeFilterValue?.value === 'targets') return targetsPaint
     if (dataTypeFilterValue?.value === 'nominal') return targetsPaint
     if (dataTypeFilterValue?.value === 'heatmap') return heatmapPaint.value
@@ -216,7 +244,7 @@
     return {}
   })
 
-  const countriesLayer = computed<LayerSpecification>(() => ({
+  const countriesLayer = computed<mapboxgl.LayerSpecification>(() => ({
     id: 'countries',
     type: 'fill',
     source: 'who-world-features',
@@ -225,7 +253,7 @@
     }
   }))
 
-  const admin0Layer: LayerSpecification = {
+  const admin0Layer: mapboxgl.LayerSpecification = {
     id: 'admin-0',
     type: 'line',
     source: 'who-world-basemap',
@@ -241,7 +269,7 @@
     }
   }
 
-  const disputedTerritoriesLayer: LayerSpecification = {
+  const disputedTerritoriesLayer: mapboxgl.LayerSpecification = {
     id: 'disputed-territories',
     type: 'fill',
     source: 'who-world-basemap',
@@ -252,7 +280,7 @@
     }
   }
 
-  const disputedBordersLayer: LayerSpecification = {
+  const disputedBordersLayer: mapboxgl.LayerSpecification = {
     id: 'disputed-borders-dashed',
     type: 'line',
     source: 'who-world-basemap',
@@ -269,7 +297,7 @@
     }
   }
 
-  const countryNamesLayer: LayerSpecification = {
+  const countryNamesLayer: mapboxgl.LayerSpecification = {
     id: 'country-names',
     type: 'symbol',
     source: 'who-world-basemap',
@@ -287,6 +315,110 @@
       'text-halo-width': 2
     }
   }
+
+  const mapInstance = useMapboxInstance('world-map')
+
+  const onCenterMap = () => {
+    mapInstance.value?.flyTo({
+      center: [20, 20],
+      zoom: 1.5
+    })
+  }
+
+  const showPopover = ref(false)
+
+  const onWheel = (e: mapboxgl.MapWheelEvent) => {
+    const map = e.target
+    const { deltaY } = e.originalEvent
+    const currentZoom = map.getZoom()
+
+    if (!currentZoom) return
+
+    const newZoom = currentZoom - deltaY / 120
+
+    showPopover.value = false
+    map.flyTo({ zoom: newZoom })
+  }
+
+  const hoveredFeatureId = ref<string | number>('')
+  const virtualElementRef = ref<HTMLElement | undefined>()
+  const popoverData = reactive<Map.PopoverData>({})
+  const popoverCoordinates = ref<mapboxgl.Point | undefined>()
+  const onMouseMove = (e: mapboxgl.MapMouseEvent) => {
+    const map = e.target
+    const feature = e.features?.[0]
+    const featureId = feature?.id
+    const { length } = e?.features ?? []
+    const isSameFeature = featureId === hoveredFeatureId.value
+
+    if (length === 0 || !featureId || isSameFeature) return
+
+    map.setFeatureState(
+      { source: 'who-world-features', id: hoveredFeatureId.value },
+      { hover: false }
+    )
+
+    map.setFeatureState(
+      {
+        source: 'who-world-features',
+        id: featureId
+      },
+      { hover: true }
+    )
+
+    hoveredFeatureId.value = feature?.id || ''
+    map.getCanvas().style.cursor = 'pointer'
+
+    const { dataPointId, CENTER_LAT, CENTER_LON } = feature.properties as {
+      dataPointId: string
+      CENTER_LAT: number
+      CENTER_LON: number
+    }
+
+    const dataPoint = mapData.value?.dataPoints.find(
+      dp => dp.id.toString() === dataPointId
+    )
+
+    popoverData.lngLat = [CENTER_LON, CENTER_LAT]
+    popoverData.country = feature.properties?.ADM0_VIZ_NAME
+    popoverData.value = formatData({
+      indicator: currentIndicator.value,
+      dataPoint
+    })
+    popoverData.element = undefined
+
+    nextTick(() => {
+      popoverData.element = virtualElementRef.value
+
+      popoverCoordinates.value = map.project([CENTER_LON, CENTER_LAT])
+      showPopover.value = true
+    })
+  }
+
+  const onMouseLeave = (e: mapboxgl.MapMouseEvent) => {
+    const map = e.target
+    const features = map.queryRenderedFeatures(e.point)
+
+    if (features.some(f => f.layer?.id === 'countries')) return
+
+    map.setFeatureState(
+      { source: 'who-world-features', id: hoveredFeatureId.value },
+      { hover: false }
+    )
+
+    hoveredFeatureId.value = ''
+    map.getCanvas().style.cursor = ''
+    showPopover.value = false
+  }
+
+  const coordinatesStyle = computed(() =>
+    popoverCoordinates.value
+      ? {
+          left: `${popoverCoordinates.value.x}px`,
+          top: `${popoverCoordinates.value.y}px`
+        }
+      : {}
+  )
 </script>
 
 <style lang="sass">
