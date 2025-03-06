@@ -3,6 +3,9 @@ import { join } from 'path'
 import { fileURLToPath } from 'url'
 import mapDataPoints from '../services/mapDataPoints'
 
+// Cache the GeoJSON file in memory
+let geoJsonFeatures: GeoJSON.Feature[] | null = null
+
 export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
   const { indicatorId }: { indicatorId: string } = getQuery(event)
 
@@ -14,18 +17,28 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
   }
 
   try {
-    const relativePath = '../../assets/maps/who_countries.json'
-    const currentDir = fileURLToPath(new URL('.', import.meta.url))
-    const geoJsonPath = join(currentDir, relativePath)
-    const { features } = JSON.parse(readFileSync(geoJsonPath, 'utf-8'))
+    // Load GeoJSON only once and cache it
+    if (!geoJsonFeatures) {
+      const relativePath = '../../assets/maps/who_countries.json'
+      const currentDir = fileURLToPath(new URL('.', import.meta.url))
+      const geoJsonPath = join(currentDir, relativePath)
+      const { features } = JSON.parse(readFileSync(geoJsonPath, 'utf-8'))
+      geoJsonFeatures = features
+    }
+
     const dataPoints = await mapDataPoints(indicatorId)
 
-    const linkedFeatures: GeoJSON.Feature[] = features.map(
-      (feature: GeoJSON.Feature) => {
+    const dataPointsByCountry = new Map()
+    dataPoints.forEach(dp => {
+      dataPointsByCountry.set(dp.country.code, dp)
+    })
+
+    const linkedFeatures: GeoJSON.Feature[] =
+      geoJsonFeatures?.map((feature: GeoJSON.Feature) => {
         const { ISO_3_CODE } = feature.properties as {
           ISO_3_CODE: string
         }
-        const dataPoint = dataPoints.find(dp => dp.country.code === ISO_3_CODE)
+        const dataPoint = dataPointsByCountry.get(ISO_3_CODE)
 
         return {
           ...feature,
@@ -37,8 +50,7 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
             value: Number(dataPoint?.value)
           }
         }
-      }
-    )
+      }) ?? []
 
     return { features: linkedFeatures, dataPoints }
   } catch (error) {
