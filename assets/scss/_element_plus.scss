@@ -51,7 +51,8 @@ $-bg-color: (
   &:not(.el-button--success),
   &:not(.el-button--warning),
   &:not(.el-button--danger),
-  &:not(.el-button--info) {
+  &:not(.el-button--info),
+  &:not(.is-plain) {
     border-color: rgb(229, 231, 235) !important;
 
     &:hover {

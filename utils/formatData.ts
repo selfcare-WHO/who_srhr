@@ -16,19 +16,12 @@ export default ({
       return displayValue === 'original_value' ? originalValue : dataPointValue
     }
 
-    return (value !== undefined && value !== null)
-      ? value.toFixed(2)
-      : ''
+    return value !== undefined && value !== null ? value.toFixed(2) : ''
   })()
 
   const postfix = type === 'Percentage' ? '%' : ''
 
-  if (
-    renderedValue === null ||
-    renderedValue === undefined ||
-    renderedValue === ''
-  )
-    return 'n/d'
+  if (renderedValue === null || renderedValue === undefined) return 'n/d'
 
   if (translateValue) {
     const translateObject = JSON.parse(translateValue)
@@ -40,7 +33,8 @@ export default ({
   }
 
   if (mask) {
-    const maskedValue = StringMask.apply(renderedValue, mask, {
+    const numberValue = Math.round(Number(renderedValue))
+    const maskedValue = StringMask.apply(numberValue, mask, {
       reverse: true
     })
 

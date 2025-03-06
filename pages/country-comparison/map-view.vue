@@ -55,7 +55,7 @@
 
       ElButton(
         class=`absolute top-[10px] right-[10px] w-[29px] h-[29px]
-          shadow-[0_0_0_1px_rgba(0,0,0,0.1)]
+          shadow-[0_0_0_1px_rgba(0,0,0,0.1)] z-10
         `
         plain
         :icon="Aim"
