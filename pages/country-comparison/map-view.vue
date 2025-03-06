@@ -208,7 +208,7 @@
     if (!mapData.value?.features?.length) return 0
 
     const values = mapData.value.features
-      .map(feature => feature.properties?.originalValue)
+      .map(feature => feature.properties?.value)
       .filter(val => val !== undefined && val !== null)
 
     return values.length ? Math.min(...values) : 0
@@ -218,7 +218,7 @@
     if (!mapData.value?.features?.length) return 6
 
     const values = mapData.value.features
-      .map(feature => feature.properties?.originalValue)
+      .map(feature => feature.properties?.value)
       .filter(val => val !== undefined && val !== null)
 
     return values.length ? Math.max(...values) : 6
@@ -228,7 +228,7 @@
     'fill-color': [
       'interpolate',
       ['linear'],
-      ['to-number', ['get', 'originalValue']],
+      ['to-number', ['get', 'value']],
       dataMinValue.value,
       parseCssVar('--el-bg-color-heatmap-min'),
       dataMaxValue.value,

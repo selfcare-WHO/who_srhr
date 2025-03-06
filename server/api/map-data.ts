@@ -33,7 +33,8 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
             ...feature.properties,
             dataPointId: dataPoint?.id.toString(),
             change: dataPoint?.change,
-            originalValue: dataPoint?.originalValue
+            originalValue: dataPoint?.originalValue,
+            value: Number(dataPoint?.value)
           }
         }
       }
