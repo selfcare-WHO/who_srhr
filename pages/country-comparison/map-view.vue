@@ -54,7 +54,7 @@
       )
 
       ElButton(
-        class=`absolute top-[10px] right-[10px] w-[29px] h-[29px]
+        class=`center-map-button absolute top-[10px] right-[10px] w-[29px] h-[29px]
           shadow-[0_0_0_1px_rgba(0,0,0,0.1)] z-10
         `
         plain
@@ -425,4 +425,11 @@
   .map-view
     .mapboxgl-ctrl-logo
       display: none !important
+
+    .center-map-button
+      border-color: rgb(229, 231, 235) !important
+
+      &:hover
+        border-color: rgb(229, 231, 235) !important
+        background-color: #f2f2f2 !important
 </style>
