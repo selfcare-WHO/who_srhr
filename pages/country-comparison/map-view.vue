@@ -202,32 +202,40 @@
 
     const values = mapData.value.features
       .map(feature => feature.properties?.value)
-      .filter(val => val !== undefined && val !== null)
+      .filter(val => val !== undefined && val !== null && !isNaN(Number(val)))
 
     return values.length ? Math.min(...values) : 0
   })
 
   const dataMaxValue = computed(() => {
-    if (!mapData.value?.features?.length) return 6
+    if (!mapData.value?.features?.length) return 1
 
     const values = mapData.value.features
       .map(feature => feature.properties?.value)
-      .filter(val => val !== undefined && val !== null)
+      .filter(val => val !== undefined && val !== null && !isNaN(Number(val)))
 
-    return values.length ? Math.max(...values) : 6
+    return values.length ? Math.max(...values) : 1
   })
 
-  const heatmapPaint = computed<mapboxgl.LayerSpecification['paint']>(() => ({
-    'fill-color': [
-      'interpolate',
-      ['linear'],
-      ['to-number', ['get', 'value']],
-      dataMinValue.value,
-      parseCssVar('--el-bg-color-heatmap-min'),
-      dataMaxValue.value,
-      parseCssVar('--el-bg-color-heatmap-max')
-    ]
-  }))
+  const heatmapPaint = computed<mapboxgl.LayerSpecification['paint']>(() => {
+    const min = dataMinValue.value
+    const max =
+      dataMinValue.value === dataMaxValue.value
+        ? dataMinValue.value + 1
+        : dataMaxValue.value
+
+    return {
+      'fill-color': [
+        'interpolate',
+        ['linear'],
+        ['to-number', ['get', 'value']],
+        min,
+        parseCssVar('--el-bg-color-heatmap-min'),
+        max,
+        parseCssVar('--el-bg-color-heatmap-max')
+      ]
+    }
+  })
 
   const countriesPaint = computed<mapboxgl.LayerSpecification['paint']>(() => {
     if (dataTypeFilterValue?.value === 'targets') return targetsPaint
