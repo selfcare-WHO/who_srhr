@@ -84,14 +84,24 @@ export const useMapPopover = (
       const popoverWidth = 230
       const popoverOffset = 10
 
-      const isInUpperThird = point.y < mapHeight / 3
+      const isInUpperFifth = point.y < mapHeight / 5
+      const isInLeftFifth = point.x < mapWidth / 5
+      const isInRightFifth = point.x > mapWidth - mapWidth / 5
 
-      popoverData.placement = isInUpperThird ? 'bottom' : 'top'
+      popoverData.placement = (() => {
+        if (isInUpperFifth) return 'bottom'
+        if (isInLeftFifth) return 'right'
+        if (isInRightFifth) return 'left'
 
-      if (point.x + popoverWidth / 2 > mapWidth) {
-        point.x = mapWidth - popoverWidth / 2
-      } else if (point.x - popoverWidth / 2 < 0) {
-        point.x = popoverWidth / 2
+        return 'top'
+      })()
+
+      if (point.x < 0) {
+        point.x = popoverOffset
+      }
+
+      if (point.x > mapWidth - popoverOffset) {
+        point.x = mapWidth - popoverOffset
       }
 
       if (point.y < 0) {
