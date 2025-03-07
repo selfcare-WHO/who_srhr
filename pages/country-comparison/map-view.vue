@@ -39,7 +39,6 @@
         @mousemove="onMouseMove"
         @mouseleave="onMouseLeave"
       )
-      MapboxLayer(:layer="countriesLayer")
       MapboxLayer(:layer="admin0Layer")
       MapboxLayer(:layer="disputedTerritoriesLayer")
       MapboxLayer(:layer="disputedBordersLayer")
