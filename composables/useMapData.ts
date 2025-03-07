@@ -34,7 +34,7 @@ export const useMapData = () => {
   const linkedFeaturesSource = computed<mapboxgl.SourceSpecification>(() => ({
     type: 'geojson',
     data: linkedGeoJSON.value,
-    tolerance: 0.5
+    tolerance: 0.75
   }))
 
   // Data value calculations

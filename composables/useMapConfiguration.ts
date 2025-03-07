@@ -1,6 +1,8 @@
 import type { MapboxComponentOptions } from 'nuxt-mapbox'
 
-export const useMapConfiguration = () => {
+export const useMapConfiguration = (
+  countriesPaint: ComputedRef<mapboxgl.LayerSpecification['paint']>
+) => {
   const mapOptions: MapboxComponentOptions = {
     center: [20, 20],
     maxBounds: [
@@ -48,7 +50,26 @@ export const useMapConfiguration = () => {
     source: 'who-world-basemap',
     'source-layer': 'Background_VTP',
     paint: {
-      'fill-color': '#FFFFFF'
+      'fill-color': '#edf9ff'
+    }
+  }
+
+  const countriesLayer = computed<mapboxgl.LayerSpecification>(() => ({
+    id: 'countries',
+    type: 'fill',
+    source: 'who-world-features',
+    paint: {
+      ...countriesPaint.value
+    }
+  }))
+
+  const countriesBoundaryLayer: mapboxgl.LayerSpecification = {
+    id: 'countries-boundary',
+    type: 'line',
+    source: 'who-world-features',
+    paint: {
+      'line-color': '#FFFFFF',
+      'line-width': lineWidth
     }
   }
 
@@ -117,6 +138,8 @@ export const useMapConfiguration = () => {
     mapOptions,
     WHOWorldBasemapSource,
     backgroundLayer,
+    countriesLayer,
+    countriesBoundaryLayer,
     admin0Layer,
     disputedTerritoriesLayer,
     disputedBordersLayer,

@@ -26,6 +26,7 @@
         @mousemove="onMouseMove"
         @mouseleave="onMouseLeave"
       )
+      MapboxLayer(:layer="countriesBoundaryLayer")
       MapboxLayer(:layer="admin0Layer")
       MapboxLayer(:layer="disputedTerritoriesLayer")
       MapboxLayer(:layer="disputedBordersLayer")
@@ -86,16 +87,6 @@
   defineOptions({ name: 'CountryComparisonMap' })
 
   const {
-    mapOptions,
-    WHOWorldBasemapSource,
-    backgroundLayer,
-    admin0Layer,
-    disputedTerritoriesLayer,
-    disputedBordersLayer,
-    countryNamesLayer
-  } = useMapConfiguration()
-
-  const {
     mapData,
     isFetching,
     nominalLegend,
@@ -112,14 +103,17 @@
     dataMaxValue
   )
 
-  const countriesLayer = computed<mapboxgl.LayerSpecification>(() => ({
-    id: 'countries',
-    type: 'fill',
-    source: 'who-world-features',
-    paint: {
-      ...countriesPaint.value
-    }
-  }))
+  const {
+    mapOptions,
+    WHOWorldBasemapSource,
+    backgroundLayer,
+    countriesLayer,
+    countriesBoundaryLayer,
+    admin0Layer,
+    disputedTerritoriesLayer,
+    disputedBordersLayer,
+    countryNamesLayer
+  } = useMapConfiguration(countriesPaint)
 
   const mapRef = useMapboxRef('world-map')
 
