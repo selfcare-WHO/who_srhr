@@ -7,7 +7,8 @@
     :key="popoverData?.element?.id"
     :persistent="false"
     :placement="popoverData.placement || 'top'"
-    popper-class="data-popover pointer-events-none"
+    :teleported="false"
+    :popper-class="`data-popover pointer-events-none ${popperClass}`"
   )
     .flex.flex-col.gap-2
       h3(class="text-[20px] leading-tight font-bold") {{ popoverData.country }}
@@ -17,6 +18,7 @@
 <script lang="ts" setup>
   const { popoverData } = defineProps<{
     popoverData: Map.PopoverData
+    popperClass?: string
   }>()
 
   const showPopover = defineModel<boolean>({ required: true })
