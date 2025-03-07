@@ -7991,7 +7991,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nuxt-mapbox@npm:1.6.2":
+"nuxt-mapbox@npm:^1.6.2":
   version: 1.6.2
   resolution: "nuxt-mapbox@npm:1.6.2"
   dependencies:
@@ -11913,7 +11913,7 @@ __metadata:
     element-plus: "npm:^2.8.7"
     nuxt: "npm:^3.8.2"
     nuxt-gtag: "npm:3.0.2"
-    nuxt-mapbox: "npm:1.6.2"
+    nuxt-mapbox: "npm:^1.6.2"
     nuxt-svgo: "npm:4.0.9"
     prettier: "npm:^3.5.2"
     prettier-plugin-classnames: "npm:^0.7.6"

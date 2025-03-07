@@ -1,5 +1,9 @@
 <template lang="pug">
-  .map-view(class="relative min-h-[80vh] bg-page my-4 flex-1" v-loading="isFetching")
+  .map-view(
+    class="relative min-h-[80vh] bg-page my-4 flex-1"
+    @mousemove="onGlobalMouseMove"
+    v-loading="isFetching"
+  )
     MapDetailsPopover(
       v-model="showPopover"
       :popover-data="popoverData"
@@ -14,7 +18,6 @@
     )
 
     MapboxMap(
-      ref="mapRef"
       class="h-full min-h-[80vh] rounded-lg"
       map-id="world-map"
       :options="mapOptions"
@@ -25,67 +28,60 @@
         source-id="who-world-basemap"
         :source="WHOWorldBasemapSource"
       )
-
       MapboxSource(
         source-id="who-world-features"
         :source="linkedFeaturesSource"
       )
       
       MapboxLayer(:layer="backgroundLayer")
-      MapboxLayer(:layer="landLayer")
       MapboxLayer(
         :layer="countriesLayer"
         @mousemove="onMouseMove"
         @mouseleave="onMouseLeave"
       )
+      MapboxLayer(:layer="countriesLayer")
       MapboxLayer(:layer="admin0Layer")
       MapboxLayer(:layer="disputedTerritoriesLayer")
       MapboxLayer(:layer="disputedBordersLayer")
       MapboxLayer(:layer="countryNamesLayer")
 
       MapboxAttributionControl(
+        class="hide-popover-on-hover"
         :options="{ compact: true }"
         position="top-right"
-        @mouseenter="hidePopover"
       )
 
       MapboxNavigationControl(
+        class="hide-popover-on-hover"
         :options="{ showCompass: false, visualizePitch: false }"
         position="bottom-right"
-        @mouseenter="hidePopover"
       )
 
       ElButton(
-        class=`center-map-button absolute top-[10px] right-[10px] w-[29px] h-[29px]
+        class=`hide-popover-on-hover center-map-button absolute top-[10px] right-[10px] w-[29px] h-[29px]
           shadow-[0_0_0_1px_rgba(0,0,0,0.1)] z-10
         `
         plain
         :icon="Aim"
         @click="onCenterMap"
-        @mouseenter="hidePopover"
       )
 
     MapFilters(
-      class="absolute top-[20px] left-[20px]"
-      @mouseenter="hidePopover"
+      class="hide-popover-on-hover absolute top-[20px] left-[20px]"
     )
 
     MapLegend(
-      class="absolute bottom-[20px] left-[20px]"
+      class="hide-popover-on-hover absolute bottom-[20px] left-[20px]"
       :min-value="dataMinValue"
       :max-value="dataMaxValue"
       :current-indicator="currentIndicator"
       :data-type="dataTypeFilterValue"
-      @mouseenter="hidePopover"
+      :nominal-legend="nominalLegend"
     )
-
 </template>
 
 <script lang="ts" setup>
-  import type {
-    MapboxComponentOptions,
-    MapboxInstancesObject
-  } from 'nuxt-mapbox'
+  import type { MapboxComponentOptions } from 'nuxt-mapbox'
 
   import { Aim } from '@element-plus/icons-vue'
 
@@ -116,6 +112,8 @@
     }
   )
 
+  const nominalLegend = computed(() => mapData.value?.legend)
+
   const linkedGeoJSON = computed<GeoJSON.FeatureCollection>(() => ({
     type: 'FeatureCollection',
     features: mapData.value?.features || []
@@ -126,8 +124,6 @@
     data: linkedGeoJSON.value,
     tolerance: 0.5
   }))
-
-  const mapRef = ref<MapboxInstancesObject>()
 
   const mapOptions: MapboxComponentOptions = {
     center: [20, 20],
@@ -162,16 +158,6 @@
     'source-layer': 'Background_VTP',
     paint: {
       'fill-color': '#FFFFFF'
-    }
-  }
-
-  const landLayer: mapboxgl.LayerSpecification = {
-    id: 'land',
-    type: 'fill',
-    source: 'who-world-basemap',
-    'source-layer': 'Land (ADM0)',
-    paint: {
-      'fill-color': parseCssVar('--el-bg-color-none')
     }
   }
 
@@ -323,10 +309,10 @@
     }
   }
 
-  const mapInstance = useMapboxInstance('world-map')
+  const mapRef = useMapboxRef('world-map')
 
   const onCenterMap = () => {
-    mapInstance.value?.flyTo({
+    mapRef.value?.flyTo({
       center: [20, 20],
       zoom: 1.5
     })
@@ -351,6 +337,19 @@
   const virtualElementRef = ref<HTMLElement | undefined>()
   const popoverData = reactive<Map.PopoverData>({})
   const popoverCoordinates = ref<mapboxgl.Point | undefined>()
+
+  const onGlobalMouseMove = (e: MouseEvent) => {
+    const target = e.target as HTMLElement
+
+    if (
+      target?.classList?.contains('hide-popover-on-hover') &&
+      showPopover.value
+    ) {
+      showPopover.value = false
+      return
+    }
+  }
+
   const onMouseMove = (e: mapboxgl.MapMouseEvent) => {
     const map = e.target
     const feature = e.features?.[0]
@@ -430,6 +429,11 @@
         }
       : {}
   )
+
+  onBeforeUnmount(() => {
+    showPopover.value = false
+    mapRef.value?.remove()
+  })
 </script>
 
 <style lang="sass">

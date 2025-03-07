@@ -1,26 +1,21 @@
-import QuestionMark from '@assets/icons/question-mark.svg'
-import CheckMark from '@assets/icons/check-mark.svg'
-import Minus from '@assets/icons/minus.svg'
-import CloseBold from '@assets/icons/close-bold.svg'
-
-export const TargetStatus = {
-  achieved: {
-    name: 'Achieved',
+export const TargetStatus: Map.Legend = {
+  Achieved: {
+    value: 'Achieved',
     dbValue: 'Achieved',
     color: 'var(--el-color-success)'
   },
-  challenges: {
-    name: 'Challenges',
+  'Challenges remain': {
+    value: 'Challenges',
     dbValue: 'Challenges remain',
     color: 'var(--el-color-warning)'
   },
-  majorChallenges: {
-    name: 'Major Challenges',
+  'Major challenges remain': {
+    value: 'Major Challenges',
     dbValue: 'Major challenges remain',
     color: 'var(--el-color-danger)'
   },
-  noData: {
-    name: 'No Data',
+  'Data not available': {
+    value: 'No Data',
     dbValue: 'Data not available',
     color: 'var(--el-text-color-placeholder)'
   }
@@ -30,7 +25,9 @@ export const ImpactOnSrhr = {
   supportive: {
     dbValue: 'Achieved',
     name: 'Supportive',
-    icon: CheckMark,
+    icon: import.meta.client
+      ? import('@assets/icons/check-mark.svg')
+      : undefined,
     iconColor: 'var(--el-color-primary)',
     bgColor: '#ccd2de',
     borderColor: 'var(--el-color-primary)'
@@ -38,7 +35,7 @@ export const ImpactOnSrhr = {
   partial: {
     name: 'Partial',
     dbValue: 'Challenges remain',
-    icon: Minus,
+    icon: import.meta.client ? import('@assets/icons/minus.svg') : undefined,
     iconColor: '#E2E6ED',
     bgColor: '#66799D',
     borderColor: '#66799D'
@@ -46,7 +43,9 @@ export const ImpactOnSrhr = {
   punitive: {
     name: 'Punitive',
     dbValue: 'Major challenges remain',
-    icon: CloseBold,
+    icon: import.meta.client
+      ? import('@assets/icons/close-bold.svg')
+      : undefined,
     iconColor: '#ccd2de',
     bgColor: '#999999',
     borderColor: '#999999'
@@ -54,7 +53,9 @@ export const ImpactOnSrhr = {
   noData: {
     dbValue: 'Data not available',
     name: 'No Data',
-    icon: QuestionMark,
+    icon: import.meta.client
+      ? import('@assets/icons/question-mark.svg')
+      : undefined,
     iconColor: 'var(--el-color-primary)',
     bgColor: 'transparent',
     borderColor: 'var(--el-color-primary)'

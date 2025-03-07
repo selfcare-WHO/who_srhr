@@ -2,10 +2,10 @@ import prisma from '~/lib/prisma'
 
 export default async (
   indicatorId: string
-): Promise<Prisma.DataPointWithCountry[]> => {
+): Promise<Prisma.IndicatorWithDataPoints | null> => {
   const cacheKey = `map-data-points-${indicatorId}`
   const cached =
-    await useStorage().getItem<Prisma.DataPointWithCountry[]>(cacheKey)
+    await useStorage().getItem<Prisma.IndicatorWithDataPoints>(cacheKey)
   if (cached) return cached
 
   try {
@@ -24,11 +24,11 @@ export default async (
       throw new Error(`Indicator with ID ${indicatorId} not found`)
     }
 
-    await useStorage().setItem(cacheKey, indicator.dataPoints, { ttl: 3600 })
+    await useStorage().setItem(cacheKey, indicator)
 
-    return indicator.dataPoints
+    return indicator
   } catch (error) {
     console.error('Error in mapDataPoints:', error)
-    return []
+    return null
   }
 }

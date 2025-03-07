@@ -81,7 +81,8 @@ export const useMapFiltersStore = defineStore('MapFilters', () => {
   )
 
   watchImmediate(indicatorOptions, val => {
-    indicatorFilterValue.value = String(val[0]?.children?.[0]?.id)
+    const indicatorId = val[0]?.children?.[0]?.id
+    indicatorFilterValue.value = indicatorId ? String(indicatorId) : ''
   })
 
   return {

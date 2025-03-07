@@ -16,6 +16,7 @@ export default defineNuxtConfig({
   },
 
   app: {
+    keepalive: true,
     head: {
       title: 'SRHR Country Profile',
       meta: [
@@ -116,7 +117,9 @@ export default defineNuxtConfig({
   },
 
   mapbox: {
-    accessToken: process.env.VITE_MAPBOX_PUBLIC_KEY
+    accessToken: process.env.VITE_MAPBOX_PUBLIC_KEY,
+    prewarm: true,
+    persistent: false
   },
 
   elementPlus: {

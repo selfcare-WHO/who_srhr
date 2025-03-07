@@ -7,13 +7,13 @@
       span(v-if="currentIndicator?.subheading" class="text-sm text-regular")
         | {{' '}} ({{ currentIndicator?.subheading }})
 
-    template(v-if="dataType === 'targets'")
+    template(v-if="dataType !== 'heatmap' && Object.keys(legendItems).length > 0")
       h3(class="mt-2 font-bold text-sm text-regular uppercase")
-        | Global target status:
+        | {{ dataType === 'nominal' ? 'Legend:' : 'Global target status:' }}
 
       div(class="mt-2 grid grid-cols-2 gap-y-2")
         div(
-          v-for="(status, key) in TargetStatus"
+          v-for="(status, key) in legendItems"
           :key="key"
           class="flex items-center gap-2"
         )
@@ -23,13 +23,9 @@
           )
 
           span(class="text-sm text-regular")
-            | {{ status.name }}
+            | {{ status.value }}
 
-    template(v-else-if="dataType === 'nominal'")
-      h3(class="mt-2 font-bold text-sm text-regular uppercase")
-        | Global target status:
-
-    template(v-else-if="dataType === 'heatmap'")
+    template(v-else)
       div(class=`
         mt-2 h-3 w-[calc(100%-2rem)] mx-4
         bg-gradient-to-r
@@ -55,21 +51,27 @@
     maxValue: number
     currentIndicator?: Prisma.IndicatorWithSubgroups
     dataType: Filter.MapDataType
+    nominalLegend?: Map.Legend
   }>()
 
   const valuesInterval = 5
-  
+
   const gradientValues = computed(() => {
     const range = props.maxValue - props.minValue
 
     return Array.from({ length: valuesInterval }, (_, i) => {
-      return props.minValue + (range * i / valuesInterval)
+      return props.minValue + (range * i) / valuesInterval
     })
   })
 
+  const isNominal = computed(() => props.dataType === 'nominal')
+  const legendItems = computed(() =>
+    isNominal.value ? (props.nominalLegend ?? {}) : TargetStatus
+  )
+
   const scaleStyle = (index: number) => {
     const middleIndex = Math.floor(valuesInterval / 2)
-    
+
     if (index < middleIndex) {
       return {
         left: `${index * (100 / (valuesInterval - 1))}%`,

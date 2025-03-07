@@ -11,14 +11,14 @@
       .key-item(
         v-for="target in Object.values(TargetStatus)"
         class="flex items-center gap-2"
-        :key="target.name"
+        :key="target.value"
       )
         div(
           class="rounded-full h-4 w-4"
           :style="{ backgroundColor: target.color }"
         )
 
-        span {{ target.name }}
+        span {{ target.value }}
 
     .impact-on-srhr-keys(
       v-else
