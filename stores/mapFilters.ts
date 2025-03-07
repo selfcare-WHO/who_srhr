@@ -40,7 +40,7 @@ export const useMapFiltersStore = defineStore('MapFilters', () => {
         .map(indicator => ({
           id: indicator.id,
           value: indicator.id,
-          label: indicator.fullName
+          label: indicator.displayName
         }))
 
       if (filteredIndicators.length) {

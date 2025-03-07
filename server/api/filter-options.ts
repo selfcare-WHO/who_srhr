@@ -6,7 +6,12 @@ export default defineEventHandler(async event => {
     include: { subgroups: true }
   })
 
-  indicators.sort((a, b) => {
+  const enrichedIndicators = indicators.map(indicator => ({
+    ...indicator,
+    displayName: `${indicator.fullName}${indicator.subheading ? ` - ${indicator.subheading}` : ''}`
+  }))
+
+  enrichedIndicators.sort((a, b) => {
     const aId = a.id
     const bId = b.id
 
@@ -23,5 +28,5 @@ export default defineEventHandler(async event => {
 
   const countries = await prisma.country.findMany()
 
-  return { domains, indicators, countries }
+  return { domains, indicators: enrichedIndicators, countries }
 })

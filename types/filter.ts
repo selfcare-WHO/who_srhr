@@ -37,7 +37,7 @@ declare global {
 
     type Options = {
       domains?: Prisma.Domain[]
-      indicators?: Prisma.IndicatorWithSubgroups[]
+      indicators?: Prisma.SerializedIndicatorWithSubgroups[]
       countries?: Prisma.Country[]
     }
 

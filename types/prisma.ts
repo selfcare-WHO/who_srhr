@@ -21,6 +21,31 @@ declare global {
       include: { subgroups: true }
     }>
 
+    // Serialized version of IndicatorWithSubgroups for use with API responses
+    export type SerializedIndicatorWithSubgroups = {
+      id: string
+      name: string
+      fullName: string
+      subheading: string | null
+      type: string
+      hasTarget: boolean
+      mask: string | null
+      isLaw: boolean
+      translateValue: string | null
+      displayValue: string | null
+      domainId: number
+      tableView: boolean
+      chartView: boolean
+      mapView: boolean
+      mapType: string | null
+      displayName: string
+      subgroups: {
+        id: number
+        name: string
+        fullName: string
+      }[]
+    }
+
     export type DataPointWithType = DataPoint & {
       indicator: {
         type: string

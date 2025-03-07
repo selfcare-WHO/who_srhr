@@ -1,11 +1,11 @@
 <template lang="pug">
   div(class="w-[375px] rounded-lg bg-secondary bg-opacity-20 p-4")
     .mb-3
-      span(class="text-[17px] font-[700] text-primary")
+      p(class="m-0 text-[17px] font-[700] text-primary")
         | {{ currentIndicator?.fullName }}
 
-      span(v-if="currentIndicator?.subheading" class="text-sm text-regular")
-        | {{' '}} ({{ currentIndicator?.subheading }})
+      p(v-if="currentIndicator?.subheading" class="m-0 text-sm text-regular")
+        | {{ currentIndicator?.subheading }}
 
     template(v-if="dataType !== 'heatmap' && Object.keys(legendItems).length > 0")
       h3(class="mt-2 font-bold text-sm text-regular uppercase")
