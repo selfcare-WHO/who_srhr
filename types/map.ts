@@ -19,6 +19,7 @@ declare global {
       value?: string
       element?: HTMLElement
       lngLat?: mapboxgl.LngLatLike
+      placement?: 'top' | 'bottom'
     }
   }
 }

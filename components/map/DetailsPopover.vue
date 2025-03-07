@@ -6,7 +6,7 @@
     :virtual-triggering="true"
     :key="popoverData?.element?.id"
     :persistent="false"
-    placement="top"
+    :placement="popoverData.placement || 'top'"
     popper-class="data-popover pointer-events-none"
   )
     .flex.flex-col.gap-2

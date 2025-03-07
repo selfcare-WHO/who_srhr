@@ -36,7 +36,6 @@ export const useMapPopover = (
   const updatePopoverData = (feature: any, map: mapboxgl.Map) => {
     const featureId = feature?.id
 
-    // Skip if no feature
     if (!featureId) return
 
     map.setFeatureState(
@@ -76,31 +75,27 @@ export const useMapPopover = (
     nextTick(() => {
       popoverData.element = virtualElementRef.value
 
-      // Calculate point position
       const point = map.project([CENTER_LON, CENTER_LAT])
 
-      // Get map dimensions
       const mapCanvas = map.getCanvas()
       const mapWidth = mapCanvas.width
       const mapHeight = mapCanvas.height
 
-      // Adjust coordinates to ensure popover stays within map bounds
       const popoverWidth = 230
-      const popoverHeight = 100
       const popoverOffset = 10
 
-      // Adjust x coordinate if too close to the right edge
+      const isInUpperThird = point.y < mapHeight / 3
+
+      popoverData.placement = isInUpperThird ? 'bottom' : 'top'
+
       if (point.x + popoverWidth / 2 > mapWidth) {
         point.x = mapWidth - popoverWidth / 2
-      }
-      // Adjust x coordinate if too close to the left edge
-      else if (point.x - popoverWidth / 2 < 0) {
+      } else if (point.x - popoverWidth / 2 < 0) {
         point.x = popoverWidth / 2
       }
 
-      // Adjust y coordinate if too close to the top edge
-      if (point.y - popoverHeight - popoverOffset < 0) {
-        point.y = popoverHeight + popoverOffset
+      if (point.y < 0) {
+        point.y = popoverOffset
       }
 
       popoverCoordinates.value = point
