@@ -66,8 +66,12 @@
   const initializedTable = ref(false)
 
   const setColumns = () => {
-    if (tabulator.value && columns.value?.length)
+    if (tabulator.value && columns.value?.length) {
       tabulator.value?.setColumns(columns.value)
+      nextTick(() => {
+        tabulator.value?.redraw()
+      })
+    }
   }
 
   const initTable = () => {
