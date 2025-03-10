@@ -29,20 +29,6 @@ export const useMapConfiguration = (
     tiles: [tilesUrl]
   }
 
-  const lineWidth: mapboxgl.DataDrivenPropertyValueSpecification<number> = [
-    'interpolate',
-    ['linear'],
-    ['zoom'],
-    0,
-    1.5,
-    4,
-    2,
-    8,
-    3,
-    12,
-    4
-  ]
-
   // Base layer configurations
   const backgroundLayer: mapboxgl.LayerSpecification = {
     id: 'background',
@@ -69,7 +55,7 @@ export const useMapConfiguration = (
     source: 'who-world-features',
     paint: {
       'line-color': '#FFFFFF',
-      'line-width': lineWidth
+      'line-width': 1
     }
   }
 
@@ -85,7 +71,7 @@ export const useMapConfiguration = (
     },
     paint: {
       'line-color': '#FFFFFF',
-      'line-width': lineWidth
+      'line-width': 1
     }
   }
 
@@ -111,7 +97,7 @@ export const useMapConfiguration = (
     paint: {
       'line-color': '#828282',
       'line-dasharray': [0.1, 2.5],
-      'line-width': lineWidth
+      'line-width': 1
     }
   }
 
