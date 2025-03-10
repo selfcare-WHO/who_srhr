@@ -59,8 +59,19 @@ export const useMapFiltersStore = defineStore('MapFilters', () => {
     }, [])
   })
 
+  const subgroupOptions = computed<Filter.Option[]>(() => {
+    if (!currentIndicator.value) return []
+
+    return currentIndicator.value.subgroups.map(subgroup => ({
+      id: String(subgroup.id),
+      value: String(subgroup.id),
+      name: subgroup.name
+    }))
+  })
+
   const dataTypeFilterValue = ref<Filter.MapDataType>('heatmap')
   const indicatorFilterValue = ref<string>('')
+  const subgroupFilterValue = ref<string>('')
 
   const indicatorFilter = reactive<Filter.Item>({
     key: 'indicator',
@@ -73,6 +84,16 @@ export const useMapFiltersStore = defineStore('MapFilters', () => {
     options: indicatorOptions
   })
 
+  const subgroupFilter = reactive<Filter.Item>({
+    key: 'subgroup',
+    label: 'Subgroup',
+    value: subgroupFilterValue,
+    tree: false,
+    multiple: false,
+    clearable: false,
+    options: subgroupOptions
+  })
+
   const currentIndicator = computed<Prisma.IndicatorWithSubgroups | undefined>(
     () =>
       indicators.value.find(
@@ -80,17 +101,31 @@ export const useMapFiltersStore = defineStore('MapFilters', () => {
       )
   )
 
+  const currentSubgroup = computed<Prisma.Subgroup | undefined>(() => {
+    if (!currentIndicator.value) return undefined
+
+    return currentIndicator.value.subgroups.find(
+      subgroup => String(subgroup.id) === subgroupFilterValue.value
+    )
+  })
+
   watchImmediate(indicatorOptions, val => {
     const indicatorId = val[0]?.children?.[0]?.id
     indicatorFilterValue.value = indicatorId ? String(indicatorId) : ''
+
+    const subgroupId = currentIndicator.value?.subgroups[0]?.id
+    subgroupFilterValue.value = subgroupId ? String(subgroupId) : ''
   })
 
   return {
     dataTypeOptions,
     indicatorOptions,
     indicatorFilter,
+    subgroupFilter,
     dataTypeFilterValue,
     indicatorFilterValue,
-    currentIndicator
+    subgroupFilterValue,
+    currentIndicator,
+    currentSubgroup
   }
 })

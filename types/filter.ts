@@ -7,9 +7,9 @@ declare global {
       children?: Option[]
     }
 
-    type Label = 'Indicator' | 'Country' | 'Data Type'
+    type Label = 'Indicator' | 'Country' | 'Data Type' | 'Subgroup'
 
-    type Key = 'indicator' | 'country' | 'dataType'
+    type Key = 'indicator' | 'country' | 'dataType' | 'subgroup'
 
     type Item<K extends Key = Key> = {
       key: K

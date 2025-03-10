@@ -76,6 +76,7 @@
         :min-value="dataMinValue"
         :max-value="dataMaxValue"
         :current-indicator="currentIndicator"
+        :current-subgroup="currentSubgroup"
         :data-type="dataTypeFilterValue"
         :nominal-legend="nominalLegend"
       )
@@ -94,6 +95,7 @@
     dataMinValue,
     dataMaxValue,
     currentIndicator,
+    currentSubgroup,
     dataTypeFilterValue
   } = useMapData()
 

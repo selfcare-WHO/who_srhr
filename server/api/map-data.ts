@@ -8,12 +8,15 @@ import { TargetStatus } from '~/types/enums'
 let geoJsonFeatures: GeoJSON.Feature[] | null = null
 
 export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
-  const { indicatorId }: { indicatorId: string } = getQuery(event)
+  const {
+    indicatorId,
+    subgroupId
+  }: { indicatorId: string; subgroupId: string } = getQuery(event)
 
-  if (!indicatorId) {
+  if (!indicatorId || !subgroupId) {
     throw createError({
       statusCode: 400,
-      statusMessage: 'Indicator is required'
+      statusMessage: 'Indicator and subgroup are required'
     })
   }
 
@@ -26,7 +29,7 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
       geoJsonFeatures = features
     }
 
-    const indicator = await mapDataPoints(indicatorId)
+    const indicator = await mapDataPoints(indicatorId, subgroupId)
 
     if (!indicator) {
       throw createError({
@@ -92,7 +95,11 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
         }
       }) ?? []
 
-    return { features: linkedFeatures, dataPoints, legend: legendObject }
+    return {
+      features: linkedFeatures,
+      dataPoints,
+      legend: legendObject
+    }
   } catch (error) {
     throw createError({
       statusCode: 500,

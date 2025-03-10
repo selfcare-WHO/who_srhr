@@ -7,6 +7,9 @@
       p(v-if="currentIndicator?.subheading" class="m-0 text-sm text-regular")
         | {{ currentIndicator?.subheading }}
 
+      p(v-if="currentSubgroup" class="m-0 text-sm text-bold")
+        | {{ currentSubgroup?.name }}
+
     template(v-if="dataType !== 'heatmap' && Object.keys(legendItems).length > 0")
       h3(class="mt-2 font-bold text-sm text-regular uppercase")
         | {{ dataType === 'nominal' ? 'Legend:' : 'Global target status:' }}
@@ -50,6 +53,7 @@
     minValue: number
     maxValue: number
     currentIndicator?: Prisma.IndicatorWithSubgroups
+    currentSubgroup?: Prisma.Subgroup
     dataType: Filter.MapDataType
     nominalLegend?: Map.Legend
   }>()

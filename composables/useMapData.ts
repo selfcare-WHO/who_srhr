@@ -1,7 +1,12 @@
 export const useMapData = () => {
   const mapFiltersStore = useMapFiltersStore()
-  const { indicatorFilterValue, dataTypeFilterValue, currentIndicator } =
-    storeToRefs(mapFiltersStore)
+  const {
+    indicatorFilterValue,
+    subgroupFilterValue,
+    dataTypeFilterValue,
+    currentIndicator,
+    currentSubgroup
+  } = storeToRefs(mapFiltersStore)
 
   const isFetching = ref(false)
 
@@ -12,14 +17,17 @@ export const useMapData = () => {
 
       isFetching.value = true
       const data = await $fetch('/api/map-data', {
-        query: { indicatorId: indicatorFilterValue.value }
+        query: {
+          indicatorId: indicatorFilterValue.value,
+          subgroupId: subgroupFilterValue.value
+        }
       })
       isFetching.value = false
 
       return data
     },
     {
-      watch: [indicatorFilterValue],
+      watch: [indicatorFilterValue, subgroupFilterValue],
       immediate: true
     }
   )
@@ -66,6 +74,7 @@ export const useMapData = () => {
     dataMinValue,
     dataMaxValue,
     currentIndicator,
+    currentSubgroup,
     dataTypeFilterValue
   }
 }

@@ -1,9 +1,10 @@
 import prisma from '~/lib/prisma'
 
 export default async (
-  indicatorId: string
+  indicatorId: string,
+  subgroupId: string
 ): Promise<Prisma.IndicatorWithDataPoints | null> => {
-  const cacheKey = `map-data-points-${indicatorId}`
+  const cacheKey = `map-data-points-${indicatorId}-${subgroupId}`
   const cached =
     await useStorage().getItem<Prisma.IndicatorWithDataPoints>(cacheKey)
   if (cached) return cached
@@ -12,9 +13,13 @@ export default async (
     const indicator = await prisma.indicator.findUnique({
       where: { id: indicatorId },
       include: {
+        subgroups: true,
         dataPoints: {
           include: {
             country: true
+          },
+          where: {
+            subgroupId: Number(subgroupId)
           }
         }
       }
