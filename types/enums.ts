@@ -26,7 +26,7 @@ export const ImpactOnSrhr = {
     dbValue: 'Achieved',
     name: 'Supportive',
     icon: import.meta.client
-      ? import('@assets/icons/check-mark.svg')
+      ? await import('@assets/icons/check-mark.svg')
       : undefined,
     iconColor: 'var(--el-color-primary)',
     bgColor: '#ccd2de',
@@ -35,7 +35,9 @@ export const ImpactOnSrhr = {
   partial: {
     name: 'Partial',
     dbValue: 'Challenges remain',
-    icon: import.meta.client ? import('@assets/icons/minus.svg') : undefined,
+    icon: import.meta.client
+      ? await import('@assets/icons/minus.svg')
+      : undefined,
     iconColor: '#E2E6ED',
     bgColor: '#66799D',
     borderColor: '#66799D'
@@ -44,7 +46,7 @@ export const ImpactOnSrhr = {
     name: 'Punitive',
     dbValue: 'Major challenges remain',
     icon: import.meta.client
-      ? import('@assets/icons/close-bold.svg')
+      ? await import('@assets/icons/close-bold.svg')
       : undefined,
     iconColor: '#ccd2de',
     bgColor: '#999999',
@@ -54,7 +56,7 @@ export const ImpactOnSrhr = {
     dbValue: 'Data not available',
     name: 'No Data',
     icon: import.meta.client
-      ? import('@assets/icons/question-mark.svg')
+      ? await import('@assets/icons/question-mark.svg')
       : undefined,
     iconColor: 'var(--el-color-primary)',
     bgColor: 'transparent',
