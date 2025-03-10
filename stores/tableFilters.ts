@@ -31,7 +31,7 @@ export const useTableFiltersStore = defineStore('TableFilters', () => {
         .map(indicator => ({
           id: indicator.id,
           value: indicator.id,
-          label: indicator.fullName
+          label: indicator.displayName
         }))
 
       if (filteredIndicators.length) {

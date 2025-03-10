@@ -9,7 +9,7 @@
         ElFormItem(
           v-for="filter in tableFilters"
           :key="filter.label"
-          class="w-[285px]"
+          class="w-[375px]"
           :label="filter.label"
         )
           FilterItem(
