@@ -1,3 +1,12 @@
+let checkMark, minus, closeBold, questionMark
+
+if (import.meta.client) {
+  checkMark = (await import('@assets/icons/check-mark.svg')).default
+  minus = (await import('@assets/icons/minus.svg')).default
+  closeBold = (await import('@assets/icons/close-bold.svg')).default
+  questionMark = (await import('@assets/icons/question-mark.svg')).default
+}
+
 export const TargetStatus: Map.Legend = {
   Achieved: {
     value: 'Achieved',
@@ -21,16 +30,11 @@ export const TargetStatus: Map.Legend = {
   }
 }
 
-// Function to load icons dynamically
-const loadIcon = (path: string) => {
-  return () => (import.meta.client ? import(path) : Promise.resolve(undefined))
-}
-
 export const ImpactOnSrhr = {
   supportive: {
     dbValue: 'Achieved',
     name: 'Supportive',
-    iconLoader: loadIcon('@assets/icons/check-mark.svg'),
+    icon: checkMark,
     iconColor: 'var(--el-color-primary)',
     bgColor: '#ccd2de',
     borderColor: 'var(--el-color-primary)'
@@ -38,7 +42,7 @@ export const ImpactOnSrhr = {
   partial: {
     name: 'Partial',
     dbValue: 'Challenges remain',
-    iconLoader: loadIcon('@assets/icons/minus.svg'),
+    icon: minus,
     iconColor: '#E2E6ED',
     bgColor: '#66799D',
     borderColor: '#66799D'
@@ -46,7 +50,7 @@ export const ImpactOnSrhr = {
   punitive: {
     name: 'Punitive',
     dbValue: 'Major challenges remain',
-    iconLoader: loadIcon('@assets/icons/close-bold.svg'),
+    icon: closeBold,
     iconColor: '#ccd2de',
     bgColor: '#999999',
     borderColor: '#999999'
@@ -54,7 +58,7 @@ export const ImpactOnSrhr = {
   noData: {
     dbValue: 'Data not available',
     name: 'No Data',
-    iconLoader: loadIcon('@assets/icons/question-mark.svg'),
+    icon: questionMark,
     iconColor: 'var(--el-color-primary)',
     bgColor: 'transparent',
     borderColor: 'var(--el-color-primary)'
