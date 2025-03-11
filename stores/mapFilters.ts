@@ -4,14 +4,31 @@ export const useMapFiltersStore = defineStore('MapFilters', () => {
   const filtersStore = useFiltersStore()
   const { indicators, domains } = storeToRefs(filtersStore)
 
-  const dataTypeOptions = computed<Filter.MapDataTypeOption[]>(() => [
+  const currentIndicator = computed<Prisma.IndicatorWithSubgroups>(
+    () =>
+      indicators.value.find(
+        indicator => indicator.id === indicatorFilterValue.value
+      ) ?? ({} as Prisma.IndicatorWithSubgroups)
+  )
+
+  const currentSubgroup = computed<Prisma.Subgroup>(() => {
+    if (!currentIndicator.value) return {} as Prisma.Subgroup
+
+    return (
+      currentIndicator.value?.subgroups?.find(
+        subgroup => String(subgroup.id) === subgroupFilterValue.value
+      ) ?? ({} as Prisma.Subgroup)
+    )
+  })
+
+  const dataTypeOptions = computed<Filter.Option[]>(() => [
     {
-      id: 'heatmap',
-      name: 'Heatmap'
+      id: 'numerical_categorical',
+      name: 'Numerical & categorical'
     },
     {
-      id: 'nominal',
-      name: 'Nominal'
+      id: 'laws_policies',
+      name: 'Laws & policies'
     },
     {
       id: 'targets',
@@ -29,12 +46,12 @@ export const useMapFiltersStore = defineStore('MapFilters', () => {
             return false
 
           switch (dataTypeFilterValue.value) {
+            case 'numerical_categorical':
+              return !indicator.isLaw
+            case 'laws_policies':
+              return indicator.isLaw
             case 'targets':
               return indicator.hasTarget
-            case 'nominal':
-              return indicator.type === 'Nominal'
-            default:
-              return !indicator.hasTarget && indicator.type !== 'Nominal'
           }
         })
         .map(indicator => ({
@@ -62,16 +79,28 @@ export const useMapFiltersStore = defineStore('MapFilters', () => {
   const subgroupOptions = computed<Filter.Option[]>(() => {
     if (!currentIndicator.value) return []
 
-    return currentIndicator.value.subgroups.map(subgroup => ({
-      id: String(subgroup.id),
-      value: String(subgroup.id),
-      name: subgroup.name
-    }))
+    return (
+      currentIndicator.value?.subgroups?.map(subgroup => ({
+        id: String(subgroup.id),
+        value: String(subgroup.id),
+        name: subgroup.name
+      })) ?? []
+    )
   })
 
-  const dataTypeFilterValue = ref<Filter.MapDataType>('heatmap')
+  const dataTypeFilterValue = ref<Filter.DataType>('numerical_categorical')
   const indicatorFilterValue = ref<string>('')
   const subgroupFilterValue = ref<string>('')
+
+  const dataTypeFilter = reactive<Filter.Item>({
+    key: 'dataType',
+    label: 'Data Type',
+    value: dataTypeFilterValue,
+    tree: false,
+    multiple: false,
+    clearable: false,
+    options: dataTypeOptions
+  })
 
   const indicatorFilter = reactive<Filter.Item>({
     key: 'indicator',
@@ -91,35 +120,34 @@ export const useMapFiltersStore = defineStore('MapFilters', () => {
     tree: false,
     multiple: false,
     clearable: false,
-    options: subgroupOptions
+    options: subgroupOptions,
+    hide: computed(() => subgroupOptions.value?.length <= 1)
   })
 
-  const currentIndicator = computed<Prisma.IndicatorWithSubgroups | undefined>(
-    () =>
-      indicators.value.find(
-        indicator => indicator.id === indicatorFilterValue.value
-      )
-  )
-
-  const currentSubgroup = computed<Prisma.Subgroup | undefined>(() => {
-    if (!currentIndicator.value) return undefined
-
-    return currentIndicator.value.subgroups.find(
-      subgroup => String(subgroup.id) === subgroupFilterValue.value
-    )
-  })
+  const mapFilters = reactive<Filter.Item[]>([
+    dataTypeFilter,
+    indicatorFilter,
+    subgroupFilter
+  ])
 
   watchImmediate(indicatorOptions, val => {
     const indicatorId = val[0]?.children?.[0]?.id
     indicatorFilterValue.value = indicatorId ? String(indicatorId) : ''
 
-    const subgroupId = currentIndicator.value?.subgroups[0]?.id
+    const subgroupId = currentIndicator.value?.subgroups?.[0]?.id
+    subgroupFilterValue.value = subgroupId ? String(subgroupId) : ''
+  })
+
+  watch(currentIndicator, val => {
+    const subgroupId = val?.subgroups?.[0]?.id
     subgroupFilterValue.value = subgroupId ? String(subgroupId) : ''
   })
 
   return {
+    mapFilters,
     dataTypeOptions,
     indicatorOptions,
+    dataTypeFilter,
     indicatorFilter,
     subgroupFilter,
     dataTypeFilterValue,

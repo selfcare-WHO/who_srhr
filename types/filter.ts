@@ -21,6 +21,7 @@ declare global {
       tree?: boolean
       childrenKey?: Key
       clearable: boolean
+      hide?: MaybeRefOrGetter<boolean>
     }
 
     type TableValues = {
@@ -41,11 +42,6 @@ declare global {
       countries?: Prisma.Country[]
     }
 
-    type MapDataType = 'heatmap' | 'targets' | 'nominal'
-
-    type MapDataTypeOption = {
-      id: MapDataType
-      name: string
-    }
+    type DataType = 'numerical_categorical' | 'laws_policies' | 'targets'
   }
 }

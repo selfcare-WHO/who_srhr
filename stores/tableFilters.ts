@@ -57,7 +57,7 @@ export const useTableFiltersStore = defineStore('TableFilters', () => {
     }))
   )
 
-  const dataTypeFilterValue = ref<string>('numerical_categorical')
+  const dataTypeFilterValue = ref<Filter.DataType>('numerical_categorical')
   const indicatorFilterValue = ref<string[]>([])
   const countryFilterValue = ref<string[]>([])
 

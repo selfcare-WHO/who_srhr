@@ -7,12 +7,15 @@
       p(v-if="currentIndicator?.subheading" class="m-0 text-sm text-regular")
         | {{ currentIndicator?.subheading }}
 
-      p(v-if="currentSubgroup" class="m-0 text-sm text-bold")
+      p(
+        v-if="currentSubgroup && currentSubgroup.name !== 'Data'"
+        class="m-0 text-sm text-bold"
+      )
         | {{ currentSubgroup?.name }}
 
-    template(v-if="dataType !== 'heatmap' && Object.keys(legendItems).length > 0")
+    template(v-if="isNominal || dataType === 'targets'")
       h3(class="mt-2 font-bold text-sm text-regular uppercase")
-        | {{ dataType === 'nominal' ? 'Legend:' : 'Global target status:' }}
+        | {{ legendTitle }}
 
       div(class="mt-2 grid grid-cols-2 gap-y-2")
         div(
@@ -54,7 +57,7 @@
     maxValue: number
     currentIndicator?: Prisma.IndicatorWithSubgroups
     currentSubgroup?: Prisma.Subgroup
-    dataType: Filter.MapDataType
+    dataType: Filter.DataType
     nominalLegend?: Map.Legend
   }>()
 
@@ -68,10 +71,18 @@
     })
   })
 
-  const isNominal = computed(() => props.dataType === 'nominal')
+  const isNominal = computed(() => props.currentIndicator?.type === 'Nominal')
+
   const legendItems = computed(() =>
     isNominal.value ? (props.nominalLegend ?? {}) : TargetStatus
   )
+
+  const legendTitle = computed(() => {
+    if (props.dataType === 'numerical_categorical') return 'Legend:'
+    if (props.dataType === 'laws_policies') return 'Impact on integrated srhr:'
+    if (props.dataType === 'targets') return 'Global target status:'
+    return ''
+  })
 
   const scaleStyle = (index: number) => {
     const middleIndex = Math.floor(valuesInterval / 2)

@@ -6,7 +6,7 @@
     :virtual-triggering="true"
     :key="popoverData?.element?.id"
     :persistent="false"
-    :placement="popoverData.placement || 'top'"
+    :placement="popoverData?.placement ?? 'top'"
     :teleported="false"
     :popper-class="`data-popover pointer-events-none ${popperClass}`"
   )
