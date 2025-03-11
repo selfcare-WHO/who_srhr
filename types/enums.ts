@@ -21,13 +21,16 @@ export const TargetStatus: Map.Legend = {
   }
 }
 
+// Function to load icons dynamically
+const loadIcon = (path: string) => {
+  return () => (import.meta.client ? import(path) : Promise.resolve(undefined))
+}
+
 export const ImpactOnSrhr = {
   supportive: {
     dbValue: 'Achieved',
     name: 'Supportive',
-    icon: import.meta.client
-      ? await import('@assets/icons/check-mark.svg')
-      : undefined,
+    iconLoader: loadIcon('@assets/icons/check-mark.svg'),
     iconColor: 'var(--el-color-primary)',
     bgColor: '#ccd2de',
     borderColor: 'var(--el-color-primary)'
@@ -35,9 +38,7 @@ export const ImpactOnSrhr = {
   partial: {
     name: 'Partial',
     dbValue: 'Challenges remain',
-    icon: import.meta.client
-      ? await import('@assets/icons/minus.svg')
-      : undefined,
+    iconLoader: loadIcon('@assets/icons/minus.svg'),
     iconColor: '#E2E6ED',
     bgColor: '#66799D',
     borderColor: '#66799D'
@@ -45,9 +46,7 @@ export const ImpactOnSrhr = {
   punitive: {
     name: 'Punitive',
     dbValue: 'Major challenges remain',
-    icon: import.meta.client
-      ? await import('@assets/icons/close-bold.svg')
-      : undefined,
+    iconLoader: loadIcon('@assets/icons/close-bold.svg'),
     iconColor: '#ccd2de',
     bgColor: '#999999',
     borderColor: '#999999'
@@ -55,9 +54,7 @@ export const ImpactOnSrhr = {
   noData: {
     dbValue: 'Data not available',
     name: 'No Data',
-    icon: import.meta.client
-      ? await import('@assets/icons/question-mark.svg')
-      : undefined,
+    iconLoader: loadIcon('@assets/icons/question-mark.svg'),
     iconColor: 'var(--el-color-primary)',
     bgColor: 'transparent',
     borderColor: 'var(--el-color-primary)'
