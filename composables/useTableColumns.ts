@@ -1,5 +1,5 @@
 import type { ColumnDefinition } from 'tabulator-tables'
-import { ImpactOnSrhr } from '@enums'
+import { ImpactOnSrhr } from '~/types/clientEnums'
 
 import { ElIcon } from 'element-plus'
 import { createVNode, render } from 'vue'

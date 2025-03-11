@@ -47,7 +47,8 @@
 </template>
 
 <script lang="ts" setup>
-  import { TargetStatus, ImpactOnSrhr } from '@enums'
+  import { TargetStatus } from '~/types/enums'
+  import { ImpactOnSrhr } from '~/types/clientEnums'
 
   const { dataType } = defineProps<{
     dataType?: string
