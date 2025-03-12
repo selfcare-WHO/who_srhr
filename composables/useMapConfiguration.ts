@@ -106,7 +106,7 @@ export const useMapConfiguration = (
     type: 'symbol',
     source: 'who-world-basemap',
     'source-layer': 'Country Names/label',
-    minzoom: 1,
+    minzoom: 3,
     layout: {
       'text-font': ['Oswald Regular'],
       'text-size': 16,
