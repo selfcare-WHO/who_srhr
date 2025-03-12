@@ -24,12 +24,18 @@
           class="flex items-center gap-2"
         )
           div(
-            class="h-4 w-4 rounded-full"
-            :style="{ backgroundColor: status.color }"
+            class="rounded-full h-4 w-4 border-2 flex items-center justify-center"
+            :style="itemStyle(status)"
           )
+            ElIcon(
+              v-if="status.icon"
+              :color="status.iconColor"
+              size="10"
+            )
+              component(:is="status.icon")
 
           span(class="text-sm text-regular")
-            | {{ status.value }}
+            | {{ status.name }}
 
     template(v-else)
       div(class=`
@@ -51,6 +57,7 @@
 
 <script lang="ts" setup>
   import { TargetStatus } from '~/types/enums'
+  import { ImpactOnSrhr } from '~/types/clientEnums'
 
   const props = defineProps<{
     minValue: number
@@ -58,7 +65,7 @@
     currentIndicator?: Prisma.IndicatorWithSubgroups
     currentSubgroup?: Prisma.Subgroup
     dataType: Filter.DataType
-    nominalLegend?: Map.Legend
+    nominalLegend?: Data.Legend
   }>()
 
   const valuesInterval = 5
@@ -73,9 +80,13 @@
 
   const isNominal = computed(() => props.currentIndicator?.type === 'Nominal')
 
-  const legendItems = computed(() =>
-    isNominal.value ? (props.nominalLegend ?? {}) : TargetStatus
-  )
+  const legendItems = computed(() => {
+    if (props.dataType === 'laws_policies') return ImpactOnSrhr
+    if (props.dataType === 'targets') return TargetStatus
+    if (isNominal.value) return props.nominalLegend ?? {}
+
+    return {}
+  })
 
   const legendTitle = computed(() => {
     if (props.dataType === 'numerical_categorical') return 'Legend:'
@@ -108,6 +119,13 @@
         textAlign: 'center' as const,
         transform: 'translateX(-50%)'
       }
+    }
+  }
+
+  const itemStyle = (status: Data.Legend[keyof Data.Legend]) => {
+    return {
+      backgroundColor: status?.color ?? status.bgColor,
+      borderColor: status?.color ?? status.borderColor
     }
   }
 </script>

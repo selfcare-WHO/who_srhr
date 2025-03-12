@@ -1,3 +1,10 @@
+import { ImpactOnSrhr } from '~/types/clientEnums'
+
+import CheckMark from '@assets/icons/check-mark.png'
+import Minus from '@assets/icons/minus.png'
+import CloseBold from '@assets/icons/close-bold.png'
+import QuestionMark from '@assets/icons/question-mark.png'
+
 export const useMapStyles = ({
   dataTypeFilterValue,
   dataMinValue,
@@ -55,7 +62,35 @@ export const useMapStyles = ({
     'fill-color': [
       'case',
       ['==', ['get', 'change'], 'Achieved'],
-      getStatusColor('Achieved')
+      ImpactOnSrhr.supportive.bgColor,
+      ['==', ['get', 'change'], 'Challenges remain'],
+      ImpactOnSrhr.partial.bgColor,
+      ['==', ['get', 'change'], 'Major challenges remain'],
+      ImpactOnSrhr.punitive.bgColor,
+      ['==', ['get', 'change'], 'Data not available '],
+      ImpactOnSrhr.noData.bgColor,
+
+      // fallback color
+      ImpactOnSrhr.noData.bgColor
+    ],
+    'fill-pattern': [
+      'case',
+      ['==', ['get', 'change'], 'Achieved'],
+      'icon-check-mark',
+      ['==', ['get', 'change'], 'Challenges remain'],
+      'icon-minus',
+      ['==', ['get', 'change'], 'Major challenges remain'],
+      'icon-close-bold',
+      ['==', ['get', 'change'], 'Data not available '],
+      'icon-question-mark',
+      // fallback pattern
+      'icon-question-mark'
+    ],
+    'fill-opacity': [
+      'case',
+      ['boolean', ['feature-state', 'hover'], false],
+      1,
+      0.75
     ]
   }
 
@@ -72,6 +107,25 @@ export const useMapStyles = ({
     }
 
     return {}
+  })
+
+  useMapbox('world-map', map => {
+    const loadMapIcon = (imageSource: string, iconName: string) => {
+      map.loadImage(imageSource, (err, image) => {
+        if (err) throw err
+
+        if (image) {
+          map.addImage(iconName, image, {
+            pixelRatio: 3
+          })
+        }
+      })
+    }
+
+    loadMapIcon(CheckMark, 'icon-check-mark')
+    loadMapIcon(Minus, 'icon-minus')
+    loadMapIcon(CloseBold, 'icon-close-bold')
+    loadMapIcon(QuestionMark, 'icon-question-mark')
   })
 
   return {

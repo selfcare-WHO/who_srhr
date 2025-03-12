@@ -3,7 +3,7 @@ import minus from '@assets/icons/minus.svg'
 import closeBold from '@assets/icons/close-bold.svg'
 import questionMark from '@assets/icons/question-mark.svg'
 
-export const ImpactOnSrhr = {
+export const ImpactOnSrhr: Data.Legend = {
   supportive: {
     dbValue: 'Achieved',
     name: 'Supportive',
@@ -29,8 +29,8 @@ export const ImpactOnSrhr = {
     borderColor: '#999999'
   },
   noData: {
-    dbValue: 'Data not available',
     name: 'No Data',
+    dbValue: 'Data not available',
     icon: questionMark,
     iconColor: 'var(--el-color-primary)',
     bgColor: 'transparent',

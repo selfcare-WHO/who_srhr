@@ -1,21 +1,21 @@
-export const TargetStatus: Map.Legend = {
+export const TargetStatus: Data.Legend = {
   Achieved: {
-    value: 'Achieved',
+    name: 'Achieved',
     dbValue: 'Achieved',
     color: 'var(--el-color-success)'
   },
   'Challenges remain': {
-    value: 'Challenges',
+    name: 'Challenges',
     dbValue: 'Challenges remain',
     color: 'var(--el-color-warning)'
   },
   'Major challenges remain': {
-    value: 'Major Challenges',
+    name: 'Major Challenges',
     dbValue: 'Major challenges remain',
     color: 'var(--el-color-danger)'
   },
   'Data not available': {
-    value: 'No Data',
+    name: 'No Data',
     dbValue: 'Data not available',
     color: 'var(--el-text-color-placeholder)'
   }

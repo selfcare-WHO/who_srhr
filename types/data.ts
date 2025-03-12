@@ -52,5 +52,17 @@ declare global {
     }
 
     type Value = number | string | null | undefined
+
+    interface Legend {
+      [key: string]: {
+        dbValue: string
+        name: string
+        color?: string
+        icon?: string
+        iconColor?: string
+        bgColor?: string
+        borderColor?: string
+      }
+    }
   }
 }
