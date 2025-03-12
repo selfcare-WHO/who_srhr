@@ -22,16 +22,18 @@
           :source="linkedFeaturesSource"
         )
         
-        MapboxLayer(:layer="backgroundLayer")
+        MapboxLayer(:layer="backgroundLayer" before-layer="countries")
         MapboxLayer(
+          :key="dataTypeFilterValue"
           :layer="countriesLayer"
           @mousemove="onMouseMove"
           @mouseleave="onMouseLeave"
+          before-layer="countries-boundary"
         )
-        MapboxLayer(:layer="countriesBoundaryLayer")
-        MapboxLayer(:layer="admin0Layer")
-        MapboxLayer(:layer="disputedTerritoriesLayer")
-        MapboxLayer(:layer="disputedBordersLayer")
+        MapboxLayer(:layer="countriesBoundaryLayer" before-layer="admin-0")
+        MapboxLayer(:layer="admin0Layer" before-layer="disputed-territories")
+        MapboxLayer(:layer="disputedTerritoriesLayer" before-layer="disputed-borders")
+        MapboxLayer(:layer="disputedBordersLayer" before-layer="country-names")
         MapboxLayer(:layer="countryNamesLayer")
 
         MapDetailsPopover(

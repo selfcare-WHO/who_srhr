@@ -44,9 +44,7 @@ export const useMapConfiguration = (
     id: 'countries',
     type: 'fill',
     source: 'who-world-features',
-    paint: {
-      ...countriesPaint.value
-    }
+    paint: countriesPaint.value as mapboxgl.FillLayerSpecification['paint']
   }))
 
   const countriesBoundaryLayer: mapboxgl.LayerSpecification = {
@@ -86,7 +84,7 @@ export const useMapConfiguration = (
   }
 
   const disputedBordersLayer: mapboxgl.LayerSpecification = {
-    id: 'disputed-borders-dashed',
+    id: 'disputed-borders',
     type: 'line',
     source: 'who-world-basemap',
     'source-layer': 'DISPUTED_BORDERS',
