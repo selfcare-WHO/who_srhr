@@ -20,6 +20,7 @@
           :tree="filter.tree"
           :placeholder="filter.placeholder"
           :clearable="!!filter?.clearable"
+          :filterable="filter.filterable"
         )
 </template>
 

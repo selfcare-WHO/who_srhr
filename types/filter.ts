@@ -22,6 +22,7 @@ declare global {
       childrenKey?: Key
       clearable: boolean
       hide?: MaybeRefOrGetter<boolean>
+      filterable?: boolean
     }
 
     type TableValues = {

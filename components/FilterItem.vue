@@ -20,7 +20,7 @@
     :placeholder="placeholder || `All ${label}s`"
     :clearable="clearable"
     :multiple="multiple"
-    :filterable="multiple"
+    :filterable="multiple || filterable"
     :data="options"
     @check="onChange"
     @change="onChange"
@@ -42,7 +42,7 @@
     :max-collapse-tags="5"
     :size="size"
     :clearable="clearable"
-    :filterable="multiple"
+    :filterable="multiple || filterable"
     :loading="isFetchingFilters"
     :disabled="isFetchingFilters"
     :placeholder="placeholder || `All ${label}s`"
@@ -73,7 +73,8 @@
     tree,
     placeholder,
     clearable,
-    size = 'small'
+    size = 'small',
+    filterable = false
   } = defineProps<{
     label: string
     options: Filter.Option[]
@@ -82,6 +83,7 @@
     placeholder?: string
     clearable: boolean
     size?: 'large' | 'small' | 'default'
+    filterable?: boolean
   }>()
 
   const emit = defineEmits<{

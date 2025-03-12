@@ -110,7 +110,8 @@ export const useMapFiltersStore = defineStore('MapFilters', () => {
     tree: true,
     multiple: false,
     clearable: false,
-    options: indicatorOptions
+    options: indicatorOptions,
+    filterable: true
   })
 
   const subgroupFilter = reactive<Filter.Item>({
