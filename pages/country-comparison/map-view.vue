@@ -5,7 +5,7 @@
   )
     MapFilters
 
-    .map-container(class="relative" v-loading="isFetching")
+    .map-container(class="relative h-full min-h-[80vh] w-full" v-loading="isFetching")
       MapboxMap(
         class="h-full min-h-[80vh] w-full rounded-lg"
         map-id="world-map"
