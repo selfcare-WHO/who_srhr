@@ -87,7 +87,7 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
             dataPointId: dataPoint?.id.toString(),
             change: dataPoint?.change,
             originalValue: dataPoint?.originalValue,
-            value: Number(dataPoint?.value)
+            value: dataPoint?.value
           }
         }
       }) ?? []

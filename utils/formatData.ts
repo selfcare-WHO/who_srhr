@@ -16,17 +16,21 @@ export default ({
       return displayValue === 'original_value' ? originalValue : dataPointValue
     }
 
-    return value !== undefined && value !== null ? value.toFixed(2) : ''
+    return value !== undefined && value !== null
+      ? Number.isInteger(value)
+        ? value.toString()
+        : value.toFixed(2)
+      : ''
   })()
 
   const postfix = type === 'Percentage' ? '%' : ''
 
-  if (renderedValue === null || renderedValue === undefined) return 'n/d'
+  if ([null, undefined, ''].includes(renderedValue)) return 'No data'
 
   if (translateValue) {
     const translateObject = JSON.parse(translateValue)
 
-    if (translateObject[renderedValue]) {
+    if (renderedValue && translateObject[renderedValue]) {
       const translatedValue = translateObject[renderedValue]
       return `${translatedValue}${postfix}`
     }

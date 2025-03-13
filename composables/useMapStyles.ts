@@ -1,3 +1,10 @@
+const parseCssVar = (varName: string): string => {
+  return (
+    getComputedStyle(document.documentElement).getPropertyValue(varName) ||
+    '#cccccc'
+  )
+}
+
 export const useMapStyles = ({
   dataTypeFilterValue,
   dataMinValue,
@@ -40,13 +47,27 @@ export const useMapStyles = ({
 
     return {
       'fill-color': [
-        'interpolate',
-        ['linear'],
-        ['to-number', ['get', 'value']],
-        min,
-        parseCssVar('--el-bg-color-heatmap-min'),
-        max,
-        parseCssVar('--el-bg-color-heatmap-max')
+        'case',
+        ['to-boolean', ['get', 'value']],
+        [
+          'case',
+          // Use a numeric fallback (0) and check if the value is a number and not 0
+          // (assuming 0 is not a valid data point in your dataset)
+          ['!=', ['to-number', ['get', 'value'], 0], 0],
+          [
+            'interpolate',
+            ['linear'],
+            ['to-number', ['get', 'value'], 0],
+            min,
+            parseCssVar('--el-bg-color-heatmap-min'),
+            max,
+            parseCssVar('--el-bg-color-heatmap-max')
+          ],
+          // Fallback color for non-numeric values
+          parseCssVar('--el-color-warning')
+        ],
+        // Default case: when 'value' doesn't exist or is null
+        parseCssVar('--el-text-color-disabled')
       ]
     }
   })

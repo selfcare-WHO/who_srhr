@@ -46,12 +46,26 @@
       `)
       
       div(class="relative mt-2 h-3 w-[calc(100%-2rem)] mx-4")
-          span(
-            v-for="(value, index) in gradientValues" :key="index"
-            class="text-xs text-regular absolute"
-            :style="scaleStyle(index)"
+        span(
+          v-for="(value, index) in gradientValues" :key="index"
+          class="text-xs text-regular absolute"
+          :style="scaleStyle(index)"
+        )
+          | {{ formatData({ indicator: currentIndicator, value }) }}
+
+      div(class="mx-3 mt-5 grid grid-cols-2 gap-y-2")
+        div(
+          v-for="(legendItem, key) in heatmapLegendItems"
+          :key="key"
+          class="flex items-center gap-2"
+        )
+          div(
+            class="rounded-full h-4 w-4 border-2 flex items-center justify-center"
+            :style="{ backgroundColor: legendItem.color }"
           )
-            | {{ formatData({ indicator: currentIndicator, value }) }}
+
+          span(class="text-sm text-regular")
+            | {{ legendItem.name }}
 
 </template>
 
@@ -92,6 +106,19 @@
     if (props.dataType === 'laws_policies') return 'Impact on integrated srhr:'
     if (props.dataType === 'targets') return 'Global target status:'
     return ''
+  })
+
+  const heatmapLegendItems = computed(() => {
+    return {
+      Other: {
+        name: 'Other',
+        color: 'var(--el-color-warning)'
+      },
+      'No data': {
+        name: 'No data',
+        color: 'var(--el-text-color-disabled)'
+      }
+    }
   })
 
   const scaleStyle = (index: number) => {
