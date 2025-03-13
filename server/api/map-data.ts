@@ -51,10 +51,7 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
       )
         return
 
-      if (
-        legend.has(dp?.change) &&
-        legend.get(dp?.change).value !== dp?.value
-      ) {
+      if (legend.has(dp?.change) && legend.get(dp?.change).name !== dp?.value) {
         console.error(
           `Legend already has ${dp?.change} with value ${legend.get(dp?.change)} and ${dp?.value}`
         )
@@ -68,7 +65,7 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
 
       if (color) {
         legend.set(dp?.change, {
-          value: dp?.value ?? 'No Data',
+          name: dp?.value ?? 'No Data',
           color
         })
       }

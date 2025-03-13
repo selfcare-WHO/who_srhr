@@ -57,7 +57,6 @@
 
 <script lang="ts" setup>
   import { TargetStatus } from '~/types/enums'
-  import { ImpactOnSrhr } from '~/types/clientEnums'
 
   const props = defineProps<{
     minValue: number
@@ -81,9 +80,9 @@
   const isNominal = computed(() => props.currentIndicator?.type === 'Nominal')
 
   const legendItems = computed(() => {
-    if (props.dataType === 'laws_policies') return ImpactOnSrhr
     if (props.dataType === 'targets') return TargetStatus
-    if (isNominal.value) return props.nominalLegend ?? {}
+    if (props.dataType === 'laws_policies' || isNominal.value)
+      return props.nominalLegend ?? {}
 
     return {}
   })
