@@ -83,7 +83,7 @@ export const useMapFiltersStore = defineStore('MapFilters', () => {
       currentIndicator.value?.subgroups?.map(subgroup => ({
         id: String(subgroup.id),
         value: String(subgroup.id),
-        name: subgroup.name
+        name: subgroup.fullName
       })) ?? []
     )
   })
