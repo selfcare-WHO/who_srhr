@@ -108,7 +108,9 @@ export const useTableFiltersStore = defineStore('TableFilters', () => {
   const filteredIndicators = computed<Prisma.IndicatorWithSubgroups[]>(() => {
     return indicators.value.filter(indicator => {
       const belongsToDataType =
-        dataTypeFilterValue.value !== 'laws_policies' || indicator.isLaw
+        dataTypeFilterValue.value === 'laws_policies'
+          ? indicator.isLaw
+          : !indicator.isLaw
 
       const belongsToFilteredIndicators =
         indicatorFilterValue.value.length > 0
