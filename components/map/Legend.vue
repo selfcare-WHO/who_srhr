@@ -11,7 +11,7 @@
         v-if="currentSubgroup && currentSubgroup.name !== 'Data'"
         class="m-0 text-sm text-bold"
       )
-        | {{ currentSubgroup?.name }}
+        | {{ currentSubgroup?.fullName }}
 
     template(v-if="isNominal || dataType === 'targets'")
       h3(class="mt-2 font-bold text-sm text-regular uppercase")
