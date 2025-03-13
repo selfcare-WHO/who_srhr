@@ -24,7 +24,6 @@
         
         MapboxLayer(:layer="backgroundLayer" before-layer="countries")
         MapboxLayer(
-          :key="dataTypeFilterValue"
           :layer="countriesLayer"
           @mousemove="onMouseMove"
           @mouseleave="onMouseLeave"
