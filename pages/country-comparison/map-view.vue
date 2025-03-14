@@ -38,6 +38,7 @@
         MapDetailsPopover(
           v-model="showPopover"
           :popover-data="popoverData"
+          :current-indicator="currentIndicator"
           popper-class="!z-10"
         )
 

@@ -2,7 +2,7 @@ import { readFileSync } from 'fs'
 import { join } from 'path'
 import { fileURLToPath } from 'url'
 import mapDataPoints from '../services/mapDataPoints'
-import { useEnums } from '~/composables/useClientImpactOnSrhr'
+import { useEnums } from '~/composables/useEnums'
 
 // Cache the GeoJSON file in memory
 let geoJsonFeatures: GeoJSON.Feature[] | null = null
@@ -20,7 +20,7 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
     })
   }
 
-  const { targetStatus } = useEnums()
+  const { targetStatus, impactOnSrhr } = useEnums()
 
   try {
     if (!geoJsonFeatures) {
@@ -66,8 +66,12 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
       const color = status?.color
 
       if (color) {
+        const impact = Object.values(impactOnSrhr).find(
+          impact => impact.dbValue === dp?.change
+        )
+
         legend.set(dp?.change, {
-          name: dp?.value ?? 'No Data',
+          name: impact?.name ?? 'No Data',
           color
         })
       }

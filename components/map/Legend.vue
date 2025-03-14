@@ -60,7 +60,7 @@
           class="flex items-center gap-2"
         )
           div(
-            class="rounded-full h-4 w-4 border-2 flex items-center justify-center"
+            class="rounded-full h-4 w-4"
             :style="{ backgroundColor: legendItem?.color }"
           )
 
