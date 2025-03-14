@@ -78,6 +78,8 @@
           :current-subgroup="currentSubgroup"
           :data-type="dataTypeFilterValue"
           :nominal-legend="nominalLegend"
+          :has-other="hasOther"
+          :has-no-data="hasNoData"
         )
 </template>
 
@@ -95,7 +97,9 @@
     dataMaxValue,
     currentIndicator,
     currentSubgroup,
-    dataTypeFilterValue
+    dataTypeFilterValue,
+    hasOther,
+    hasNoData
   } = useMapData()
 
   const { countriesPaint } = useMapStyles({
@@ -137,12 +141,6 @@
   onBeforeUnmount(() => {
     showPopover.value = false
     mapRef.value?.remove()
-  })
-
-  watch(mapData, () => {
-    console.log(mapData.value?.dataPoints)
-    const lybia = mapData.value?.dataPoints.find(dp => dp.countryId === 99)
-    console.log(lybia)
   })
 </script>
 

@@ -61,17 +61,15 @@
         )
           div(
             class="rounded-full h-4 w-4 border-2 flex items-center justify-center"
-            :style="{ backgroundColor: legendItem.color }"
+            :style="{ backgroundColor: legendItem?.color }"
           )
 
           span(class="text-sm text-regular")
-            | {{ legendItem.name }}
+            | {{ legendItem?.name }}
 
 </template>
 
 <script lang="ts" setup>
-  import { TargetStatus } from '~/types/enums'
-
   const props = defineProps<{
     minValue: number
     maxValue: number
@@ -79,7 +77,11 @@
     currentSubgroup?: Prisma.Subgroup
     dataType: Filter.DataType
     nominalLegend?: Data.Legend
+    hasOther?: boolean
+    hasNoData?: boolean
   }>()
+
+  const { targetStatus } = useEnums()
 
   const valuesInterval = 5
 
@@ -94,7 +96,7 @@
   const isNominal = computed(() => props.currentIndicator?.type === 'Nominal')
 
   const legendItems = computed(() => {
-    if (props.dataType === 'targets') return TargetStatus
+    if (props.dataType === 'targets') return targetStatus
     if (props.dataType === 'laws_policies' || isNominal.value)
       return props.nominalLegend ?? {}
 
@@ -110,14 +112,22 @@
 
   const heatmapLegendItems = computed(() => {
     return {
-      Other: {
-        name: 'Other',
-        color: 'var(--el-color-warning)'
-      },
-      'No data': {
-        name: 'No data',
-        color: 'var(--el-text-color-disabled)'
-      }
+      ...(props.hasOther
+        ? {
+            Other: {
+              name: 'Other',
+              color: 'var(--el-color-warning)'
+            }
+          }
+        : {}),
+      ...(props.hasNoData
+        ? {
+            'No data': {
+              name: 'No data',
+              color: 'var(--el-text-color-disabled)'
+            }
+          }
+        : {})
     }
   })
 

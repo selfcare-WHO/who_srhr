@@ -66,6 +66,24 @@ export const useMapData = () => {
     return values.length ? Math.max(...values) : 1
   })
 
+  const hasOther = computed(() => {
+    return mapData.value?.features.some(feature => {
+      const value = feature.properties?.value
+      return (
+        value !== undefined &&
+        value !== null &&
+        (isNaN(Number(value)) || Number(value) === 0)
+      )
+    })
+  })
+
+  const hasNoData = computed(() => {
+    return mapData.value?.features.some(feature => {
+      const value = feature.properties?.value
+      return value === undefined || value === null
+    })
+  })
+
   return {
     mapData,
     isFetching,
@@ -75,6 +93,8 @@ export const useMapData = () => {
     dataMaxValue,
     currentIndicator,
     currentSubgroup,
-    dataTypeFilterValue
+    dataTypeFilterValue,
+    hasOther,
+    hasNoData
   }
 }

@@ -9,7 +9,7 @@
         | TARGET STATUS:
 
       .key-item(
-        v-for="target in Object.values(TargetStatus)"
+        v-for="target in Object.values(targetStatus)"
         class="flex items-center gap-2"
         :key="target.name"
       )
@@ -28,7 +28,7 @@
         | IMPACT ON INTEGRATED SRHR:
       
       .key-item(
-        v-for="impact in Object.values(ImpactOnSrhr)"
+        v-for="impact in Object.values(impactOnSrhr)"
         class="flex items-center gap-2"
         :key="impact.name"
       )
@@ -47,8 +47,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { TargetStatus } from '~/types/enums'
-  import { ImpactOnSrhr } from '~/types/clientEnums'
+  const { targetStatus, impactOnSrhr } = useEnums()
 
   const { dataType } = defineProps<{
     dataType?: string

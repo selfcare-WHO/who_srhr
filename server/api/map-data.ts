@@ -2,7 +2,7 @@ import { readFileSync } from 'fs'
 import { join } from 'path'
 import { fileURLToPath } from 'url'
 import mapDataPoints from '../services/mapDataPoints'
-import { TargetStatus } from '~/types/enums'
+import { useEnums } from '~/composables/useClientImpactOnSrhr'
 
 // Cache the GeoJSON file in memory
 let geoJsonFeatures: GeoJSON.Feature[] | null = null
@@ -19,6 +19,8 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
       statusMessage: 'Indicator and subgroup are required'
     })
   }
+
+  const { targetStatus } = useEnums()
 
   try {
     if (!geoJsonFeatures) {
@@ -47,7 +49,7 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
 
       if (
         type !== 'Nominal' ||
-        legend.size === Object.keys(TargetStatus).length
+        legend.size === Object.keys(targetStatus).length
       )
         return
 
@@ -58,10 +60,10 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
         return
       }
 
-      const statusKey = (dp?.change as keyof typeof TargetStatus) ?? 'noData'
+      const statusKey = (dp?.change as keyof typeof targetStatus) ?? 'noData'
 
-      const targetStatus = TargetStatus[statusKey]
-      const color = targetStatus?.color
+      const status = targetStatus[statusKey]
+      const color = status?.color
 
       if (color) {
         legend.set(dp?.change, {

@@ -1,5 +1,4 @@
 import type { ColumnDefinition } from 'tabulator-tables'
-import { ImpactOnSrhr } from '~/types/clientEnums'
 
 import { ElIcon } from 'element-plus'
 import { createVNode, render } from 'vue'
@@ -7,6 +6,7 @@ import { createVNode, render } from 'vue'
 export const useTableColumns = () => {
   const tableFiltersStore = useTableFiltersStore()
   const { filteredIndicators } = storeToRefs(tableFiltersStore)
+  const { impactOnSrhr } = useEnums()
 
   const createIndicatorColumns = (
     indicator: Prisma.IndicatorWithSubgroups
@@ -75,22 +75,21 @@ export const useTableColumns = () => {
           innerDiv.className =
             'indicator-law-circle w-4 h-4 rounded-full border-2 flex items-center justify-center'
 
-          const impactOnSrhr = Object.values(ImpactOnSrhr).find(
+          const impact = Object.values(impactOnSrhr).find(
             status => status.dbValue === dataPoint?.change
           )
 
-          innerDiv.style.backgroundColor = impactOnSrhr?.bgColor || ''
-          innerDiv.style.borderColor = impactOnSrhr?.borderColor || ''
+          innerDiv.style.backgroundColor = impact?.bgColor || ''
+          innerDiv.style.borderColor = impact?.borderColor || ''
 
           const iconVNode = createVNode(
             ElIcon,
             {
-              color: impactOnSrhr?.iconColor,
+              color: impact?.iconColor,
               size: '10'
             },
             {
-              default: () =>
-                impactOnSrhr?.icon ? createVNode(impactOnSrhr.icon) : null
+              default: () => (impact?.icon ? createVNode(impact.icon) : null)
             }
           )
 
