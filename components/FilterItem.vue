@@ -6,11 +6,11 @@
     ref="selectRef"
     tag-type="primary"
     tag-effect="dark"
-    show-checkbox
     fit-input-width
     default-expand-all
     collapse-tags
     collapse-tags-tooltip
+    :show-checkbox="multiple"
     :max-collapse-tags="5"
     :size="size"
     :check-on-click-node="true"
