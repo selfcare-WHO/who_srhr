@@ -40,44 +40,8 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
       })
     }
 
-    const { dataPoints, type } = indicator
+    const { dataPoints } = indicator
     const dataPointsByCountry = new Map()
-    const legend = new Map()
-
-    dataPoints.forEach(dp => {
-      dataPointsByCountry.set(dp.country.code, dp)
-
-      if (
-        type !== 'Nominal' ||
-        legend.size === Object.keys(targetStatus).length
-      )
-        return
-
-      if (legend.has(dp?.change) && legend.get(dp?.change).name !== dp?.value) {
-        console.error(
-          `Legend already has ${dp?.change} with value ${legend.get(dp?.change)} and ${dp?.value}`
-        )
-        return
-      }
-
-      const statusKey = (dp?.change as keyof typeof targetStatus) ?? 'noData'
-
-      const status = targetStatus[statusKey]
-      const color = status?.color
-
-      if (color) {
-        const impact = Object.values(impactOnSrhr).find(
-          impact => impact.dbValue === dp?.change
-        )
-
-        legend.set(dp?.change, {
-          name: impact?.name ?? 'No Data',
-          color
-        })
-      }
-    })
-
-    const legendObject = Object.fromEntries(legend)
 
     const linkedFeatures: GeoJSON.Feature[] =
       geoJsonFeatures?.map((feature: GeoJSON.Feature) => {
