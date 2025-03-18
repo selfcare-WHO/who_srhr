@@ -100,8 +100,7 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
 
     return {
       features: linkedFeatures,
-      dataPoints,
-      legend: legendObject
+      dataPoints
     }
   } catch (error) {
     throw createError({

@@ -62,6 +62,7 @@ declare global {
         iconColor?: string
         bgColor?: string
         borderColor?: string
+        solidColor?: string
       }
     }
   }

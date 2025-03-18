@@ -8,7 +8,8 @@ export const useEnums = () => {
       icon: '',
       iconColor: 'var(--el-color-primary)',
       bgColor: '#ccd2de',
-      borderColor: 'var(--el-color-primary)'
+      borderColor: 'var(--el-color-primary)',
+      solidColor: 'var(--el-color-success)'
     },
     partial: {
       name: 'Partial',
@@ -16,7 +17,8 @@ export const useEnums = () => {
       icon: '',
       iconColor: '#E2E6ED',
       bgColor: '#66799D',
-      borderColor: '#66799D'
+      borderColor: '#66799D',
+      solidColor: 'var(--el-color-warning)'
     },
     punitive: {
       name: 'Punitive',
@@ -24,7 +26,8 @@ export const useEnums = () => {
       icon: '',
       iconColor: '#ccd2de',
       bgColor: '#999999',
-      borderColor: '#999999'
+      borderColor: '#999999',
+      solidColor: 'var(--el-color-danger)'
     },
     noData: {
       name: 'No Data',
@@ -32,7 +35,8 @@ export const useEnums = () => {
       icon: '',
       iconColor: 'var(--el-color-primary)',
       bgColor: 'transparent',
-      borderColor: 'var(--el-color-primary)'
+      borderColor: 'var(--el-color-primary)',
+      solidColor: 'var(--el-text-color-placeholder)'
     }
   })
 

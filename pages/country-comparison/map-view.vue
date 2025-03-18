@@ -78,7 +78,6 @@
           :current-indicator="currentIndicator"
           :current-subgroup="currentSubgroup"
           :data-type="dataTypeFilterValue"
-          :nominal-legend="nominalLegend"
           :has-other="hasOther"
           :has-no-data="hasNoData"
         )
@@ -92,7 +91,6 @@
   const {
     mapData,
     isFetching,
-    nominalLegend,
     linkedFeaturesSource,
     dataMinValue,
     dataMaxValue,

@@ -24,6 +24,13 @@
           class="flex items-center gap-2"
         )
           div(
+            v-if="status.solidColor"
+            class="rounded-full h-4 w-4 border-2 flex items-center justify-center"
+            :style="{ backgroundColor: status.solidColor }"
+          )
+
+          div(
+            v-else
             class="rounded-full h-4 w-4 border-2 flex items-center justify-center"
             :style="itemStyle(status)"
           )
@@ -51,7 +58,7 @@
           class="text-xs text-regular absolute"
           :style="scaleStyle(index)"
         )
-          | {{ formatData({ indicator: currentIndicator, value }) }}
+          | {{ formatLargeNumbers(value, 2) }}
 
       div(class="mx-3 mt-5 grid grid-cols-2 gap-y-2")
         div(
@@ -76,12 +83,11 @@
     currentIndicator?: Prisma.IndicatorWithSubgroups
     currentSubgroup?: Prisma.Subgroup
     dataType: Filter.DataType
-    nominalLegend?: Data.Legend
     hasOther?: boolean
     hasNoData?: boolean
   }>()
 
-  const { targetStatus } = useEnums()
+  const { targetStatus, impactOnSrhr } = useEnums()
 
   const valuesInterval = 5
 
@@ -96,9 +102,9 @@
   const isNominal = computed(() => props.currentIndicator?.type === 'Nominal')
 
   const legendItems = computed(() => {
+    if (props.dataType === 'numerical_categorical') return targetStatus
+    if (props.dataType === 'laws_policies') return impactOnSrhr
     if (props.dataType === 'targets') return targetStatus
-    if (props.dataType === 'laws_policies' || isNominal.value)
-      return props.nominalLegend ?? {}
 
     return {}
   })

@@ -11,7 +11,7 @@ declare global {
     type DataPoints = {
       features: GeoJSON.Feature[]
       dataPoints: Prisma.DataPoint[]
-      legend: Data.Legend
+      legend?: Data.Legend
     }
 
     type PopoverData = {
