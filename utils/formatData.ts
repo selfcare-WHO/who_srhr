@@ -36,14 +36,8 @@ export default ({
     }
   }
 
-  if (mask) {
-    const numberValue = Math.round(Number(renderedValue))
-    const maskedValue = StringMask.apply(numberValue, mask, {
-      reverse: true
-    })
+  const formatter = new Intl.NumberFormat('en-US')
+  const formattedNumber = formatter.format(Number(renderedValue))
 
-    return `${maskedValue}${postfix}`
-  }
-
-  return `${renderedValue}${postfix}`
+  return `${formattedNumber}${postfix}`
 }
