@@ -31,7 +31,7 @@ export const useMapStyles = ({
       getStatusColor('Challenges remain'),
       ['==', ['get', 'change'], 'Major challenges remain'],
       getStatusColor('Major challenges remain'),
-      ['==', ['get', 'change'], 'Data not available '],
+      ['==', ['get', 'change'], 'Data not available'],
       getStatusColor('Data not available'),
       // fallback color
       getStatusColor('Data not available')
@@ -48,25 +48,28 @@ export const useMapStyles = ({
     return {
       'fill-color': [
         'case',
-        ['to-boolean', ['get', 'value']],
+        ['has', 'value'],
         [
           'case',
-          // Use a numeric fallback (0) and check if the value is a number and not 0
-          // (assuming 0 is not a valid data point in your dataset)
-          ['!=', ['to-number', ['get', 'value'], 0], 0],
+          // Yep, this hack sucks, ¯\_(ツ)_/¯
+          [
+            '!=',
+            ['to-number', ['get', 'value'], -999999999999999],
+            -999999999999999
+          ],
           [
             'interpolate',
             ['linear'],
-            ['to-number', ['get', 'value'], 0],
+            ['to-number', ['get', 'value']],
             min,
             parseCssVar('--el-bg-color-heatmap-min'),
             max,
             parseCssVar('--el-bg-color-heatmap-max')
           ],
-          // Fallback color for non-numeric values
+          // Fallback for non-numeric values
           parseCssVar('--el-color-warning')
         ],
-        // Default case: when 'value' doesn't exist or is null
+        // Default case when property doesn't exist (No data)
         parseCssVar('--el-text-color-disabled')
       ]
     }

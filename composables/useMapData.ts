@@ -69,11 +69,12 @@ export const useMapData = () => {
   const hasOther = computed(() => {
     return mapData.value?.features.some(feature => {
       const value = feature.properties?.value
-      return (
-        value !== undefined &&
-        value !== null &&
-        (isNaN(Number(value)) || Number(value) === 0)
-      )
+
+      const isNull = value === null || value === undefined
+      const numberValue = Number(value)
+      const isZero = numberValue === 0
+
+      return !isNull && !isZero && isNaN(numberValue)
     })
   })
 
