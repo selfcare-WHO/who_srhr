@@ -89,7 +89,7 @@
     const range = props.maxValue - props.minValue
 
     return Array.from({ length: valuesInterval }, (_, i) => {
-      return props.minValue + (range * i) / valuesInterval
+      return props.minValue + (range * i) / (valuesInterval - 1)
     })
   })
 
