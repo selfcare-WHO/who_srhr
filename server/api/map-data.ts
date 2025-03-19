@@ -2,7 +2,6 @@ import { readFileSync } from 'fs'
 import { join } from 'path'
 import { fileURLToPath } from 'url'
 import mapDataPoints from '../services/mapDataPoints'
-import { useEnums } from '~/composables/useEnums'
 
 // Cache the GeoJSON file in memory
 let geoJsonFeatures: GeoJSON.Feature[] | null = null
@@ -19,8 +18,6 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
       statusMessage: 'Indicator and subgroup are required'
     })
   }
-
-  const { targetStatus, impactOnSrhr } = useEnums()
 
   try {
     if (!geoJsonFeatures) {
@@ -42,6 +39,10 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
 
     const { dataPoints } = indicator
     const dataPointsByCountry = new Map()
+
+    dataPoints.forEach(dp => {
+      dataPointsByCountry.set(dp.country.code, dp)
+    })
 
     const linkedFeatures: GeoJSON.Feature[] =
       geoJsonFeatures?.map((feature: GeoJSON.Feature) => {

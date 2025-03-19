@@ -88,6 +88,9 @@
 
   defineOptions({ name: 'CountryComparisonMap' })
 
+  const colorStore = useColorStore()
+  const { isCBFriendly } = storeToRefs(colorStore)
+
   const {
     mapData,
     isFetching,
@@ -140,6 +143,10 @@
   onBeforeUnmount(() => {
     showPopover.value = false
     mapRef.value?.remove()
+  })
+
+  watch(isCBFriendly, () => {
+    mapRef.value?.triggerRepaint()
   })
 </script>
 

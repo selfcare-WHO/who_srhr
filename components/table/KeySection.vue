@@ -47,7 +47,7 @@
 </template>
 
 <script lang="ts" setup>
-  const { targetStatus, impactOnSrhr } = useEnums()
+  const { targetStatus, impactOnSrhr } = useEnum()
 
   const { dataType } = defineProps<{
     dataType?: string

@@ -25,7 +25,7 @@
       TableKeySection(:dataType="filterValues?.dataType")
 
       div(class="table-wrapper relative min-h-[700px]")
-        div(ref="tableElement")
+        div(ref="tableElement" :key="`table-${isCBFriendly}`")
     
     ElTooltip(
       virtual-triggering
@@ -58,6 +58,9 @@
   const showTooltip = ref(false)
 
   const { columns } = useTableColumns()
+
+  const colorStore = useColorStore()
+  const { isCBFriendly } = storeToRefs(colorStore)
 
   const tabulator = ref<Tabulator | null>(null)
   const tableElement = ref<HTMLElement | null>(null)

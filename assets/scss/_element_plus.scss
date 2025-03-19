@@ -57,15 +57,23 @@ $-bg-color: (
   color: map-get($-text-color, 'primary') !important;
 }
 
-// El Empty colors
-:root .el-empty {
-  --el-empty-fill-color-1: rgba(252, 252, 253, 0.8) !important;
-  --el-empty-fill-color-2: rgba(248, 249, 251, 0.95) !important;
-  --el-empty-fill-color-3: rgba(247, 248, 252, 0.95) !important;
-  --el-empty-fill-color-4: rgba(238, 239, 243, 0.95) !important;
-  --el-empty-fill-color-5: rgba(237, 238, 242, 0.95) !important;
-  --el-empty-fill-color-6: rgba(233, 235, 239, 0.8) !important;
-  --el-empty-fill-color-7: rgba(229, 231, 233, 0.8) !important;
-  --el-empty-fill-color-8: rgba(224, 227, 233, 0.8) !important;
-  --el-empty-fill-color-9: rgba(213, 215, 222, 0.8) !important;
+:root {
+  --el-color-primary-cbf: #00205c;
+  --el-color-success-cbf: #145aa9;
+  --el-color-warning-cbf: #8acecd;
+  --el-color-danger-cbf: #f15e22;
+  --el-color-error-cbf: #f03bf6;
+  --el-color-info-cbf: #d0e6ee;
+
+  .el-empty {
+    --el-empty-fill-color-1: rgba(252, 252, 253, 0.8) !important;
+    --el-empty-fill-color-2: rgba(248, 249, 251, 0.95) !important;
+    --el-empty-fill-color-3: rgba(247, 248, 252, 0.95) !important;
+    --el-empty-fill-color-4: rgba(238, 239, 243, 0.95) !important;
+    --el-empty-fill-color-5: rgba(237, 238, 242, 0.95) !important;
+    --el-empty-fill-color-6: rgba(233, 235, 239, 0.8) !important;
+    --el-empty-fill-color-7: rgba(229, 231, 233, 0.8) !important;
+    --el-empty-fill-color-8: rgba(224, 227, 233, 0.8) !important;
+    --el-empty-fill-color-9: rgba(213, 215, 222, 0.8) !important;
+  }
 }

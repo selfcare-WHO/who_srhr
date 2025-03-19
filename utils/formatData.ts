@@ -37,7 +37,9 @@ export default ({
   }
 
   const formatter = new Intl.NumberFormat('en-US')
-  const formattedNumber = formatter.format(Number(renderedValue))
+  const formattedNumber = isNaN(Number(renderedValue))
+    ? renderedValue
+    : formatter.format(Number(renderedValue))
 
   return `${formattedNumber}${postfix}`
 }

@@ -6,15 +6,21 @@
 
       LayoutMobileEmptyState(v-if="!isDesktop")
 
-      .flex.items-center.gap-3(v-else)
-        h2.text-secondary.mr-3 Select view:
-        NuxtLink(to="/country-comparison/map-view")
-          ElButton.w-32(type="primary" :plain="!mapView") Map
-        NuxtLink(to="/country-comparison/charts-view")
-          ElButton.w-32(type="primary" :plain="!chartsView") Charts
-        NuxtLink(to="/country-comparison/table-view")
-          ElButton.w-32(type="primary" :plain="!tableView") Table
+      .flex.justify-between.items-center.gap-3(v-else)
+        .flex.items-center.gap-3
+          h2.text-secondary.mr-3 Select view:
+          NuxtLink(to="/country-comparison/map-view")
+            ElButton.w-32(type="primary" :plain="!mapView") Map
+          NuxtLink(to="/country-comparison/charts-view")
+            ElButton.w-32(type="primary" :plain="!chartsView") Charts
+          NuxtLink(to="/country-comparison/table-view")
+            ElButton.w-32(type="primary" :plain="!tableView") Table
 
+        .flex.items-center.gap-3
+          h2.text-secondary Color blind friendly
+          ElSwitch(
+            v-model="isCBFriendly"
+          )
     NuxtPage.flex-1(v-if="isDesktop" keep-alive)
 </template>
 
@@ -22,6 +28,9 @@
   definePageMeta({
     middleware: ['country-comparison']
   })
+
+  const colorStore = useColorStore()
+  const { isCBFriendly } = storeToRefs(colorStore)
 
   const { isDesktop } = useResponsive()
 

@@ -87,7 +87,7 @@
     hasNoData?: boolean
   }>()
 
-  const { targetStatus, impactOnSrhr } = useEnums()
+  const { targetStatus, impactOnSrhr } = useEnum()
 
   const valuesInterval = 5
 

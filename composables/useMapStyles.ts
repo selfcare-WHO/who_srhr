@@ -16,7 +16,7 @@ export const useMapStyles = ({
   dataMaxValue: Ref<number>
   indicator: ComputedRef<Prisma.IndicatorWithSubgroups>
 }) => {
-  const targetsPaint: mapboxgl.LayerSpecification['paint'] = {
+  const targetsPaint = computed<mapboxgl.LayerSpecification['paint']>(() => ({
     'fill-opacity': [
       'case',
       ['boolean', ['feature-state', 'hover'], false],
@@ -36,7 +36,7 @@ export const useMapStyles = ({
       // fallback color
       getStatusColor('Data not available')
     ]
-  }
+  }))
 
   const heatmapPaint = computed<mapboxgl.LayerSpecification['paint']>(() => {
     const min = dataMinValue.value
@@ -51,7 +51,7 @@ export const useMapStyles = ({
         ['has', 'value'],
         [
           'case',
-          // Yep, this hack sucks, ¯\_(ツ)_/¯
+          // Yep, this hack sucks... ¯\_(ツ)_/¯
           [
             '!=',
             ['to-number', ['get', 'value'], -999999999999999],
@@ -77,12 +77,12 @@ export const useMapStyles = ({
 
   const countriesPaint = computed<mapboxgl.LayerSpecification['paint']>(() => {
     if (dataTypeFilterValue?.value === 'numerical_categorical') {
-      if (indicator?.value?.type === 'Nominal') return targetsPaint
+      if (indicator?.value?.type === 'Nominal') return targetsPaint.value
       else return heatmapPaint.value
     }
 
     if (['laws_policies', 'targets'].includes(dataTypeFilterValue?.value)) {
-      return targetsPaint
+      return targetsPaint.value
     }
 
     return {}

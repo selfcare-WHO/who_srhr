@@ -6,7 +6,7 @@ import { createVNode, render } from 'vue'
 export const useTableColumns = () => {
   const tableFiltersStore = useTableFiltersStore()
   const { filteredIndicators } = storeToRefs(tableFiltersStore)
-  const { impactOnSrhr } = useEnums()
+  const { impactOnSrhr } = useEnum()
 
   const createIndicatorColumns = (
     indicator: Prisma.IndicatorWithSubgroups
