@@ -7,9 +7,16 @@ declare global {
       children?: Option[]
     }
 
-    type Label = 'Indicator' | 'Country' | 'Data Type' | 'Subgroup'
+    type Label =
+      | 'Indicator'
+      | 'Country'
+      | 'Data Type'
+      | 'Subgroup'
+      | 'Indicators'
+      | 'Countries to display'
+      | 'Country to highlight'
 
-    type Key = 'indicator' | 'country' | 'dataType' | 'subgroup'
+    type Key = 'indicator' | 'country' | 'dataType' | 'subgroup' | 'highlight'
 
     type Item<K extends Key = Key> = {
       key: K
@@ -44,5 +51,12 @@ declare global {
     }
 
     type DataType = 'numerical_categorical' | 'laws_policies' | 'targets'
+
+    type ChartValues = {
+      indicator: string[]
+      country: string[]
+      dataType: string
+      highlight: string
+    }
   }
 }
