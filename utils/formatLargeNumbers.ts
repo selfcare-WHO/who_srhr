@@ -7,9 +7,10 @@ export default (num: number, digits: number) => {
     { value: 1e12, symbol: 'T' }
   ]
   const regexp = /\.0+$|(?<=\.[0-9]*[1-9])0+$/
+
   const item = lookup.findLast(item => num >= item.value)
 
   return item
     ? (num / item.value).toFixed(digits).replace(regexp, '').concat(item.symbol)
-    : '0'
+    : num.toFixed(digits).replace(regexp, '')
 }
