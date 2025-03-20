@@ -12,6 +12,7 @@
         :options="mapOptions"
         @wheel="onWheel"
         @drag="showPopover = false"
+        @mouseleave="showPopover = false"
       )
         MapboxSource(
           source-id="who-world-basemap"

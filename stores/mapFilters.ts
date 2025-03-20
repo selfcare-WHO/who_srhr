@@ -4,11 +4,11 @@ export const useMapFiltersStore = defineStore('MapFilters', () => {
   const filtersStore = useFiltersStore()
   const { indicators, domains } = storeToRefs(filtersStore)
 
-  const currentIndicator = computed<Prisma.IndicatorWithSubgroups>(
+  const currentIndicator = computed<Prisma.SerializedIndicatorWithSubgroups>(
     () =>
       indicators.value.find(
         indicator => indicator.id === indicatorFilterValue.value
-      ) ?? ({} as Prisma.IndicatorWithSubgroups)
+      ) ?? ({} as Prisma.SerializedIndicatorWithSubgroups)
   )
 
   const currentSubgroup = computed<Prisma.Subgroup>(() => {

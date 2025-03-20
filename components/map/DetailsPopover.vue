@@ -12,18 +12,15 @@
   )
     .flex.flex-col.gap-2
       h3(class="text-[20px] leading-tight font-bold") {{ popoverData.country }}
-      h4(
-        v-if="currentIndicator.isLaw"
-        class="text-md font-bold"
-      )
-        | {{ currentIndicator.fullName }}
+      h4(class="text-md font-bold")
+        | {{ currentIndicator.displayName }}
       span.text-md {{ popoverData.value }}
   </template>
 
 <script lang="ts" setup>
   defineProps<{
     popoverData: Map.PopoverData
-    currentIndicator: Prisma.IndicatorWithSubgroups
+    currentIndicator: Prisma.SerializedIndicatorWithSubgroups
     popperClass?: string
   }>()
 
