@@ -7,15 +7,6 @@ export const useChartFiltersStore = defineStore('ChartFilters', () => {
   const filtersStore = useFiltersStore()
   const { domains, indicators, countries } = storeToRefs(filtersStore)
 
-  // Define data type options
-  const dataTypeOptions = computed<Filter.Option[]>(() => [
-    {
-      id: 'numerical_only',
-      name: 'Numerical data only',
-      label: 'Numerical data only'
-    }
-  ])
-
   // Define indicator options based on domains and indicators
   const indicatorOptions = computed<Filter.Option[]>(() => {
     if (!domains.value) return []
@@ -25,11 +16,7 @@ export const useChartFiltersStore = defineStore('ChartFilters', () => {
         .filter(indicator => {
           const belongsToDomain = indicator.domainId === domain.id
 
-          if (dataTypeFilterValue.value === 'numerical_categorical') {
-            return belongsToDomain && !indicator.isLaw
-          } else {
-            return belongsToDomain && indicator.isLaw
-          }
+          return belongsToDomain && !indicator.isLaw
         })
         .map(indicator => ({
           id: indicator.id,
@@ -72,29 +59,16 @@ export const useChartFiltersStore = defineStore('ChartFilters', () => {
   ])
 
   // Filter values
-  const dataTypeFilterValue = ref<string>('numerical_only')
   const indicatorFilterValue = ref<string[]>([])
   const countryFilterValue = ref<string[]>([])
   const highlightFilterValue = ref<string>('none')
 
   // Combined filter values
   const filterValues = computed<Filter.ChartValues>(() => ({
-    dataType: dataTypeFilterValue.value,
     indicator: indicatorFilterValue.value,
     country: countryFilterValue.value,
     highlight: highlightFilterValue.value
   }))
-
-  // Create reactive filter objects
-  const dataTypeFilter = reactive<Filter.Item>({
-    key: 'dataType',
-    label: 'Data Type',
-    value: dataTypeFilterValue,
-    tree: false,
-    multiple: false,
-    clearable: false,
-    options: dataTypeOptions
-  })
 
   const indicatorFilter = reactive<Filter.Item>({
     key: 'indicator',
@@ -137,15 +111,12 @@ export const useChartFiltersStore = defineStore('ChartFilters', () => {
   // Get filtered indicators for chart display
   const filteredIndicators = computed<Prisma.IndicatorWithSubgroups[]>(() => {
     return indicators.value.filter(indicator => {
-      // Only include numeric indicators
-      const isNumeric = indicator.type === 'Numeric'
-
       // Check if indicator is selected in filter
       const isSelected =
         indicatorFilterValue.value.length === 0 ||
         indicatorFilterValue.value.includes(indicator.id)
 
-      return isNumeric && isSelected
+      return indicator.type !== 'Nominal' && isSelected
     })
   })
 
@@ -165,7 +136,7 @@ export const useChartFiltersStore = defineStore('ChartFilters', () => {
         )
 
         const numericIndicators = newIndicators.filter(
-          i => (i.type === 'Numeric' || i.type === 'Numerical') && !i.isLaw
+          i => i.type !== 'Nominal' && !i.isLaw
         )
         console.log('Filtered numeric indicators:', numericIndicators.length)
       }

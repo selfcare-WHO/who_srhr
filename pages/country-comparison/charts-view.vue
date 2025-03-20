@@ -31,6 +31,8 @@
         
         .flex.justify-center.items-center.h-full.w-full(v-if="!filteredIndicators.length || !selectedCountries.length")
           ElEmpty(description="Please select at least one indicator and one country to display charts")
+        
+        ChartsDemographic(v-else)
 </template>
 
 <script lang="ts" setup>

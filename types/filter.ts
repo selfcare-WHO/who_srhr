@@ -55,7 +55,6 @@ declare global {
     type ChartValues = {
       indicator: string[]
       country: string[]
-      dataType: string
       highlight: string
     }
   }

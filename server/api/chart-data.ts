@@ -1,31 +1,25 @@
 import type { H3Event } from 'h3'
 import prisma from '~/lib/prisma'
 
-// Define an interface for our chart data structure
-interface ChartDataItem {
-  indicator: any // Use appropriate Prisma type
-  data: Array<{
-    country: string
-    countryId: number
-    value: number
-    subgroup: string
-  }>
-}
-
 export default defineEventHandler(async (event: H3Event) => {
-  const query = getQuery(event)
-  const filters = JSON.parse(query.filters as string) as Filter.ChartValues
+  const {
+    indicator,
+    country,
+    highlight
+  }: { indicator: string[]; country: string[]; highlight: string } =
+    getQuery(event)
 
   try {
+    // Build where clauses for the database query
     const where: any = {}
 
     // Filter by indicators
-    if (filters?.indicator?.length) {
-      const indicatorIds = filters.indicator
+    if (indicator?.length) {
+      const indicatorIds = indicator
         .filter(id => !id.startsWith('[domain]'))
         .map(String)
 
-      const domainIds = filters.indicator
+      const domainIds = indicator
         .filter(id => id.startsWith('[domain]'))
         .map(id => Number(id.replace('[domain]-', '')))
 
@@ -43,47 +37,62 @@ export default defineEventHandler(async (event: H3Event) => {
     }
 
     // Filter by countries
-    if (filters?.country?.length) {
+    if (country?.length) {
       where.countryId = {
-        in: filters.country.map(Number)
+        in: country.map(Number)
       }
     }
 
-    // Get the data points with related info
+    // Get data points with related information
     const dataPoints = await prisma.dataPoint.findMany({
       where,
       include: {
         indicator: true,
-        country: true,
-        subgroup: true
+        country: true
+      }
+    })
+
+    // Get all the indicators we need to process
+    const uniqueIndicatorIds = [
+      ...new Set(dataPoints.map(dp => dp.indicatorId))
+    ]
+    const indicators = await prisma.indicator.findMany({
+      where: {
+        id: {
+          in: uniqueIndicatorIds
+        },
+        type: {
+          not: 'Nominal'
+        }
       }
     })
 
     // Format data for chart rendering
-    const chartData = dataPoints.reduce<Record<string, ChartDataItem>>(
-      (acc, point) => {
-        const indicatorId = point.indicatorId
+    const chartData = indicators.map(indicator => {
+      // Map to the expected format
+      const mappedDataPoints: Chart.DataPoint[] = dataPoints.map(point => ({
+        countryId: String(point.countryId),
+        countryName: point.country.name,
+        value: Number(point.value) || 0,
+        isHighlighted: String(point.countryId) === highlight
+      }))
 
-        if (!acc[indicatorId]) {
-          acc[indicatorId] = {
-            indicator: point.indicator,
-            data: []
-          }
-        }
+      // Calculate min and max values for scale
+      const values = mappedDataPoints.map(d => d.value).filter(v => !isNaN(v))
+      const minValue = values.length ? Math.floor(Math.min(...values, 0)) : 0
+      const maxValue = values.length ? Math.ceil(Math.max(...values, 0)) : 1
 
-        acc[indicatorId].data.push({
-          country: point.country.name,
-          countryId: point.countryId,
-          value: parseFloat(point.value || '0'),
-          subgroup: point.subgroup?.fullName || 'All'
-        })
+      return {
+        id: indicator.id,
+        name: indicator.name,
+        minValue,
+        maxValue,
+        globalTarget: indicator.hasTarget ?? null,
+        dataPoints
+      }
+    })
 
-        return acc
-      },
-      {}
-    )
-
-    return Object.values(chartData)
+    return chartData
   } catch (error) {
     console.error('Error fetching chart data:', error)
     throw createError({
