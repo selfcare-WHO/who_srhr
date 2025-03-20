@@ -48,7 +48,7 @@ export const useMapStyles = ({
     return {
       'fill-color': [
         'case',
-        ['has', 'value'],
+        ['to-boolean', ['get', 'value']],
         [
           'case',
           // Yep, this hack sucks... ¯\_(ツ)_/¯

@@ -58,7 +58,7 @@
           class="text-xs text-regular absolute"
           :style="scaleStyle(index)"
         )
-          | {{ formatLargeNumbers(value, 2) }}
+          | {{ formatLargeNumbers(value, 2, currentIndicator) }}
 
       div(class="mx-3 mt-5 grid grid-cols-2 gap-y-2")
         div(
