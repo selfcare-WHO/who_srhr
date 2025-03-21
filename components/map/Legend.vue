@@ -24,9 +24,9 @@
           class="flex items-center gap-2"
         )
           div(
-            v-if="status.solidColor"
+            v-if="status?.solidColor"
             class="rounded-full h-4 w-4 border-2 flex items-center justify-center"
-            :style="{ backgroundColor: status.solidColor }"
+            :style="{ backgroundColor: status?.solidColor }"
           )
 
           div(
@@ -35,14 +35,14 @@
             :style="itemStyle(status)"
           )
             ElIcon(
-              v-if="status.icon"
-              :color="status.iconColor"
+              v-if="status?.icon"
+              :color="status?.iconColor"
               size="10"
             )
-              component(:is="status.icon")
+              component(:is="status?.icon")
 
           span(class="text-sm text-regular")
-            | {{ status.name }}
+            | {{ status?.name }}
 
     template(v-else)
       div(class=`
@@ -85,6 +85,7 @@
     dataType: Filter.DataType
     hasOther?: boolean
     hasNoData?: boolean
+    nominalLegend?: Data.Legend
   }>()
 
   const { targetStatus, impactOnSrhr } = useEnum()
@@ -102,7 +103,8 @@
   const isNominal = computed(() => props.currentIndicator?.type === 'Nominal')
 
   const legendItems = computed(() => {
-    if (props.dataType === 'numerical_categorical') return targetStatus
+    if (props.dataType === 'numerical_categorical')
+      return isNominal.value ? (props.nominalLegend ?? {}) : targetStatus
     if (props.dataType === 'laws_policies') return impactOnSrhr
     if (props.dataType === 'targets') return targetStatus
 

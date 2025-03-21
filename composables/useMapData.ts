@@ -32,6 +32,8 @@ export const useMapData = () => {
     }
   )
 
+  const nominalLegend = computed(() => mapData.value?.legend)
+
   const linkedGeoJSON = computed<GeoJSON.FeatureCollection>(() => ({
     type: 'FeatureCollection',
     features: mapData.value?.features || []
@@ -92,6 +94,7 @@ export const useMapData = () => {
     currentIndicator,
     currentSubgroup,
     dataTypeFilterValue,
+    nominalLegend,
     hasOther,
     hasNoData
   }

@@ -81,6 +81,7 @@
           :data-type="dataTypeFilterValue"
           :has-other="hasOther"
           :has-no-data="hasNoData"
+          :nominal-legend="nominalLegend"
         )
 </template>
 
@@ -102,7 +103,8 @@
     currentSubgroup,
     dataTypeFilterValue,
     hasOther,
-    hasNoData
+    hasNoData,
+    nominalLegend
   } = useMapData()
 
   const { countriesPaint } = useMapStyles({
