@@ -149,7 +149,9 @@
   })
 
   watch(isCBFriendly, () => {
-    mapRef.value?.triggerRepaint()
+    nextTick(() => {
+      mapRef.value?.triggerRepaint()
+    })
   })
 </script>
 
