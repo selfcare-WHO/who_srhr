@@ -1,7 +1,7 @@
-import type { H3Event } from 'h3'
 import prisma from '~/lib/prisma'
+import isNullish from '~/utils/isNullish'
 
-export default defineEventHandler(async (event: H3Event) => {
+export default defineEventHandler(async (event): Promise<Chart.Data[]> => {
   const {
     indicator,
     country,
@@ -9,31 +9,22 @@ export default defineEventHandler(async (event: H3Event) => {
   }: { indicator: string[]; country: string[]; highlight: string } =
     getQuery(event)
 
+  if (!indicator?.length || !country?.length || isNullish(highlight)) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'Indicator, country, and highlight are required'
+    })
+  }
+
   try {
     // Build where clauses for the database query
     const where: any = {}
 
     // Filter by indicators
-    if (indicator?.length) {
-      const indicatorIds = indicator
-        .filter(id => !id.startsWith('[domain]'))
-        .map(String)
+    if (indicator.length) {
+      where.OR = []
 
-      const domainIds = indicator
-        .filter(id => id.startsWith('[domain]'))
-        .map(id => Number(id.replace('[domain]-', '')))
-
-      if (indicatorIds.length || domainIds.length) {
-        where.OR = []
-
-        if (indicatorIds.length) {
-          where.OR.push({ indicatorId: { in: indicatorIds } })
-        }
-
-        if (domainIds.length) {
-          where.OR.push({ indicator: { domainId: { in: domainIds } } })
-        }
-      }
+      where.OR.push({ indicatorId: { in: indicator } })
     }
 
     // Filter by countries
@@ -66,16 +57,22 @@ export default defineEventHandler(async (event: H3Event) => {
         }
       }
     })
-
     // Format data for chart rendering
-    const chartData = indicators.map(indicator => {
+    const chartsData: Chart.Data[] = indicators.map(indicator => {
+      // Get only data points for this indicator
+      const indicatorDataPoints = dataPoints.filter(
+        dp => dp.indicatorId === indicator.id
+      )
+
       // Map to the expected format
-      const mappedDataPoints: Chart.DataPoint[] = dataPoints.map(point => ({
-        countryId: String(point.countryId),
-        countryName: point.country.name,
-        value: Number(point.value) || 0,
-        isHighlighted: String(point.countryId) === highlight
-      }))
+      const mappedDataPoints: Chart.DataPoint[] = indicatorDataPoints.map(
+        point => ({
+          countryId: String(point.countryId),
+          countryName: point.country.name,
+          value: Number(point.value) || 0,
+          isHighlighted: String(point.countryId) === highlight
+        })
+      )
 
       // Calculate min and max values for scale
       const values = mappedDataPoints.map(d => d.value).filter(v => !isNaN(v))
@@ -85,14 +82,14 @@ export default defineEventHandler(async (event: H3Event) => {
       return {
         id: indicator.id,
         name: indicator.name,
+        type: indicator.type as Data.IndicatorDataType,
         minValue,
         maxValue,
-        globalTarget: indicator.hasTarget ?? null,
-        dataPoints
+        dataPoints: mappedDataPoints
       }
     })
 
-    return chartData
+    return chartsData
   } catch (error) {
     console.error('Error fetching chart data:', error)
     throw createError({

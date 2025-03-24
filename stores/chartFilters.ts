@@ -121,28 +121,19 @@ export const useChartFiltersStore = defineStore('ChartFilters', () => {
   })
 
   // Watch for changes in indicators
-  watch(
-    indicators,
-    newIndicators => {
-      if (newIndicators) {
-        console.log(
-          'Available indicators:',
-          newIndicators.map(i => ({
-            id: i.id,
-            name: i.displayName,
-            type: i.type,
-            isLaw: i.isLaw
-          }))
-        )
+  // watch(
+  //   indicators,
+  //   newIndicators => {
+  //     if (newIndicators) {
 
-        const numericIndicators = newIndicators.filter(
-          i => i.type !== 'Nominal' && !i.isLaw
-        )
-        console.log('Filtered numeric indicators:', numericIndicators.length)
-      }
-    },
-    { immediate: true }
-  )
+  //       const numericIndicators = newIndicators.filter(
+  //         i => i.type !== 'Nominal' && !i.isLaw
+  //       )
+  //       console.log('Filtered numeric indicators:', numericIndicators.length)
+  //     }
+  //   },
+  //   { immediate: true }
+  // )
 
   return {
     chartFilters,

@@ -1,4 +1,3 @@
-import { computed } from 'vue'
 import { useChartFiltersStore } from '~/stores/chartFilters'
 import { storeToRefs } from 'pinia'
 
@@ -12,10 +11,13 @@ export const useChartData = () => {
   const { data: chartData } = useAsyncData(
     'chart-data',
     async () => {
-      console.log('PEEEEEEI')
+      console.log('indicatorFilterValue', indicatorFilterValue.value)
+      console.log('countryFilterValue', countryFilterValue.value)
+      console.log('highlightFilterValue', highlightFilterValue.value)
       if (
-        !indicatorFilterValue.value?.length ||
-        !countryFilterValue.value?.length
+        !indicatorFilterValue?.value?.length ||
+        !countryFilterValue?.value?.length ||
+        isNullish(highlightFilterValue?.value)
       ) {
         return Promise.resolve([])
       }
@@ -24,11 +26,9 @@ export const useChartData = () => {
       try {
         const data = await $fetch<Chart.Data[]>('/api/chart-data', {
           query: {
-            filters: JSON.stringify({
-              indicator: indicatorFilterValue.value,
-              country: countryFilterValue.value,
-              highlight: highlightFilterValue.value
-            })
+            indicator: indicatorFilterValue.value,
+            country: countryFilterValue.value,
+            highlight: highlightFilterValue.value
           }
         })
         return data

@@ -2,6 +2,13 @@ import type { ColumnDefinition } from 'tabulator-tables'
 
 declare global {
   namespace Data {
+    type IndicatorDataType =
+      | 'Percentage'
+      | 'Number'
+      | 'Rate'
+      | 'Nominal'
+      | 'Ratio/Rank'
+
     type DataRow = {
       kpi_id: string
       kpi_name: string

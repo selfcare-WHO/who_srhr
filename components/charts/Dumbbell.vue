@@ -1,6 +1,13 @@
 <script setup lang="ts">
   import * as d3 from 'd3'
 
+  // Define the type for chart data points
+  type DataPoint = {
+    value: number
+    isHighlighted: boolean
+    label?: string
+  }
+
   const props = defineProps<{
     data: Chart.Data
   }>()
@@ -98,26 +105,28 @@
       .data(props.data.dataPoints)
       .enter()
       .append('circle')
-      .attr('cx', d => xScale(d.value))
+      .attr('cx', (d: DataPoint) => xScale(d.value))
       .attr('cy', height / 2)
-      .attr('r', d => (d.isHighlighted ? dotRadius : dotRadius - 2))
-      .attr('fill', d =>
+      .attr('r', (d: DataPoint) =>
+        d.isHighlighted ? dotRadius : dotRadius - 2
+      )
+      .attr('fill', (d: DataPoint) =>
         d.isHighlighted ? colors.highlighted : colors.regular
       )
-      .attr('stroke', d => (d.isHighlighted ? 'none' : '#fff'))
+      .attr('stroke', (d: DataPoint) => (d.isHighlighted ? 'none' : '#fff'))
       .attr('stroke-width', 1)
 
     // Add global target line if available
-    if (props.data.globalTarget) {
-      svg
-        .append('line')
-        .attr('x1', xScale(props.data.globalTarget))
-        .attr('y1', margin.top - 10)
-        .attr('x2', xScale(props.data.globalTarget))
-        .attr('y2', height - margin.bottom)
-        .attr('stroke', colors.target)
-        .attr('stroke-width', 2)
-    }
+    // if (props.data.globalTarget) {
+    //   svg
+    //     .append('line')
+    //     .attr('x1', xScale(props.data.globalTarget))
+    //     .attr('y1', margin.top - 10)
+    //     .attr('x2', xScale(props.data.globalTarget))
+    //     .attr('y2', height - margin.bottom)
+    //     .attr('stroke', colors.target)
+    //     .attr('stroke-width', 2)
+    // }
 
     // Add title and unit
     svg
@@ -128,13 +137,13 @@
       .attr('font-size', '14px')
       .attr('font-weight', 'bold')
 
-    svg
-      .append('text')
-      .attr('x', -margin.left)
-      .attr('y', height / 2 + 5)
-      .text(props.data.unit)
-      .attr('font-size', '12px')
-      .attr('fill', '#666')
+    // svg
+    //   .append('text')
+    //   .attr('x', -margin.left)
+    //   .attr('y', height / 2 + 5)
+    //   .text(props.data.unit)
+    //   .attr('font-size', '12px')
+    //   .attr('fill', '#666')
   }
 
   // Watch for data changes to update chart

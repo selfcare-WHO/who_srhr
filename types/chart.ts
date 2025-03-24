@@ -10,10 +10,9 @@ declare global {
     export interface Data {
       id: string
       name: string
-      unit: string
+      type: Data.IndicatorDataType
       minValue: number
       maxValue: number
-      globalTarget?: number
       dataPoints: DataPoint[]
     }
   }
