@@ -11,9 +11,6 @@ export const useChartData = () => {
   const { data: chartData } = useAsyncData(
     'chart-data',
     async () => {
-      console.log('indicatorFilterValue', indicatorFilterValue.value)
-      console.log('countryFilterValue', countryFilterValue.value)
-      console.log('highlightFilterValue', highlightFilterValue.value)
       if (
         !indicatorFilterValue?.value?.length ||
         !countryFilterValue?.value?.length ||
