@@ -15,16 +15,13 @@
   const chartContainer = ref<HTMLElement | null>(null)
   const chartWidth = ref(0)
 
-  // Chart configurations
-  const margin = { top: 20, right: 20, bottom: 20, left: 120 }
-  const dotRadius = 6
+  const dotRadius = 12
   const colors = {
-    highlighted: '#193f77',
-    regular: '#a4cef8',
-    target: '#000'
+    highlighted: '#00205c',
+    regular: '#8dc5ff99',
+    target: '#00205c'
   }
 
-  // Resize handling
   onMounted(() => {
     updateChartSize()
     window.addEventListener('resize', updateChartSize)
@@ -41,65 +38,41 @@
     }
   }
 
-  // Chart rendering
   const renderChart = () => {
     if (!chartContainer.value) return
 
-    const width = chartWidth.value - margin.left - margin.right
-    const height = 80 // Fixed height for each chart
+    const width = chartWidth.value
+    const height = 60
 
     // Clear previous chart
     d3.select(chartContainer.value).selectAll('*').remove()
 
-    // Create SVG
     const svg = d3
       .select(chartContainer.value)
       .append('svg')
       .attr('width', chartWidth.value)
       .attr('height', height)
+      .attr('overflow', 'visible')
       .append('g')
-      .attr('transform', `translate(${margin.left},${margin.top})`)
 
-    // Create scale
     const xScale = d3
       .scaleLinear()
       .domain([props.data.minValue, props.data.maxValue])
       .range([0, width])
 
-    // Add X axis
-    svg
+    const axis = d3
+      .axisBottom(xScale)
+      .ticks(2)
+      .tickValues([props.data.minValue, props.data.maxValue])
+      .tickFormat(d => formatLargeNumbers(d.valueOf(), 1))
+
+    const axisG = svg
       .append('g')
-      .attr('transform', `translate(0,${height - margin.bottom})`)
-      .call(d3.axisBottom(xScale).ticks(5))
+      .attr('transform', `translate(0,${height / 2})`)
+      .call(axis)
 
-    // Add range label at bottom
-    svg
-      .append('text')
-      .attr('x', 0)
-      .attr('y', height - 5)
-      .text(props.data.minValue)
-      .attr('font-size', '12px')
-      .attr('text-anchor', 'start')
+    axisG.selectAll('.tick line').attr('transform', 'translate(0, -7)')
 
-    svg
-      .append('text')
-      .attr('x', width)
-      .attr('y', height - 5)
-      .text(props.data.maxValue)
-      .attr('font-size', '12px')
-      .attr('text-anchor', 'end')
-
-    // Add axis line
-    svg
-      .append('line')
-      .attr('x1', 0)
-      .attr('y1', height / 2)
-      .attr('x2', width)
-      .attr('y2', height / 2)
-      .attr('stroke', '#ccc')
-      .attr('stroke-width', 1)
-
-    // Add dots for each country
     svg
       .selectAll('circle')
       .data(props.data.dataPoints)
@@ -113,28 +86,11 @@
       .attr('fill', (d: DataPoint) =>
         d.isHighlighted ? colors.highlighted : colors.regular
       )
-      .attr('stroke', (d: DataPoint) => (d.isHighlighted ? 'none' : '#fff'))
+      .attr('opa', colors.target)
       .attr('stroke-width', 1)
-
-    // svg
-    //   .append('text')
-    //   .attr('x', -margin.left)
-    //   .attr('y', height / 2 - 15)
-    //   .text(props.data.indicatorName)
-    //   .attr('font-size', '14px')
-    //   .attr('font-weight', 'bold')
-
-    // svg
-    //   .append('text')
-    //   .attr('x', -margin.left)
-    //   .attr('y', height / 2 - 15)
-    //   .text(props.data.subgroupName)
-    //   .attr('font-size', '14px')
-    //   .attr('font-weight', 'bold')
   }
 
-  // Watch for data changes to update chart
-  watch(() => props.data, renderChart, { deep: true })
+  watchDeep(() => props.data, renderChart)
   watch(() => chartWidth.value, renderChart)
 </script>
 
