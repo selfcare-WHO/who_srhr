@@ -24,29 +24,19 @@
 
       ChartKey
 
-      div(class="chart-wrapper relative min-h-[700px]" v-loading="isFetching")
-        div(
-          class="flex justify-center items-center h-full w-full "
-          v-if="!indicatorFilterValue.length || !countryFilterValue.length"
-        )
-          ElEmpty(description="Please select at least one indicator and one country to display charts")
-        
-        ChartDemographic(v-else)
+      div(class="chart-wrapper relative min-h-[700px]")
+        ChartDemographic(class="w-full h-full")
 </template>
 
 <script lang="ts" setup>
   defineOptions({ name: 'CountryComparisonCharts' })
 
   const chartFiltersStore = useChartFiltersStore()
-  const { countryFilterValue, indicatorFilterValue } =
-    storeToRefs(chartFiltersStore)
   const { chartFilters } = chartFiltersStore
 
   // // For color blind friendly colors
   // const colorStore = useColorStore()
   // const { isCBFriendly } = storeToRefs(colorStore)
-
-  const isFetching = ref(false)
 </script>
 
 <style lang="sass" scoped>

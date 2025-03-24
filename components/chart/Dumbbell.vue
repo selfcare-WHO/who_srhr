@@ -116,13 +116,21 @@
       .attr('stroke', (d: DataPoint) => (d.isHighlighted ? 'none' : '#fff'))
       .attr('stroke-width', 1)
 
-    svg
-      .append('text')
-      .attr('x', -margin.left)
-      .attr('y', height / 2 - 15)
-      .text(props.data.name)
-      .attr('font-size', '14px')
-      .attr('font-weight', 'bold')
+    // svg
+    //   .append('text')
+    //   .attr('x', -margin.left)
+    //   .attr('y', height / 2 - 15)
+    //   .text(props.data.indicatorName)
+    //   .attr('font-size', '14px')
+    //   .attr('font-weight', 'bold')
+
+    // svg
+    //   .append('text')
+    //   .attr('x', -margin.left)
+    //   .attr('y', height / 2 - 15)
+    //   .text(props.data.subgroupName)
+    //   .attr('font-size', '14px')
+    //   .attr('font-weight', 'bold')
   }
 
   // Watch for data changes to update chart
@@ -131,7 +139,12 @@
 </script>
 
 <template lang="pug">
-.dumbbell-chart(ref="chartContainer")
+.dumbbell-chart
+  h2(class="font-bold text-xl") {{ data.indicatorName }}
+  h3(class="text-sm") {{ data.subheading }}
+  h4(v-if="data.subgroupName && data.subgroupName !== 'Data'" class="text-sm text-gray-600") {{ data.subgroupName }}
+
+  div(ref="chartContainer")
 </template>
 
 <style lang="scss" scoped>

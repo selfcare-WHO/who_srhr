@@ -1,91 +1,109 @@
 import prisma from '~/lib/prisma'
-import isNullish from '~/utils/isNullish'
 
 export default defineEventHandler(async (event): Promise<Chart.Data[]> => {
-  const {
-    indicator,
-    country,
-    highlight
-  }: { indicator: string[]; country: string[]; highlight: string } =
+  const filters: { indicator: string[]; country: string[]; highlight: string } =
     getQuery(event)
 
-  if (!indicator?.length || !country?.length || isNullish(highlight)) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'Indicator, country, and highlight are required'
-    })
+  if (!Array.isArray(filters.country) && filters.country) {
+    filters.country = [filters.country]
+  }
+
+  if (!Array.isArray(filters.indicator) && filters.indicator) {
+    filters.indicator = [filters.indicator]
   }
 
   try {
-    // Build where clauses for the database query
     const where: any = {}
 
-    // Filter by indicators
-    if (indicator.length) {
+    if (filters.indicator?.length) {
       where.OR = []
 
-      where.OR.push({ indicatorId: { in: indicator } })
+      where.OR.push({ indicatorId: { in: filters.indicator } })
     }
 
-    // Filter by countries
-    if (country?.length) {
+    if (filters.country?.length > 0) {
       where.countryId = {
-        in: country.map(Number)
+        in: filters.country?.map(Number)
       }
     }
 
-    // Get data points with related information
     const dataPoints = await prisma.dataPoint.findMany({
       where,
       include: {
         indicator: true,
-        country: true
+        country: true,
+        subgroup: true
       }
     })
 
-    // Get all the indicators we need to process
-    const uniqueIndicatorIds = [
-      ...new Set(dataPoints.map(dp => dp.indicatorId))
-    ]
     const indicators = await prisma.indicator.findMany({
       where: {
-        id: {
-          in: uniqueIndicatorIds
-        },
+        ...(filters.indicator?.length ? { id: { in: filters.indicator } } : {}),
         type: {
           not: 'Nominal'
         }
+      },
+      include: {
+        subgroups: true
       }
     })
-    // Format data for chart rendering
-    const chartsData: Chart.Data[] = indicators.map(indicator => {
-      // Get only data points for this indicator
-      const indicatorDataPoints = dataPoints.filter(
-        dp => dp.indicatorId === indicator.id
-      )
 
-      // Map to the expected format
-      const mappedDataPoints: Chart.DataPoint[] = indicatorDataPoints.map(
+    const chartsData: Chart.Data[] = []
+
+    const createChartData = (
+      filteredDataPoints: any[],
+      indicator: any,
+      subgroup?: any
+    ) => {
+      if (filteredDataPoints.length === 0) return null
+
+      const mappedDataPoints: Chart.DataPoint[] = filteredDataPoints.map(
         point => ({
           countryId: String(point.countryId),
           countryName: point.country.name,
           value: Number(point.value) || 0,
-          isHighlighted: String(point.countryId) === highlight
+          isHighlighted: String(point.countryId) === filters.highlight
         })
       )
 
-      // Calculate min and max values for scale
       const values = mappedDataPoints.map(d => d.value).filter(v => !isNaN(v))
       const minValue = values.length ? Math.floor(Math.min(...values, 0)) : 0
       const maxValue = values.length ? Math.ceil(Math.max(...values, 0)) : 1
 
       return {
-        id: indicator.id,
-        name: indicator.name,
+        indicatorId: indicator.id,
+        indicatorName: indicator.fullName,
+        subheading: indicator.subheading,
+        subgroupName: subgroup?.name,
         type: indicator.type as Data.IndicatorDataType,
         minValue,
         maxValue,
         dataPoints: mappedDataPoints
+      }
+    }
+
+    indicators.forEach(indicator => {
+      if (indicator.subgroups && indicator.subgroups.length > 0) {
+        indicator.subgroups.forEach(subgroup => {
+          const subgroupDataPoints = dataPoints.filter(
+            dp =>
+              dp.indicatorId === indicator.id && dp.subgroupId === subgroup.id
+          )
+
+          const chartData = createChartData(
+            subgroupDataPoints,
+            indicator,
+            subgroup
+          )
+          if (chartData) chartsData.push(chartData)
+        })
+      } else {
+        const indicatorDataPoints = dataPoints.filter(
+          dp => dp.indicatorId === indicator.id
+        )
+
+        const chartData = createChartData(indicatorDataPoints, indicator)
+        if (chartData) chartsData.push(chartData)
       }
     })
 

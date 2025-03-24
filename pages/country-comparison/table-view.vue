@@ -92,7 +92,7 @@
       selectable: false,
       pagination: true,
       paginationSize: 10,
-      ajaxURL: '/api/paginated-data',
+      ajaxURL: '/api/table-data',
       paginationMode: 'remote',
       reactiveData: true,
       ajaxParams: () => ({

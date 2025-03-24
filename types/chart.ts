@@ -8,8 +8,10 @@ declare global {
     }
 
     export interface Data {
-      id: string
-      name: string
+      indicatorId: string
+      indicatorName: string
+      subheading: string
+      subgroupName: string
       type: Data.IndicatorDataType
       minValue: number
       maxValue: number

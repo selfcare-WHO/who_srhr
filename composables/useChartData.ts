@@ -11,14 +11,6 @@ export const useChartData = () => {
   const { data: chartData } = useAsyncData(
     'chart-data',
     async () => {
-      if (
-        !indicatorFilterValue?.value?.length ||
-        !countryFilterValue?.value?.length ||
-        isNullish(highlightFilterValue?.value)
-      ) {
-        return Promise.resolve([])
-      }
-
       isFetching.value = true
       try {
         const data = await $fetch<Chart.Data[]>('/api/chart-data', {

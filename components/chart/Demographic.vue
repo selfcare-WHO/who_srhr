@@ -1,36 +1,22 @@
 <script setup lang="ts">
   import { useChartData } from '~/composables/useChartData'
 
-  const { chartData } = useChartData()
+  const { chartData, isFetching } = useChartData()
 </script>
 
 <template lang="pug">
-.demographic-charts
-  .chart-header
-    .chart-key
-      .key-item
-        .key-dot.highlighted
-        span Highlighted country
-      
-      .key-item  
-        .key-dot.regular
-        span Other countries
-      
-      .key-item
-        .key-line
-        span Global target
-  
+.demographic-charts(v-loading="isFetching")
   .charts-container(v-if="chartData?.length")
    ChartDumbbell(
       v-for="chart in chartData"
-      :key="chart.id"
+      :key="`chart-${chart.indicatorId}-${chart.subgroupName}`"
       :data="chart"
     )
-  
-  .empty-state(v-else)
-    el-empty(
-      description="No data available. Please select indicators."
-    )
+
+  ElEmpty(
+    v-else
+    description="Please select at least one indicator and one country to display charts"
+  )
 </template>
 
 <style lang="scss" scoped>

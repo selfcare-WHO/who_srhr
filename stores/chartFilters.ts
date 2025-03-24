@@ -1,17 +1,15 @@
 import { defineStore } from 'pinia'
 import { useFiltersStore } from './filters'
 import { storeToRefs } from 'pinia'
-import { watch } from 'vue'
 
 export const useChartFiltersStore = defineStore('ChartFilters', () => {
   const filtersStore = useFiltersStore()
   const { domains, indicators, countries } = storeToRefs(filtersStore)
 
-  // Define indicator options based on domains and indicators
   const indicatorOptions = computed<Filter.Option[]>(() => {
     if (!domains.value) return []
 
-    return domains.value.reduce<Filter.Option[]>((acc, domain) => {
+    const options = domains.value.reduce<Filter.Option[]>((acc, domain) => {
       const filteredIndicators = indicators.value
         .filter(indicator => {
           const belongsToDomain = indicator.domainId === domain.id
@@ -38,9 +36,10 @@ export const useChartFiltersStore = defineStore('ChartFilters', () => {
 
       return acc
     }, [])
+
+    return options
   })
 
-  // Country options
   const countryOptions = computed<Filter.Option[]>(() =>
     countries.value.map(country => ({
       id: String(country.id),
@@ -48,7 +47,6 @@ export const useChartFiltersStore = defineStore('ChartFilters', () => {
     }))
   )
 
-  // Country highlight options (same as countries but with "None" option)
   const highlightOptions = computed<Filter.Option[]>(() => [
     {
       id: 'none',
@@ -58,12 +56,10 @@ export const useChartFiltersStore = defineStore('ChartFilters', () => {
     ...countryOptions.value
   ])
 
-  // Filter values
   const indicatorFilterValue = ref<string[]>([])
   const countryFilterValue = ref<string[]>([])
   const highlightFilterValue = ref<string>('none')
 
-  // Combined filter values
   const filterValues = computed<Filter.ChartValues>(() => ({
     indicator: indicatorFilterValue.value,
     country: countryFilterValue.value,
@@ -74,7 +70,7 @@ export const useChartFiltersStore = defineStore('ChartFilters', () => {
     key: 'indicator',
     childrenKey: 'indicator',
     label: 'Indicators',
-    placeholder: 'Select indicators',
+    placeholder: 'All domains / indicators',
     value: indicatorFilterValue,
     tree: true,
     multiple: true,
@@ -101,44 +97,15 @@ export const useChartFiltersStore = defineStore('ChartFilters', () => {
     options: highlightOptions
   })
 
-  // Combine all filters
   const chartFilters = reactive<Filter.Item[]>([
     indicatorFilter,
     countryFilter,
     highlightFilter
   ])
 
-  // Get filtered indicators for chart display
-  const filteredIndicators = computed<Prisma.IndicatorWithSubgroups[]>(() => {
-    return indicators.value.filter(indicator => {
-      // Check if indicator is selected in filter
-      const isSelected =
-        indicatorFilterValue.value.length === 0 ||
-        indicatorFilterValue.value.includes(indicator.id)
-
-      return indicator.type !== 'Nominal' && isSelected
-    })
-  })
-
-  // Watch for changes in indicators
-  // watch(
-  //   indicators,
-  //   newIndicators => {
-  //     if (newIndicators) {
-
-  //       const numericIndicators = newIndicators.filter(
-  //         i => i.type !== 'Nominal' && !i.isLaw
-  //       )
-  //       console.log('Filtered numeric indicators:', numericIndicators.length)
-  //     }
-  //   },
-  //   { immediate: true }
-  // )
-
   return {
     chartFilters,
     filterValues,
-    filteredIndicators,
     indicatorFilterValue,
     countryFilterValue,
     highlightFilterValue
