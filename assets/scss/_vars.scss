@@ -1,7 +1,17 @@
 :root {
-  --el-color-info-dark: #00a5e8;
   --container-max-width: 1328px;
   --narrow-container-max-width: 940px;
   --content-width: min(100%, var(--container-max-width));
   --narrow-content-width: min(100%, var(--narrow-container-max-width));
+
+  // colors
+  --el-color-primary-cbf: #00205c;
+  --el-color-success-cbf: #145aa9;
+  --el-color-warning-cbf: #8acecd;
+  --el-color-danger-cbf: #f15e22;
+  --el-color-error-cbf: #f03bf6;
+  --el-color-info-cbf: #d0e6ee;
+
+  --el-color-info-dark: #0077b6;
+  --el-color-info-light: #8dc5ff;
 }

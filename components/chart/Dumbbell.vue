@@ -116,19 +116,6 @@
       .attr('stroke', (d: DataPoint) => (d.isHighlighted ? 'none' : '#fff'))
       .attr('stroke-width', 1)
 
-    // Add global target line if available
-    // if (props.data.globalTarget) {
-    //   svg
-    //     .append('line')
-    //     .attr('x1', xScale(props.data.globalTarget))
-    //     .attr('y1', margin.top - 10)
-    //     .attr('x2', xScale(props.data.globalTarget))
-    //     .attr('y2', height - margin.bottom)
-    //     .attr('stroke', colors.target)
-    //     .attr('stroke-width', 2)
-    // }
-
-    // Add title and unit
     svg
       .append('text')
       .attr('x', -margin.left)
@@ -136,14 +123,6 @@
       .text(props.data.name)
       .attr('font-size', '14px')
       .attr('font-weight', 'bold')
-
-    // svg
-    //   .append('text')
-    //   .attr('x', -margin.left)
-    //   .attr('y', height / 2 + 5)
-    //   .text(props.data.unit)
-    //   .attr('font-size', '12px')
-    //   .attr('fill', '#666')
   }
 
   // Watch for data changes to update chart

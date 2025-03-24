@@ -40,7 +40,7 @@ export const useEnum = () => {
     }
   })
 
-  const targetStatus = reactive<Data.Legend>({
+  const targetStatus: Data.Legend = {
     Achieved: {
       name: 'Achieved',
       dbValue: 'Achieved',
@@ -61,7 +61,22 @@ export const useEnum = () => {
       dbValue: 'Data not available',
       color: 'var(--no-data)'
     }
-  })
+  }
+
+  const chartKey: Data.Legend = {
+    highlighted: {
+      name: 'Highlighted country',
+      twClass: 'h-4 w-4 rounded-full bg-primary'
+    },
+    other: {
+      name: 'Other countries',
+      twClass: 'h-4 w-4 rounded-full bg-info-light/60'
+    },
+    globalTarget: {
+      name: 'Global target',
+      twClass: 'h-4 w-1 bg-primary'
+    }
+  }
 
   if (getCurrentInstance()) {
     onMounted(async () => {
@@ -81,5 +96,5 @@ export const useEnum = () => {
     })
   }
 
-  return { impactOnSrhr, targetStatus }
+  return { impactOnSrhr, targetStatus, chartKey }
 }

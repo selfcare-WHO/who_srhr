@@ -21,7 +21,7 @@
         span Global target
   
   .charts-container(v-if="chartData?.length")
-   ChartsDumbbell(
+   ChartDumbbell(
       v-for="chart in chartData"
       :key="chart.id"
       :data="chart"

@@ -62,14 +62,15 @@ declare global {
 
     interface Legend {
       [key: string]: {
-        dbValue: string
         name: string
+        dbValue?: string
         color?: string
         icon?: string
         iconColor?: string
         bgColor?: string
         borderColor?: string
         solidColor?: string
+        twClass?: string
       }
     }
   }

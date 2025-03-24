@@ -15,8 +15,7 @@ $-colors: (
     'base': #f56c6c
   ),
   'info': (
-    'base': #00a5e8,
-    'dark': #0077b6
+    'base': #00a5e8
   )
 );
 
@@ -58,13 +57,6 @@ $-bg-color: (
 }
 
 :root {
-  --el-color-primary-cbf: #00205c;
-  --el-color-success-cbf: #145aa9;
-  --el-color-warning-cbf: #8acecd;
-  --el-color-danger-cbf: #f15e22;
-  --el-color-error-cbf: #f03bf6;
-  --el-color-info-cbf: #d0e6ee;
-
   .el-empty {
     --el-empty-fill-color-1: rgba(252, 252, 253, 0.8) !important;
     --el-empty-fill-color-2: rgba(248, 249, 251, 0.95) !important;
