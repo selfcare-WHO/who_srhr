@@ -50,19 +50,10 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
 
       if (
         type !== 'Nominal' ||
-        legend.size === Object.keys(targetStatus).length
+        legend.size === Object.keys(targetStatus).length ||
+        (legend.has(dp?.change) && legend.get(dp?.change).value !== dp?.value)
       )
         return
-
-      if (
-        legend.has(dp?.change) &&
-        legend.get(dp?.change).value !== dp?.value
-      ) {
-        console.error(
-          `Legend already has ${dp?.change} with value ${legend.get(dp?.change)} and ${dp?.value}`
-        )
-        return
-      }
 
       const statusKey = (dp?.change as keyof typeof targetStatus) ?? 'noData'
 
