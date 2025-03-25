@@ -1,10 +1,27 @@
 <script setup lang="ts">
   import * as d3 from 'd3'
-  import { popoverEmits } from 'element-plus'
 
   const props = defineProps<{
     data: Chart.Data
   }>()
+
+  const filtersStore = useFiltersStore()
+  const { indicators } = storeToRefs(filtersStore)
+
+  const currentIndicator = computed<
+    Prisma.SerializedIndicatorWithSubgroups | undefined
+  >(() => {
+    return indicators.value.find(
+      indicator => indicator.id === props.data.indicatorId
+    )
+  })
+
+  const popoverValue = computed(() => {
+    return formatData({
+      indicator: currentIndicator.value,
+      value: Number(popover.value)
+    })
+  })
 
   const chartContainer = ref<HTMLElement | null>(null)
   const chartWidth = ref(0)
@@ -51,12 +68,13 @@
   ) => {
     resetCircles()
 
-    element.classList.add('-hovered')
+    d3.select(element).raise()
     popover.show = true
     popover.country = dataPoint.countryName
     popover.value = dataPoint.value
     popover.id = dataPoint.countryId
     popover.element = element
+    d3.select(element).classed('-hovered', true)
   }
 
   const handleMouseMove = (event: MouseEvent) => {
@@ -71,7 +89,7 @@
     const mouseY = event.clientY - svgRect.top
 
     let closestCircle: CircleData | null = null
-    let minDistance = Infinity
+    let minDistance = dotRadius
 
     circlesData.value.forEach(circle => {
       const distance = Math.sqrt(
@@ -101,7 +119,6 @@
     const width = chartWidth.value
     const height = 60
 
-    // Clear previous chart
     d3.select(chartContainer.value).selectAll('*').remove()
 
     const svg = d3
@@ -119,10 +136,9 @@
           .join(';')
       )
 
-    // Add mouse event listeners to the SVG
     d3.select(chartContainer.value)
       .select('svg')
-      .on('mousemove', handleMouseMove)
+      .on('mousemove', useThrottleFn(handleMouseMove, 100))
       .on('mouseleave', () => {
         resetCircles()
         popover.show = false
@@ -137,7 +153,10 @@
       .axisBottom(xScale)
       .ticks(2)
       .tickValues([props.data.minValue, props.data.maxValue])
-      .tickFormat(d => formatLargeNumbers(d.valueOf(), 1))
+      .tickFormat(d =>
+        formatLargeNumbers(d.valueOf(), 1, currentIndicator.value)
+      )
+      .tickPadding(10)
 
     const axisG = svg
       .append('g')
@@ -146,17 +165,11 @@
 
     axisG.selectAll('.tick line').attr('transform', 'translate(0, -7)')
 
-    // Reset circles data
     circlesData.value = []
 
-    // Create the circles
     svg
       .selectAll('circle')
-      .data(
-        props.data.dataPoints.sort(
-          (a, b) => (Number(a.value) ?? 0) - (Number(b.value) ?? 0)
-        )
-      )
+      .data(props.data.dataPoints)
       .enter()
       .append('circle')
       .attr('class', 'data-circle')
@@ -168,7 +181,7 @@
       )
       .attr('stroke-width', 1)
       .attr('cursor', 'pointer')
-      .attr('style', 'transition: fill 0.15s ease-in-out, r 0.15s ease-in-out')
+      .attr('style', 'transition: fill 0.2s ease-in-out, r 0.2s ease-in-out')
       .each(function (d: Chart.DataPoint) {
         const element = this as SVGCircleElement
         const x = xScale(Number(d.value))
@@ -222,7 +235,7 @@
   )
     .flex.flex-col.gap-2
       h3(class="text-[20px] leading-tight font-bold") {{ popover.country }}
-      span.text-md {{ popover.value }}
+      span.text-md {{ popoverValue }}
 </template>
 
 <style lang="sass">

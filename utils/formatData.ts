@@ -7,7 +7,7 @@ export default ({
   dataPoint?: Prisma.DataPoint
   value?: number
 }): string => {
-  const { type, translateValue, displayValue, mask } = indicator || {}
+  const { type, translateValue, displayValue } = indicator || {}
   const { value: dataPointValue, originalValue } = dataPoint || {}
   const renderedValue = (() => {
     if (dataPoint) {
