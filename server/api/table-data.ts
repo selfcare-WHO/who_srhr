@@ -21,25 +21,8 @@ export default defineEventHandler(async (event: H3Event) => {
     }
 
     if (filters?.indicator?.length) {
-      const indicatorIds = filters.indicator
-        .filter(id => !id.startsWith('[domain]'))
-        .map(String)
-
-      const domainIds = filters.indicator
-        .filter(id => id.startsWith('[domain]'))
-        .map(id => Number(id.replace('[domain]-', '')))
-
-      if (indicatorIds.length || domainIds.length) {
-        where.OR = []
-
-        if (indicatorIds.length) {
-          where.OR.push({ indicatorId: { in: indicatorIds } })
-        }
-
-        if (domainIds.length) {
-          where.OR.push({ indicator: { domainId: { in: domainIds } } })
-        }
-      }
+      where.OR = []
+      where.OR.push({ indicatorId: { in: filters.indicator } })
     }
 
     if (filters?.dataType) {

@@ -34,28 +34,36 @@ export default {
 
       colors: {
         primary: {
-          DEFAULT: 'var(--el-color-primary)',
+          DEFAULT:
+            'color-mix(in srgb, var(--el-color-primary) calc(<alpha-value> * 100%), transparent)',
           100: 'var(--el-color-primary-light-8)'
         },
         info: {
-          DEFAULT: 'var(--el-color-info)',
-          dark: 'var(--el-color-info-dark)',
+          DEFAULT:
+            'color-mix(in srgb, var(--el-color-info) calc(<alpha-value> * 100%), transparent)',
+          dark: 'color-mix(in srgb, var(--el-color-info-dark) calc(<alpha-value> * 100%), transparent)',
+          light:
+            'color-mix(in srgb, var(--el-color-info-light) calc(<alpha-value> * 100%), transparent)',
           100: 'var(--el-color-info-light-8)'
         },
         success: {
-          DEFAULT: 'var(--el-color-success)',
+          DEFAULT:
+            'color-mix(in srgb, var(--el-color-success) calc(<alpha-value> * 100%), transparent)',
           100: 'var(--el-color-success-light-8)'
         },
         warning: {
-          DEFAULT: 'var(--el-color-warning)',
+          DEFAULT:
+            'color-mix(in srgb, var(--el-color-warning) calc(<alpha-value> * 100%), transparent)',
           100: 'var(--el-color-warning-light-8)'
         },
         danger: {
-          DEFAULT: 'var(--el-color-danger)',
+          DEFAULT:
+            'color-mix(in srgb, var(--el-color-danger) calc(<alpha-value> * 100%), transparent)',
           100: 'var(--el-color-danger-light-8)'
         },
         secondary: {
-          DEFAULT: 'var(--el-text-color-secondary)',
+          DEFAULT:
+            'color-mix(in srgb, var(--el-text-color-secondary) calc(<alpha-value> * 100%), transparent)',
           100: '#E4E4E4'
         }
       },

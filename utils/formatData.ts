@@ -1,5 +1,3 @@
-import StringMask from 'string-mask'
-
 export default ({
   indicator,
   dataPoint,
