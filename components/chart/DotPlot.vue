@@ -124,7 +124,7 @@
       .select('svg')
       .on('mousemove', handleMouseMove)
       .on('mouseleave', () => {
-        // resetCircles()
+        resetCircles()
         popover.show = false
       })
 
@@ -159,6 +159,7 @@
       )
       .enter()
       .append('circle')
+      .attr('class', 'data-circle')
       .attr('cx', (d: Chart.DataPoint) => xScale(Number(d.value)))
       .attr('cy', height / 2)
       .attr('r', dotRadius)
@@ -167,7 +168,7 @@
       )
       .attr('stroke-width', 1)
       .attr('cursor', 'pointer')
-      .attr('style', 'transition: fill 0.15s ease-in-out, r 0.15s ease-in-out;')
+      .attr('style', 'transition: fill 0.15s ease-in-out, r 0.15s ease-in-out')
       .each(function (d: Chart.DataPoint) {
         const element = this as SVGCircleElement
         const x = xScale(Number(d.value))
