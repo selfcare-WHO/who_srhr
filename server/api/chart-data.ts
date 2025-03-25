@@ -61,12 +61,14 @@ export default defineEventHandler(async (event): Promise<Chart.Data[]> => {
         point => ({
           countryId: String(point.countryId),
           countryName: point.country.name,
-          value: Number(point.value) || 0,
+          value: point.value || '0',
           isHighlighted: String(point.countryId) === filters.highlight
         })
       )
 
-      const values = mappedDataPoints.map(d => d.value).filter(v => !isNaN(v))
+      const values = mappedDataPoints
+        .map(d => Number(d.value))
+        .filter(v => !isNaN(v))
       const minValue = values.length ? Math.floor(Math.min(...values, 0)) : 0
       const maxValue = values.length ? Math.ceil(Math.max(...values, 0)) : 1
 
