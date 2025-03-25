@@ -1,13 +1,6 @@
 <script setup lang="ts">
   import * as d3 from 'd3'
 
-  // Define the type for chart data points
-  type DataPoint = {
-    value: number
-    isHighlighted: boolean
-    label?: string
-  }
-
   const props = defineProps<{
     data: Chart.Data
   }>()
@@ -75,18 +68,20 @@
 
     svg
       .selectAll('circle')
-      .data(props.data.dataPoints)
+      .data(
+        props.data.dataPoints.sort(
+          (a, b) => (Number(a.value) ?? 0) - (Number(b.value) ?? 0)
+        )
+      )
       .enter()
       .append('circle')
-      .attr('cx', (d: DataPoint) => xScale(d.value))
+      .attr('cx', (d: Chart.DataPoint) => xScale(d.value))
       .attr('cy', height / 2)
-      .attr('r', (d: DataPoint) =>
-        d.isHighlighted ? dotRadius : dotRadius - 2
-      )
-      .attr('fill', (d: DataPoint) =>
+      .attr('r', dotRadius)
+      .attr('fill', (d: Chart.DataPoint) =>
         d.isHighlighted ? colors.highlighted : colors.regular
       )
-      .attr('opa', colors.target)
+      .attr('z-index', (d: Chart.DataPoint) => (d.isHighlighted ? '1000' : '1'))
       .attr('stroke-width', 1)
   }
 
