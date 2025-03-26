@@ -8,29 +8,20 @@
     }
   })
 
-  const { chartData, isFetching } = useChartData()
-  const currentPage = ref(1)
+  const { chartData, isFetching, page, total, goToPage, updateItemsPerPage } =
+    useChartData({ pagination: true })
 
-  const paginatedChartData = computed(() => {
-    if (!chartData.value?.length) return []
-
-    const startIndex = (currentPage.value - 1) * props.itemsPerPage
-    const endIndex = startIndex + props.itemsPerPage
-
-    return chartData.value.slice(startIndex, endIndex)
+  // Initialize items per page from props
+  onMounted(() => {
+    updateItemsPerPage(props.itemsPerPage)
   })
 
-  const goToPage = (page: number) => {
-    currentPage.value = page
-  }
-
-  // Reset to first page when chart data changes
+  // Update if props change
   watch(
-    () => chartData.value,
-    () => {
-      currentPage.value = 1
-    },
-    { deep: true }
+    () => props.itemsPerPage,
+    newValue => {
+      updateItemsPerPage(newValue)
+    }
   )
 </script>
 
@@ -41,16 +32,16 @@
     class="flex flex-col gap-4"
   )
     ChartDotPlot(
-      v-for="chart in paginatedChartData"
+      v-for="chart in chartData"
       :key="`chart-${chart.indicatorId}-${chart.subgroupName}`"
       :data="chart"
     )
     
     .pagination-controls(class="flex justify-center items-center gap-2 mt-6 mb-4")
       ElPagination(
-        v-model:current-page="currentPage"
+        v-model:current-page="page" 
         :page-size="itemsPerPage"
-        :total="chartData?.length || 0"
+        :total="total"
         layout="prev, pager, next"
         @current-change="goToPage"
         :pager-count="5"

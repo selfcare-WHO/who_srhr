@@ -6,6 +6,8 @@ type ChartFilters = {
   indicator: string[]
   country: string[]
   highlight: string
+  size?: number
+  page?: number
 }
 
 type DataPointInclude = Prisma.DataPointGetPayload<{
@@ -16,7 +18,7 @@ type DataPointInclude = Prisma.DataPointGetPayload<{
   }
 }>
 
-export default defineEventHandler(async (event): Promise<Chart.Data[]> => {
+export default defineEventHandler(async event => {
   const query = getQuery(event)
   const filters: ChartFilters = {
     indicator: Array.isArray(query.indicator)
@@ -29,7 +31,9 @@ export default defineEventHandler(async (event): Promise<Chart.Data[]> => {
       : query.country
         ? [query.country as string]
         : [],
-    highlight: query.highlight as string
+    highlight: query.highlight as string,
+    page: query.page ? Number(query.page) : 1,
+    size: query.size ? Number(query.size) : 5
   }
 
   try {
@@ -66,7 +70,7 @@ export default defineEventHandler(async (event): Promise<Chart.Data[]> => {
       }
     })
 
-    const chartsData: Chart.Data[] = []
+    const allChartsData: Chart.Data[] = []
 
     for (const indicator of indicators) {
       if (indicator.subgroups?.length) {
@@ -92,7 +96,7 @@ export default defineEventHandler(async (event): Promise<Chart.Data[]> => {
             filters.highlight
           )
 
-          if (chartData) chartsData.push(chartData)
+          if (chartData) allChartsData.push(chartData)
         }
       } else {
         const indicatorDataPoints = dataPoints.filter(
@@ -113,11 +117,23 @@ export default defineEventHandler(async (event): Promise<Chart.Data[]> => {
           filters.highlight
         )
 
-        if (chartData) chartsData.push(chartData)
+        if (chartData) allChartsData.push(chartData)
       }
     }
 
-    return chartsData
+    // Pagination
+    const page = Number(filters.page)
+    const size = Number(filters.size)
+    const total = allChartsData.length
+
+    const startIndex = (page - 1) * size
+    const endIndex = startIndex + size
+    const paginatedData = allChartsData.slice(startIndex, endIndex)
+
+    return {
+      data: paginatedData,
+      total
+    }
   } catch (error) {
     console.error('Error fetching chart data:', error)
     throw createError({
@@ -156,8 +172,8 @@ function createChartData(
     .map(d => Number(d.value))
     .filter(v => !isNaN(v))
 
-  const minValue = values.length ? Math.floor(Math.min(...values)) : 0
-  const maxValue = values.length ? Math.ceil(Math.max(...values, 0)) : 1
+  const minValue = values.length ? Math.min(...values) : 0
+  const maxValue = values.length ? Math.max(...values) : 1
 
   return {
     indicatorId: indicator.id,
