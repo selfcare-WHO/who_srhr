@@ -25,7 +25,7 @@
       ChartKey
 
       div(class="chart-wrapper relative min-h-[700px]")
-        ChartDemographic(class="w-full h-full")
+        ChartPaginated(class="w-full h-full")
 </template>
 
 <script lang="ts" setup>
