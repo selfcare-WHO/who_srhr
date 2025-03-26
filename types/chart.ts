@@ -3,7 +3,7 @@ declare global {
     export interface DataPoint {
       countryId: string
       countryName: string
-      value: string
+      value?: string
       isHighlighted: boolean
     }
 

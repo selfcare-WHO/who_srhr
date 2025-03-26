@@ -1,6 +1,6 @@
 import prisma from '~/lib/prisma'
 import isNullish from '~/utils/isNullish'
-import { Prisma } from '@prisma/client'
+import type { Prisma, Indicator, Subgroup } from '@prisma/client'
 
 type ChartFilters = {
   indicator: string[]
@@ -8,8 +8,15 @@ type ChartFilters = {
   highlight: string
 }
 
+type DataPointInclude = Prisma.DataPointGetPayload<{
+  include: {
+    country: true
+    indicator: true
+    subgroup: true
+  }
+}>
+
 export default defineEventHandler(async (event): Promise<Chart.Data[]> => {
-  // Parse and normalize query parameters
   const query = getQuery(event)
   const filters: ChartFilters = {
     indicator: Array.isArray(query.indicator)
@@ -26,7 +33,6 @@ export default defineEventHandler(async (event): Promise<Chart.Data[]> => {
   }
 
   try {
-    // Build Prisma where clause with proper typing
     const where: Prisma.DataPointWhereInput = {}
 
     if (filters.indicator?.length) {
@@ -39,7 +45,6 @@ export default defineEventHandler(async (event): Promise<Chart.Data[]> => {
       }
     }
 
-    // Fetch data points
     const dataPoints = await prisma.dataPoint.findMany({
       where,
       include: {
@@ -49,7 +54,6 @@ export default defineEventHandler(async (event): Promise<Chart.Data[]> => {
       }
     })
 
-    // Fetch relevant indicators
     const indicators = await prisma.indicator.findMany({
       where: {
         ...(filters.indicator?.length ? { id: { in: filters.indicator } } : {}),
@@ -64,17 +68,16 @@ export default defineEventHandler(async (event): Promise<Chart.Data[]> => {
 
     const chartsData: Chart.Data[] = []
 
-    // Process each indicator
     for (const indicator of indicators) {
       if (indicator.subgroups?.length) {
-        // Process indicators with subgroups
         for (const subgroup of indicator.subgroups) {
           const subgroupDataPoints = dataPoints.filter(
             dp =>
-              dp.indicatorId === indicator.id && dp.subgroupId === subgroup.id
+              !isNullish(dp.value) &&
+              dp.indicatorId === indicator.id &&
+              dp.subgroupId === subgroup.id
           )
 
-          // Skip if highlight country is specified but has no data
           if (
             filters.highlight !== 'none' &&
             !hasHighlightedCountryData(subgroupDataPoints, filters.highlight)
@@ -92,12 +95,10 @@ export default defineEventHandler(async (event): Promise<Chart.Data[]> => {
           if (chartData) chartsData.push(chartData)
         }
       } else {
-        // Process indicators without subgroups
         const indicatorDataPoints = dataPoints.filter(
-          dp => dp.indicatorId === indicator.id
+          dp => !isNullish(dp.value) && dp.indicatorId === indicator.id
         )
 
-        // Skip if highlight country is specified but has no data
         if (
           filters.highlight !== 'none' &&
           !hasHighlightedCountryData(indicatorDataPoints, filters.highlight)
@@ -127,7 +128,6 @@ export default defineEventHandler(async (event): Promise<Chart.Data[]> => {
   }
 })
 
-// Check if highlighted country has valid data
 function hasHighlightedCountryData(
   dataPoints: any[],
   highlightId: string
@@ -137,33 +137,33 @@ function hasHighlightedCountryData(
   )
 }
 
-// Create chart data structure from data points
 function createChartData(
-  filteredDataPoints: any[],
-  indicator: any,
-  subgroup?: any,
+  filteredDataPoints: DataPointInclude[],
+  indicator: Indicator,
+  subgroup?: Subgroup,
   highlightId?: string
-): Chart.Data | null {
-  if (filteredDataPoints.length === 0) return null
+): Chart.Data | undefined {
+  if (!filteredDataPoints.length) return
 
   const mappedDataPoints: Chart.DataPoint[] = filteredDataPoints.map(point => ({
     countryId: String(point.countryId),
     countryName: point.country.name,
-    value: point.value || '0',
+    value: point.value ?? undefined,
     isHighlighted: String(point.countryId) === highlightId
   }))
 
   const values = mappedDataPoints
     .map(d => Number(d.value))
     .filter(v => !isNaN(v))
-  const minValue = values.length ? Math.floor(Math.min(...values, 0)) : 0
+
+  const minValue = values.length ? Math.floor(Math.min(...values)) : 0
   const maxValue = values.length ? Math.ceil(Math.max(...values, 0)) : 1
 
   return {
     indicatorId: indicator.id,
     indicatorName: indicator.fullName,
-    subheading: indicator.subheading,
-    subgroupName: subgroup?.name,
+    subheading: indicator.subheading || '',
+    subgroupName: subgroup?.name || '',
     type: indicator.type as Data.IndicatorDataType,
     minValue,
     maxValue,

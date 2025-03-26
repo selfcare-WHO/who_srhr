@@ -209,7 +209,7 @@
     element: EventTarget | null
     id: string
     country: string
-    value: string
+    value?: string
   }>({
     show: false,
     element: null,
