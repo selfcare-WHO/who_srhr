@@ -47,14 +47,22 @@ export const useChartFiltersStore = defineStore('ChartFilters', () => {
     }))
   )
 
-  const highlightOptions = computed<Filter.Option[]>(() => [
-    {
-      id: 'none',
-      name: 'None',
-      label: 'None'
-    },
-    ...countryOptions.value
-  ])
+  const highlightOptions = computed<Filter.Option[]>(() => {
+    const filteredOptions = countryFilterValue.value.length
+      ? countryOptions.value.filter(option =>
+          countryFilterValue.value.includes(String(option.id))
+        )
+      : countryOptions.value
+
+    return [
+      {
+        id: 'none',
+        name: 'None',
+        label: 'None'
+      },
+      ...filteredOptions
+    ]
+  })
 
   const indicatorFilterValue = ref<string[]>([])
   const countryFilterValue = ref<string[]>([])
@@ -102,6 +110,12 @@ export const useChartFiltersStore = defineStore('ChartFilters', () => {
     countryFilter,
     highlightFilter
   ])
+
+  watch(countryFilterValue, value => {
+    if (value.length && !value.includes(highlightFilterValue.value)) {
+      highlightFilterValue.value = 'none'
+    }
+  })
 
   return {
     chartFilters,
