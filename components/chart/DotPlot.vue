@@ -194,6 +194,11 @@
           element
         })
       })
+
+    d3.selectAll('.data-circle.-highlighted').each(function () {
+      const element = this as SVGCircleElement
+      d3.select(element).raise()
+    })
   }
 
   watchDeep(() => props.data, renderChart)
