@@ -13,5 +13,10 @@ declare global {
       lngLat?: mapboxgl.LngLatLike
       placement?: 'top' | 'bottom' | 'left' | 'right'
     }
+
+    type Legend = {
+      name: string
+      color: string
+    }
   }
 }

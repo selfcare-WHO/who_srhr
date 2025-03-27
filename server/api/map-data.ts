@@ -41,7 +41,7 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
     const { dataPoints, type } = indicator
     const dataPointsByCountry = new Map()
 
-    const legend = new Map()
+    const legend = new Map<string, Map.Legend>()
 
     const { targetStatus } = useEnum()
 
@@ -51,7 +51,9 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
       if (
         type !== 'Nominal' ||
         legend.size === Object.keys(targetStatus).length ||
-        (legend.has(dp?.change) && legend.get(dp?.change).value !== dp?.value)
+        (dp?.change &&
+          legend.has(dp.change) &&
+          legend.get(dp.change)?.name !== dp?.value)
       )
         return
 
@@ -60,15 +62,20 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
       const target = targetStatus[statusKey]
       const color = target?.color
 
-      if (color) {
-        legend.set(dp?.change, {
+      if (color && dp?.change) {
+        legend.set(dp.change, {
           name: dp?.value ?? 'No Data',
           color
         })
       }
     })
 
-    const legendObject = Object.fromEntries(legend)
+    const sortedLegend = [...legend].sort(
+      (a: [string, Map.Legend], b: [string, Map.Legend]) =>
+        a[1].name.localeCompare(b[1].name)
+    )
+
+    const legendObject = Object.fromEntries(sortedLegend)
 
     const linkedFeatures: GeoJSON.Feature[] =
       geoJsonFeatures?.map((feature: GeoJSON.Feature) => {
