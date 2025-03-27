@@ -40,10 +40,8 @@ export const useMapStyles = ({
 
   const heatmapPaint = computed<mapboxgl.LayerSpecification['paint']>(() => {
     const min = dataMinValue.value
-    const max =
-      dataMinValue.value === dataMaxValue.value
-        ? dataMinValue.value + 1
-        : dataMaxValue.value
+    const max = dataMaxValue.value
+    const range = max - min
 
     return {
       'fill-color': [
@@ -63,11 +61,11 @@ export const useMapStyles = ({
             ['to-number', ['get', 'value']],
             min,
             parseCssVar('--el-bg-color-heatmap-0'),
-            max / 4,
+            min + range / 4,
             parseCssVar('--el-bg-color-heatmap-25'),
-            (max / 4) * 2,
+            min + (range / 4) * 2,
             parseCssVar('--el-bg-color-heatmap-50'),
-            (max / 4) * 3,
+            min + (range / 4) * 3,
             parseCssVar('--el-bg-color-heatmap-75'),
             max,
             parseCssVar('--el-bg-color-heatmap-100')

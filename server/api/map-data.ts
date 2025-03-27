@@ -77,6 +77,26 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
         }
         const dataPoint = dataPointsByCountry.get(ISO_3_CODE)
 
+        const isRange = dataPoint?.value
+          ? dataPoint.value.match(/^\d+-\d+$/) !== null
+          : false
+        const [rangeMin, rangeMax] = dataPoint?.value
+          ?.split('-')
+          .map(Number) ?? [0, 0]
+
+        const rangeAverage = (rangeMin + rangeMax) / 2
+
+        const isLessThan = dataPoint?.value?.includes('<')
+        const isMoreThan = dataPoint?.value?.includes('>')
+
+        const value = (() => {
+          if (isRange) return rangeAverage
+          if (isLessThan) return dataPoint?.value.trim().split('<')[1]
+          if (isMoreThan) return dataPoint?.value.trim().split('>')[1]
+
+          return dataPoint?.value
+        })()
+
         return {
           ...feature,
           properties: {
@@ -84,7 +104,10 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
             dataPointId: dataPoint?.id.toString(),
             change: dataPoint?.change,
             originalValue: dataPoint?.originalValue,
-            value: dataPoint?.value
+            value,
+            isRange,
+            isLessThan,
+            isMoreThan
           }
         }
       }) ?? []

@@ -45,14 +45,22 @@ export const useMapData = () => {
     tolerance: 0.75
   }))
 
-  // Data value calculations
   const dataMinValue = computed(() => {
     if (!mapData.value?.features?.length) return 0
 
+    console.log(
+      `🚀 ~ dataMinValue ~ mapData.value.features:`,
+      mapData.value.features
+    )
+
     const values = mapData.value.features
       .map(feature => feature.properties?.value)
-      .filter(val => val !== undefined && val !== null && !isNaN(Number(val)))
+      .filter(
+        val =>
+          val !== undefined && val !== null && val !== '' && !isNaN(Number(val))
+      )
 
+    console.log(`🚀 ~ dataMinValue ~ values:`, values)
     return values.length ? Math.min(...values) : 0
   })
 
@@ -61,7 +69,10 @@ export const useMapData = () => {
 
     const values = mapData.value.features
       .map(feature => feature.properties?.value)
-      .filter(val => val !== undefined && val !== null && !isNaN(Number(val)))
+      .filter(
+        val =>
+          val !== undefined && val !== null && val !== '' && !isNaN(Number(val))
+      )
 
     return values.length ? Math.max(...values) : 1
   })
@@ -83,6 +94,11 @@ export const useMapData = () => {
       const value = feature.properties?.value
       return value === undefined || value === null
     })
+  })
+
+  watchDeep([dataMinValue, dataMaxValue], () => {
+    console.log(`🚀 ~ dataMinValue ~ dataMinValue:`, dataMinValue.value)
+    console.log(`🚀 ~ dataMaxValue ~ dataMaxValue:`, dataMaxValue.value)
   })
 
   return {
