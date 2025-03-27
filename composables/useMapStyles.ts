@@ -62,9 +62,15 @@ export const useMapStyles = ({
             ['linear'],
             ['to-number', ['get', 'value']],
             min,
-            parseCssVar('--el-bg-color-heatmap-min'),
+            parseCssVar('--el-bg-color-heatmap-0'),
+            max / 4,
+            parseCssVar('--el-bg-color-heatmap-25'),
+            (max / 4) * 2,
+            parseCssVar('--el-bg-color-heatmap-50'),
+            (max / 4) * 3,
+            parseCssVar('--el-bg-color-heatmap-75'),
             max,
-            parseCssVar('--el-bg-color-heatmap-max')
+            parseCssVar('--el-bg-color-heatmap-100')
           ],
           // Fallback for non-numeric values
           parseCssVar('--el-color-warning')

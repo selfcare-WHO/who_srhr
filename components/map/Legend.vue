@@ -1,5 +1,5 @@
 <template lang="pug">
-  div(class="w-[375px] rounded-lg bg-secondary bg-opacity-20 p-4")
+  .map-view-legend(class="w-[375px] rounded-lg bg-secondary bg-opacity-20 p-4")
     .mb-3
       p(class="m-0 text-[17px] font-[700] text-primary")
         | {{ currentIndicator?.fullName }}
@@ -47,9 +47,7 @@
     template(v-else)
       div(class=`
         mt-2 h-3 w-[calc(100%-2rem)] mx-4
-        bg-gradient-to-r
-        from-[var(--el-bg-color-heatmap-min)]
-        to-[var(--el-bg-color-heatmap-max)]
+        scale-gradient
       `)
       
       div(class="relative mt-2 h-3 w-[calc(100%-2rem)] mx-4")
@@ -173,3 +171,18 @@
     }
   }
 </script>
+
+<style scoped lang="scss">
+  .map-view-legend {
+    .scale-gradient {
+      background: linear-gradient(
+        to right,
+        var(--el-bg-color-heatmap-0) 0%,
+        var(--el-bg-color-heatmap-25) 25%,
+        var(--el-bg-color-heatmap-50) 50%,
+        var(--el-bg-color-heatmap-75) 75%,
+        var(--el-bg-color-heatmap-100) 100%
+      );
+    }
+  }
+</style>

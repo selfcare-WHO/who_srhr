@@ -31,8 +31,11 @@ $-bg-color: (
   'page': #faf8f6,
   'secondary': #ebebebcc,
   'none': #f2f2f2,
-  'heatmap-min': #08306b,
-  'heatmap-max': #ed0000
+  'heatmap-0': #eff3ff,
+  'heatmap-25': #bdd7e7,
+  'heatmap-50': #6baed6,
+  'heatmap-75': #3182bd,
+  'heatmap-100': #08519c
 );
 
 @forward 'element-plus/theme-chalk/src/common/var.scss' with (
