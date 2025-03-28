@@ -74,14 +74,13 @@
 
         MapLegend(
           class="z-10 hide-popover-on-hover absolute bottom-[20px] left-[20px]"
-          :min-value="dataMinValue"
-          :max-value="dataMaxValue"
           :current-indicator="currentIndicator"
           :current-subgroup="currentSubgroup"
           :data-type="dataTypeFilterValue"
           :has-other="hasOther"
           :has-no-data="hasNoData"
           :nominal-legend="nominalLegend"
+          :jenks-breaks="jenksBreaks"
         )
 </template>
 
@@ -97,21 +96,19 @@
     mapData,
     isFetching,
     linkedFeaturesSource,
-    dataMinValue,
-    dataMaxValue,
     currentIndicator,
     currentSubgroup,
     dataTypeFilterValue,
     hasOther,
     hasNoData,
-    nominalLegend
+    nominalLegend,
+    jenksBreaks
   } = useMapData()
 
   const { countriesPaint } = useMapStyles({
     dataTypeFilterValue,
-    dataMinValue,
-    dataMaxValue,
-    indicator: currentIndicator
+    indicator: currentIndicator,
+    jenksBreaks
   })
 
   const {

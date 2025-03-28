@@ -10710,6 +10710,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"simple-statistics@npm:^7.8.8":
+  version: 7.8.8
+  resolution: "simple-statistics@npm:7.8.8"
+  checksum: 10c0/728083b6d6f478959436223164ff94c4a1fb627e601669150afff280620aea61d575826583e1ed3904f7bb86e3d9572dac3769f213707df740889f84529de0a6
+  languageName: node
+  linkType: hard
+
 "simple-swizzle@npm:^0.2.2":
   version: 0.2.2
   resolution: "simple-swizzle@npm:0.2.2"
@@ -12545,6 +12552,7 @@ __metadata:
     pug: "npm:^3.0.3"
     sass: "npm:^1.69.5"
     shave: "npm:^5.0.4"
+    simple-statistics: "npm:^7.8.8"
     string-mask: "npm:^0.3.0"
     tabulator-tables: "npm:^6.3.0"
     tsx: "npm:^4.19.2"

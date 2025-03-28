@@ -7,14 +7,12 @@ const parseCssVar = (varName: string): string => {
 
 export const useMapStyles = ({
   dataTypeFilterValue,
-  dataMinValue,
-  dataMaxValue,
-  indicator
+  indicator,
+  jenksBreaks
 }: {
   dataTypeFilterValue: Ref<string>
-  dataMinValue: Ref<number>
-  dataMaxValue: Ref<number>
   indicator: ComputedRef<Prisma.IndicatorWithSubgroups>
+  jenksBreaks: ComputedRef<number[] | undefined>
 }) => {
   const targetsPaint = computed<mapboxgl.LayerSpecification['paint']>(() => ({
     'fill-opacity': [
@@ -39,9 +37,7 @@ export const useMapStyles = ({
   }))
 
   const heatmapPaint = computed<mapboxgl.LayerSpecification['paint']>(() => {
-    const min = dataMinValue.value
-    const max = dataMaxValue.value
-    const range = max - min
+    if (!jenksBreaks?.value) return {}
 
     return {
       'fill-color': [
@@ -59,15 +55,15 @@ export const useMapStyles = ({
             'interpolate',
             ['linear'],
             ['to-number', ['get', 'value']],
-            min,
+            jenksBreaks.value[0],
             parseCssVar('--el-bg-color-heatmap-0'),
-            min + range / 4,
+            jenksBreaks.value[1],
             parseCssVar('--el-bg-color-heatmap-25'),
-            min + (range / 4) * 2,
+            jenksBreaks.value[2],
             parseCssVar('--el-bg-color-heatmap-50'),
-            min + (range / 4) * 3,
+            jenksBreaks.value[3],
             parseCssVar('--el-bg-color-heatmap-75'),
-            max,
+            jenksBreaks.value[4],
             parseCssVar('--el-bg-color-heatmap-100')
           ],
           // Fallback for non-numeric values

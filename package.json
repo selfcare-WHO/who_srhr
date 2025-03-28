@@ -28,6 +28,7 @@
     "d3": "^7.9.0",
     "element-plus": "^2.8.7",
     "shave": "^5.0.4",
+    "simple-statistics": "^7.8.8",
     "string-mask": "^0.3.0",
     "tabulator-tables": "^6.3.0"
   },

@@ -45,14 +45,18 @@
             | {{ status?.name }}
 
     template(v-else)
-      div(class=`
-        mt-2 h-3 w-[calc(100%-2rem)] mx-4
-        scale-gradient
-      `)
-      
+      div(class="mt-2 h-3 w-[calc(100%-2rem)] mx-4 flex")
+        div(
+          v-for="(_, index) in gradientQtd"
+          class="flex-1"
+          :key="index"
+          :style="{ backgroundColor: `var(--el-bg-color-heatmap-${index * 25})` }"
+        )
+
       div(class="relative mt-2 h-3 w-[calc(100%-2rem)] mx-4")
         span(
-          v-for="(value, index) in gradientValues" :key="index"
+          v-for="(value, index) in jenksBreaks"
+          :key="index"
           class="text-xs text-regular absolute"
           :style="scaleStyle(index)"
         )
@@ -76,27 +80,20 @@
 
 <script lang="ts" setup>
   const props = defineProps<{
-    minValue: number
-    maxValue: number
     currentIndicator?: Prisma.IndicatorWithSubgroups
     currentSubgroup?: Prisma.Subgroup
     dataType: Filter.DataType
     hasOther?: boolean
     hasNoData?: boolean
     nominalLegend?: Data.Legend
+    jenksBreaks?: number[]
   }>()
 
   const { targetStatus, impactOnSrhr } = useEnum()
 
-  const valuesInterval = 5
-
-  const gradientValues = computed(() => {
-    const range = props.maxValue - props.minValue
-
-    return Array.from({ length: valuesInterval }, (_, i) => {
-      return props.minValue + (range * i) / (valuesInterval - 1)
-    })
-  })
+  const gradientQtd = computed(() =>
+    Array.from({ length: (props.jenksBreaks?.length ?? 1) - 1 })
+  )
 
   const isNominal = computed(() => props.currentIndicator?.type === 'Nominal')
 
@@ -138,16 +135,17 @@
   })
 
   const scaleStyle = (index: number) => {
+    const valuesInterval = props.jenksBreaks?.length ?? 0
     const middleIndex = Math.floor(valuesInterval / 2)
 
-    if (index < middleIndex) {
+    if (index === 0) {
       return {
         left: `${index * (100 / (valuesInterval - 1))}%`,
         right: 'auto',
         textAlign: 'left' as const,
         transform: 'translateX(-50%)'
       }
-    } else if (index > middleIndex) {
+    } else if (index === valuesInterval - 1) {
       return {
         right: `${(valuesInterval - 1 - index) * (100 / (valuesInterval - 1))}%`,
         left: 'auto',
@@ -156,7 +154,7 @@
       }
     } else {
       return {
-        left: '50%',
+        left: `${index * (100 / (valuesInterval - 1))}%`,
         right: 'auto',
         textAlign: 'center' as const,
         transform: 'translateX(-50%)'

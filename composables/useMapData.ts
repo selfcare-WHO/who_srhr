@@ -16,7 +16,7 @@ export const useMapData = () => {
       if (!indicatorFilterValue.value) return Promise.resolve(null)
 
       isFetching.value = true
-      const data = await $fetch('/api/map-data', {
+      const data = await $fetch<Map.DataPoints>('/api/map-data', {
         query: {
           indicatorId: indicatorFilterValue.value,
           subgroupId: subgroupFilterValue.value
@@ -45,38 +45,6 @@ export const useMapData = () => {
     tolerance: 0.75
   }))
 
-  const dataMinValue = computed(() => {
-    if (!mapData.value?.features?.length) return 0
-
-    console.log(
-      `🚀 ~ dataMinValue ~ mapData.value.features:`,
-      mapData.value.features
-    )
-
-    const values = mapData.value.features
-      .map(feature => feature.properties?.value)
-      .filter(
-        val =>
-          val !== undefined && val !== null && val !== '' && !isNaN(Number(val))
-      )
-
-    console.log(`🚀 ~ dataMinValue ~ values:`, values)
-    return values.length ? Math.min(...values) : 0
-  })
-
-  const dataMaxValue = computed(() => {
-    if (!mapData.value?.features?.length) return 1
-
-    const values = mapData.value.features
-      .map(feature => feature.properties?.value)
-      .filter(
-        val =>
-          val !== undefined && val !== null && val !== '' && !isNaN(Number(val))
-      )
-
-    return values.length ? Math.max(...values) : 1
-  })
-
   const hasOther = computed(() => {
     return mapData.value?.features.some(feature => {
       const value = feature.properties?.value
@@ -96,22 +64,18 @@ export const useMapData = () => {
     })
   })
 
-  watchDeep([dataMinValue, dataMaxValue], () => {
-    console.log(`🚀 ~ dataMinValue ~ dataMinValue:`, dataMinValue.value)
-    console.log(`🚀 ~ dataMaxValue ~ dataMaxValue:`, dataMaxValue.value)
-  })
+  const jenksBreaks = computed(() => mapData.value?.jenksBreaks)
 
   return {
     mapData,
     isFetching,
     linkedFeaturesSource,
-    dataMinValue,
-    dataMaxValue,
     currentIndicator,
     currentSubgroup,
     dataTypeFilterValue,
     nominalLegend,
     hasOther,
-    hasNoData
+    hasNoData,
+    jenksBreaks
   }
 }

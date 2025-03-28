@@ -11,7 +11,10 @@ export default (num: number, digits: number, indicator?: Prisma.Indicator) => {
   const item = lookup.findLast(item => num >= item.value)
 
   const formattedNumber = item
-    ? (num / item.value).toFixed(digits).replace(regexp, '').concat(item.symbol)
+    ? (num / item.value)
+        .toFixed(digits)
+        .replace(regexp, '')
+        .concat(` ${item.symbol}`)
     : num.toFixed(digits).replace(regexp, '')
 
   const postfix = indicator?.type === 'Percentage' ? '%' : ''

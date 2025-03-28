@@ -36,7 +36,7 @@ export const useMapConfiguration = (
     source: 'who-world-basemap',
     'source-layer': 'Background_VTP',
     paint: {
-      'fill-color': '#edf9ff'
+      'fill-color': '#ffffff'
     }
   }
 
@@ -52,7 +52,7 @@ export const useMapConfiguration = (
     type: 'line',
     source: 'who-world-features',
     paint: {
-      'line-color': '#FFFFFF',
+      'line-color': '#ffffff',
       'line-width': 1
     }
   }

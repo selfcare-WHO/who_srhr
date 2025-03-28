@@ -1,8 +1,10 @@
 import { readFileSync } from 'fs'
 import { join } from 'path'
 import { fileURLToPath } from 'url'
+import { jenks } from 'simple-statistics'
 import mapDataPoints from '../services/mapDataPoints'
 import { useEnum } from '~/composables/useEnum'
+import isNullish from '~/utils/isNullish'
 
 // Cache the GeoJSON file in memory
 let geoJsonFeatures: GeoJSON.Feature[] | null = null
@@ -54,8 +56,9 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
         (dp?.change &&
           legend.has(dp.change) &&
           legend.get(dp.change)?.name !== dp?.value)
-      )
+      ) {
         return
+      }
 
       const statusKey = (dp?.change as keyof typeof targetStatus) ?? 'noData'
 
@@ -80,6 +83,13 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
     )
 
     const legendObject = Object.fromEntries(sortedLegend)
+
+    const numericalValues = Array.from(dataPointsByCountry.values())
+      .map(dp => Number(dp.value))
+      .filter(val => !isNullish(val) && !isNaN(val))
+
+    const NUM_BREAKS = 5
+    const jenksBreaks = jenks(numericalValues, NUM_BREAKS)
 
     const linkedFeatures: GeoJSON.Feature[] =
       geoJsonFeatures?.map((feature: GeoJSON.Feature) => {
@@ -126,7 +136,8 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
     return {
       features: linkedFeatures,
       dataPoints,
-      legend: legendObject
+      legend: legendObject,
+      jenksBreaks
     }
   } catch (error) {
     throw createError({
