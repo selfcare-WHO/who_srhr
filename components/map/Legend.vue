@@ -17,7 +17,7 @@
       h3(class="mt-2 font-bold text-sm text-regular uppercase")
         | {{ legendTitle }}
 
-      div(class="mt-2 grid grid-cols-2 gap-y-2")
+      div(class="mt-2 grid grid-cols-2 gap-2")
         div(
           v-for="(status, key) in legendItems"
           :key="key"
@@ -25,13 +25,13 @@
         )
           div(
             v-if="status?.solidColor"
-            class="rounded-full h-4 w-4 border-2 flex items-center justify-center"
+            class="rounded-full h-4 w-4 min-h-4 min-w-4 border-2 flex items-center justify-center"
             :style="{ backgroundColor: status?.solidColor }"
           )
 
           div(
             v-else
-            class="rounded-full h-4 w-4 border-2 flex items-center justify-center"
+            class="rounded-full h-4 w-4 min-h-4 min-w-4 border-2 flex items-center justify-center"
             :style="itemStyle(status)"
           )
             ElIcon(
@@ -58,14 +58,14 @@
         )
           | {{ formatLargeNumbers(value, 2, currentIndicator) }}
 
-      div(class="mx-3 mt-5 grid grid-cols-2 gap-y-2")
+      div(class="mx-3 mt-5 grid grid-cols-2 gap-2")
         div(
           v-for="(legendItem, key) in heatmapLegendItems"
           :key="key"
           class="flex items-center gap-2"
         )
           div(
-            class="rounded-full h-4 w-4"
+            class="rounded-full h-4 w-4 min-h-4 min-w-4"
             :style="{ backgroundColor: legendItem?.color }"
           )
 

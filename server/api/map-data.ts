@@ -62,9 +62,13 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
       const target = targetStatus[statusKey]
       const color = target?.color
 
+      const name = indicator.translateValue
+        ? JSON.parse(indicator.translateValue)?.[dp?.value || '']
+        : dp?.value
+
       if (color && dp?.change) {
         legend.set(dp.change, {
-          name: dp?.value ?? 'No Data',
+          name: name ?? 'No Data',
           color
         })
       }

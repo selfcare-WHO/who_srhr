@@ -59,6 +59,10 @@ $-bg-color: (
   color: map-get($-text-color, 'primary') !important;
 }
 
+.el-select-dropdown__item.is-selected > span {
+  font-weight: 700 !important;
+}
+
 :root {
   .el-empty {
     --el-empty-fill-color-1: rgba(252, 252, 253, 0.8) !important;
