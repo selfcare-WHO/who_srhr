@@ -16,7 +16,7 @@ export const useMapConfiguration = (
       glyphs: 'mapbox://fonts/mapbox/{fontstack}/{range}.pbf'
     },
     zoom: 1.5,
-    maxZoom: 4,
+    maxZoom: 6,
     minZoom: 1,
     projection: 'mercator'
   }
@@ -78,6 +78,7 @@ export const useMapConfiguration = (
     type: 'fill',
     source: 'who-world-basemap',
     'source-layer': 'DISPUTED_AREAS',
+    filter: ['==', '_symbol', 1],
     paint: {
       'fill-color': '#E1E1E1'
     }
@@ -92,6 +93,7 @@ export const useMapConfiguration = (
       'line-cap': 'round',
       'line-join': 'round'
     },
+    filter: ['==', '_symbol', 1],
     paint: {
       'line-color': '#828282',
       'line-dasharray': [0.1, 2.5],
