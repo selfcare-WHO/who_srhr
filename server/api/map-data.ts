@@ -89,7 +89,16 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
       .filter(val => !isNullish(val) && !isNaN(val))
 
     const NUM_BREAKS = 5
-    const jenksBreaks = jenks(numericalValues, NUM_BREAKS)
+    let jenksBreaks: number[] = []
+
+    try {
+      if (numericalValues.length >= NUM_BREAKS) {
+        jenksBreaks = jenks(numericalValues, NUM_BREAKS)
+      }
+    } catch (error) {
+      console.error('Jenks calculation failed:', error)
+      jenksBreaks = []
+    }
 
     const linkedFeatures: GeoJSON.Feature[] =
       geoJsonFeatures?.map((feature: GeoJSON.Feature) => {

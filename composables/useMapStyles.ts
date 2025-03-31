@@ -14,6 +14,8 @@ export const useMapStyles = ({
   indicator: ComputedRef<Prisma.IndicatorWithSubgroups>
   jenksBreaks: ComputedRef<number[] | undefined>
 }) => {
+  const { hatchUri } = useHatchPattern()
+
   const targetsPaint = computed<mapboxgl.LayerSpecification['paint']>(() => ({
     'fill-opacity': [
       'case',
@@ -21,18 +23,18 @@ export const useMapStyles = ({
       1,
       0.75
     ],
-    'fill-color': [
+    'fill-pattern': [
       'case',
       ['==', ['get', 'change'], 'Achieved'],
-      getStatusColor('Achieved'),
+      'achieved',
       ['==', ['get', 'change'], 'Challenges remain'],
-      getStatusColor('Challenges remain'),
+      'challenges-remain',
       ['==', ['get', 'change'], 'Major challenges remain'],
-      getStatusColor('Major challenges remain'),
+      'major-challenges-remain',
       ['==', ['get', 'change'], 'Data not available'],
-      getStatusColor('Data not available'),
+      'hatch-pattern',
       // fallback color
-      getStatusColor('Data not available')
+      'hatch-pattern'
     ]
   }))
 
@@ -40,7 +42,7 @@ export const useMapStyles = ({
     if (!jenksBreaks?.value) return {}
 
     return {
-      'fill-color': [
+      'fill-pattern': [
         'case',
         ['to-boolean', ['get', 'value']],
         [
@@ -52,25 +54,24 @@ export const useMapStyles = ({
             -999999999999999
           ],
           [
-            'interpolate',
-            ['linear'],
+            'step',
             ['to-number', ['get', 'value']],
-            jenksBreaks.value[0],
-            parseCssVar('--el-bg-color-heatmap-0'),
+            // jenksBreaks.value[0],
+            'jenks-0',
             jenksBreaks.value[1],
-            parseCssVar('--el-bg-color-heatmap-25'),
+            'jenks-1',
             jenksBreaks.value[2],
-            parseCssVar('--el-bg-color-heatmap-50'),
+            'jenks-2',
             jenksBreaks.value[3],
-            parseCssVar('--el-bg-color-heatmap-75'),
+            'jenks-3',
             jenksBreaks.value[4],
-            parseCssVar('--el-bg-color-heatmap-100')
+            'jenks-4'
           ],
           // Fallback for non-numeric values
           parseCssVar('--el-color-warning')
         ],
         // Default case when property doesn't exist (No data)
-        parseCssVar('--el-text-color-disabled')
+        'hatch-pattern'
       ]
     }
   })
@@ -86,6 +87,67 @@ export const useMapStyles = ({
     }
 
     return {}
+  })
+
+  useMapbox('world-map', map => {
+    const solidColorMap: Record<Map.JenksKey | Map.StatusKey, string> = {
+      'jenks-0': generateSolidColorSVG(parseCssVar('--el-bg-color-jenks-0')),
+      'jenks-1': generateSolidColorSVG(parseCssVar('--el-bg-color-jenks-1')),
+      'jenks-2': generateSolidColorSVG(parseCssVar('--el-bg-color-jenks-2')),
+      'jenks-3': generateSolidColorSVG(parseCssVar('--el-bg-color-jenks-3')),
+      'jenks-4': generateSolidColorSVG(parseCssVar('--el-bg-color-jenks-4')),
+      achieved: generateSolidColorSVG(parseCssVar('--el-color-success')),
+      'challenges-remain': generateSolidColorSVG(
+        parseCssVar('--el-color-warning')
+      ),
+      'major-challenges-remain': generateSolidColorSVG(
+        parseCssVar('--el-color-error')
+      ),
+      'data-not-available': generateSolidColorSVG(
+        parseCssVar('--el-color-info')
+      )
+    }
+
+    // Wait for map to be loaded before adding images
+    map.on('load', () => {
+      type LoadPatternParams =
+        | {
+            imageSource: string
+            patternName: 'hatch-pattern'
+          }
+        | { imageSource?: undefined; patternName: Map.JenksKey | Map.StatusKey }
+
+      const loadMapPatterns = (params: LoadPatternParams) => {
+        if (params.imageSource) {
+          loadSVGAsImage({
+            id: params.patternName,
+            map,
+            svgDataUri: params.imageSource,
+            pixelRatio: 2
+          })
+        } else {
+          loadSVGAsImage({
+            id: params.patternName,
+            map,
+            svgDataUri: solidColorMap[params.patternName as Map.JenksKey]
+          })
+        }
+      }
+
+      loadMapPatterns({
+        imageSource: hatchUri,
+        patternName: 'hatch-pattern'
+      })
+      loadMapPatterns({ patternName: 'jenks-0' })
+      loadMapPatterns({ patternName: 'jenks-1' })
+      loadMapPatterns({ patternName: 'jenks-2' })
+      loadMapPatterns({ patternName: 'jenks-3' })
+      loadMapPatterns({ patternName: 'jenks-4' })
+      loadMapPatterns({ patternName: 'achieved' })
+      loadMapPatterns({ patternName: 'challenges-remain' })
+      loadMapPatterns({ patternName: 'major-challenges-remain' })
+      loadMapPatterns({ patternName: 'data-not-available' })
+    })
   })
 
   return {

@@ -71,6 +71,7 @@ declare global {
         borderColor?: string
         solidColor?: string
         twClass?: string
+        hatchPattern?: boolean
       }
     }
   }

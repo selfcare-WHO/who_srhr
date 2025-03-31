@@ -17,7 +17,7 @@ export const useMapConfiguration = (
     },
     zoom: 1.5,
     maxZoom: 6,
-    minZoom: 1,
+    minZoom: 0.5,
     projection: 'mercator'
   }
 

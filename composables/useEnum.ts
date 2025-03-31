@@ -36,7 +36,7 @@ export const useEnum = () => {
       iconColor: 'var(--el-color-primary)',
       bgColor: 'transparent',
       borderColor: 'var(--el-color-primary)',
-      solidColor: 'var(--no-data)'
+      hatchPattern: true
     }
   })
 
@@ -59,7 +59,8 @@ export const useEnum = () => {
     'Data not available': {
       name: 'No Data',
       dbValue: 'Data not available',
-      color: 'var(--no-data)'
+      hatchPattern: true,
+      color: 'url(~/assets/images/hatch-pattern.svg)'
     }
   }
 

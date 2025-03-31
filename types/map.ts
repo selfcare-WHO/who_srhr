@@ -17,7 +17,15 @@ declare global {
 
     type Legend = {
       name: string
-      color: string
+      color?: string
+      hatchPattern?: boolean
     }
+
+    type JenksKey = 'jenks-0' | 'jenks-1' | 'jenks-2' | 'jenks-3' | 'jenks-4'
+    type StatusKey =
+      | 'achieved'
+      | 'challenges-remain'
+      | 'major-challenges-remain'
+      | 'data-not-available'
   }
 }

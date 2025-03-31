@@ -30,6 +30,12 @@
           )
 
           div(
+            v-else-if="status?.hatchPattern"
+            class="h-4 w-6 min-h-4 min-w-6 border-2 flex items-center justify-center"
+            :style="{ background: `url(${hatchUri}) repeat`, backgroundSize: '6px' }"
+          )
+
+          div(
             v-else
             class="rounded-full h-4 w-4 min-h-4 min-w-4 border-2 flex items-center justify-center"
             :style="itemStyle(status)"
@@ -50,7 +56,7 @@
           v-for="(_, index) in gradientQtd"
           class="flex-1"
           :key="index"
-          :style="{ backgroundColor: `var(--el-bg-color-heatmap-${index * 25})` }"
+          :style="{ backgroundColor: `var(--el-bg-color-jenks-${index})` }"
         )
 
       div(class="relative mt-2 h-3 w-[calc(100%-2rem)] mx-4")
@@ -69,6 +75,13 @@
           class="flex items-center gap-2"
         )
           div(
+            v-if="legendItem?.hatchPattern"
+            class="h-4 w-6 min-h-4 min-w-6 border-2"
+            :style="{ background: `url(${hatchUri}) repeat`, backgroundSize: '6px' }"
+          )
+
+          div(
+            v-else
             class="rounded-full h-4 w-4 min-h-4 min-w-4"
             :style="{ backgroundColor: legendItem?.color }"
           )
@@ -79,6 +92,9 @@
 </template>
 
 <script lang="ts" setup>
+  const { hatchUri } = useHatchPattern()
+  console.log(`🚀 ~ hatchUri:`, hatchUri)
+
   const props = defineProps<{
     currentIndicator?: Prisma.IndicatorWithSubgroups
     currentSubgroup?: Prisma.Subgroup
@@ -113,7 +129,8 @@
     return ''
   })
 
-  const heatmapLegendItems = computed(() => {
+  // Use the LegendItem type for heatmap legend items.
+  const heatmapLegendItems = computed<Record<string, Map.Legend>>(() => {
     return {
       ...(props.hasOther
         ? {
@@ -127,7 +144,7 @@
         ? {
             'No data': {
               name: 'No data',
-              color: 'var(--el-text-color-disabled)'
+              hatchPattern: true
             }
           }
         : {})
@@ -136,7 +153,6 @@
 
   const scaleStyle = (index: number) => {
     const valuesInterval = props.jenksBreaks?.length ?? 0
-    const middleIndex = Math.floor(valuesInterval / 2)
 
     if (index === 0) {
       return {
@@ -169,18 +185,3 @@
     }
   }
 </script>
-
-<style scoped lang="scss">
-  .map-view-legend {
-    .scale-gradient {
-      background: linear-gradient(
-        to right,
-        var(--el-bg-color-heatmap-0) 0%,
-        var(--el-bg-color-heatmap-25) 25%,
-        var(--el-bg-color-heatmap-50) 50%,
-        var(--el-bg-color-heatmap-75) 75%,
-        var(--el-bg-color-heatmap-100) 100%
-      );
-    }
-  }
-</style>

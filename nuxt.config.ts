@@ -1,5 +1,9 @@
 import { fileURLToPath } from 'node:url'
 
+declare module '*.svg?raw' {
+  const content: string
+}
+
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-14',
 
