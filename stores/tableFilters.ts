@@ -6,7 +6,7 @@ export const useTableFiltersStore = defineStore('TableFilters', () => {
   const dataTypeOptions = computed<Filter.Option[]>(() => [
     {
       id: 'numerical_categorical',
-      name: 'Numerical & categorical data'
+      name: 'Health statistics'
     },
     {
       id: 'laws_policies',

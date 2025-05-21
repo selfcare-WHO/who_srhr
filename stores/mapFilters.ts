@@ -24,7 +24,7 @@ export const useMapFiltersStore = defineStore('MapFilters', () => {
   const dataTypeOptions = computed<Filter.Option[]>(() => [
     {
       id: 'numerical_categorical',
-      name: 'Numerical & categorical'
+      name: 'Health statistics'
     },
     {
       id: 'laws_policies',
