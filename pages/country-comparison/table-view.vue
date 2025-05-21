@@ -46,7 +46,7 @@
 <script lang="ts" setup>
   import { TabulatorFull as Tabulator } from 'tabulator-tables'
 
-  const TABLE_HEIGHT = 757
+  const TABLE_HEIGHT = 780
 
   defineOptions({ name: 'CountryComparisonTable' })
 
@@ -91,7 +91,7 @@
       layout: 'fitDataFill',
       selectable: false,
       pagination: true,
-      paginationSize: 10,
+      paginationSize: 12,
       ajaxURL: '/api/table-data',
       paginationMode: 'remote',
       reactiveData: true,
