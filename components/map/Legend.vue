@@ -93,7 +93,6 @@
 
 <script lang="ts" setup>
   const { hatchUri } = useHatchPattern()
-  console.log(`🚀 ~ hatchUri:`, hatchUri)
 
   const props = defineProps<{
     currentIndicator?: Prisma.IndicatorWithSubgroups

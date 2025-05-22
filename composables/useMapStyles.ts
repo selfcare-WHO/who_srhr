@@ -68,7 +68,7 @@ export const useMapStyles = ({
             'jenks-4'
           ],
           // Fallback for non-numeric values
-          parseCssVar('--el-color-warning')
+          'other'
         ],
         // Default case when property doesn't exist (No data)
         'hatch-pattern'
@@ -90,12 +90,13 @@ export const useMapStyles = ({
   })
 
   useMapbox('world-map', map => {
-    const solidColorMap: Record<Map.JenksKey | Map.StatusKey, string> = {
+    const solidColorMap: Record<Map.JenksKey | Map.StatusKey | Map.OtherKey, string> = {
       'jenks-0': generateSolidColorSVG(parseCssVar('--el-bg-color-jenks-0')),
       'jenks-1': generateSolidColorSVG(parseCssVar('--el-bg-color-jenks-1')),
       'jenks-2': generateSolidColorSVG(parseCssVar('--el-bg-color-jenks-2')),
       'jenks-3': generateSolidColorSVG(parseCssVar('--el-bg-color-jenks-3')),
       'jenks-4': generateSolidColorSVG(parseCssVar('--el-bg-color-jenks-4')),
+      'other': generateSolidColorSVG(parseCssVar('--el-color-warning')),
       achieved: generateSolidColorSVG(parseCssVar('--el-color-success')),
       'challenges-remain': generateSolidColorSVG(
         parseCssVar('--el-color-warning')
@@ -115,7 +116,7 @@ export const useMapStyles = ({
             imageSource: string
             patternName: 'hatch-pattern'
           }
-        | { imageSource?: undefined; patternName: Map.JenksKey | Map.StatusKey }
+        | { imageSource?: undefined; patternName: Map.JenksKey | Map.StatusKey | Map.OtherKey }
 
       const loadMapPatterns = (params: LoadPatternParams) => {
         if (params.imageSource) {
@@ -143,6 +144,7 @@ export const useMapStyles = ({
       loadMapPatterns({ patternName: 'jenks-2' })
       loadMapPatterns({ patternName: 'jenks-3' })
       loadMapPatterns({ patternName: 'jenks-4' })
+      loadMapPatterns({ patternName: 'other' })
       loadMapPatterns({ patternName: 'achieved' })
       loadMapPatterns({ patternName: 'challenges-remain' })
       loadMapPatterns({ patternName: 'major-challenges-remain' })
