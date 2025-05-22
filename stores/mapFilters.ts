@@ -32,7 +32,7 @@ export const useMapFiltersStore = defineStore('MapFilters', () => {
     },
     {
       id: 'targets',
-      name: 'Targets'
+      name: 'Progress towards targets'
     }
   ])
 
