@@ -15,6 +15,8 @@ export const useMapStyles = ({
   jenksBreaks: ComputedRef<number[] | undefined>
 }) => {
   const { hatchUri } = useHatchPattern()
+  const colorStore = useColorStore()
+  const { isCBFriendly } = storeToRefs(colorStore)
 
   const targetsPaint = computed<mapboxgl.LayerSpecification['paint']>(() => ({
     'fill-opacity': [
@@ -90,65 +92,64 @@ export const useMapStyles = ({
   })
 
   useMapbox('world-map', map => {
-    const solidColorMap: Record<Map.JenksKey | Map.StatusKey | Map.OtherKey, string> = {
-      'jenks-0': generateSolidColorSVG(parseCssVar('--el-bg-color-jenks-0')),
-      'jenks-1': generateSolidColorSVG(parseCssVar('--el-bg-color-jenks-1')),
-      'jenks-2': generateSolidColorSVG(parseCssVar('--el-bg-color-jenks-2')),
-      'jenks-3': generateSolidColorSVG(parseCssVar('--el-bg-color-jenks-3')),
-      'jenks-4': generateSolidColorSVG(parseCssVar('--el-bg-color-jenks-4')),
-      'other': generateSolidColorSVG(parseCssVar('--el-color-warning')),
-      achieved: generateSolidColorSVG(parseCssVar('--el-color-success')),
-      'challenges-remain': generateSolidColorSVG(
-        parseCssVar('--el-color-warning')
-      ),
-      'major-challenges-remain': generateSolidColorSVG(
-        parseCssVar('--el-color-error')
-      ),
-      'data-not-available': generateSolidColorSVG(
-        parseCssVar('--el-color-info')
-      )
-    }
-
-    // Wait for map to be loaded before adding images
-    map.on('load', () => {
-      type LoadPatternParams =
-        | {
-            imageSource: string
-            patternName: 'hatch-pattern'
-          }
-        | { imageSource?: undefined; patternName: Map.JenksKey | Map.StatusKey | Map.OtherKey }
-
-      const loadMapPatterns = (params: LoadPatternParams) => {
-        if (params.imageSource) {
-          loadSVGAsImage({
-            id: params.patternName,
-            map,
-            svgDataUri: params.imageSource,
-            pixelRatio: 2
-          })
-        } else {
-          loadSVGAsImage({
-            id: params.patternName,
-            map,
-            svgDataUri: solidColorMap[params.patternName as Map.JenksKey]
-          })
-        }
+    const registerSolidPatterns = () => {
+      const solidColorMap: Record<Map.JenksKey | Map.StatusKey | Map.OtherKey, string> = {
+        'jenks-0': generateSolidColorSVG(parseCssVar('--el-bg-color-jenks-0')),
+        'jenks-1': generateSolidColorSVG(parseCssVar('--el-bg-color-jenks-1')),
+        'jenks-2': generateSolidColorSVG(parseCssVar('--el-bg-color-jenks-2')),
+        'jenks-3': generateSolidColorSVG(parseCssVar('--el-bg-color-jenks-3')),
+        'jenks-4': generateSolidColorSVG(parseCssVar('--el-bg-color-jenks-4')),
+        'other': generateSolidColorSVG(parseCssVar('--el-color-warning')),
+        achieved: generateSolidColorSVG(parseCssVar('--achieved')),
+        'challenges-remain': generateSolidColorSVG(
+          parseCssVar('--challenges')
+        ),
+        'major-challenges-remain': generateSolidColorSVG(
+          parseCssVar('--major-challenges')
+        ),
+        'data-not-available': generateSolidColorSVG(
+          parseCssVar('--no-data')
+        )
       }
 
-      loadMapPatterns({
-        imageSource: hatchUri,
-        patternName: 'hatch-pattern'
+      Object.entries(solidColorMap).forEach(([patternName, svg]) => {
+        // Remove existing image to allow re-adding with new data
+        if (map.hasImage(patternName)) {
+          map.removeImage(patternName)
+        }
+
+        loadSVGAsImage({
+          id: patternName,
+          map,
+          svgDataUri: svg as string,
+          pixelRatio: 1
+        })
       })
-      loadMapPatterns({ patternName: 'jenks-0' })
-      loadMapPatterns({ patternName: 'jenks-1' })
-      loadMapPatterns({ patternName: 'jenks-2' })
-      loadMapPatterns({ patternName: 'jenks-3' })
-      loadMapPatterns({ patternName: 'jenks-4' })
-      loadMapPatterns({ patternName: 'other' })
-      loadMapPatterns({ patternName: 'achieved' })
-      loadMapPatterns({ patternName: 'challenges-remain' })
-      loadMapPatterns({ patternName: 'major-challenges-remain' })
-      loadMapPatterns({ patternName: 'data-not-available' })
+    }
+
+    const registerHatchPattern = () => {
+      if (!map.hasImage('hatch-pattern')) {
+        loadSVGAsImage({
+          id: 'hatch-pattern',
+          map,
+          svgDataUri: hatchUri,
+          pixelRatio: 2
+        })
+      }
+    }
+
+    map.on('load', () => {
+      registerHatchPattern()
+
+      watchImmediate(
+        isCBFriendly,
+        () => {
+          registerSolidPatterns()
+  
+          nextTick(() => map.triggerRepaint())
+        },
+        { flush: 'post' }
+      )
     })
   })
 
