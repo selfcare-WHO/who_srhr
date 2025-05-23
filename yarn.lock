@@ -11196,10 +11196,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tabulator-tables@npm:^6.3.0":
-  version: 6.3.0
-  resolution: "tabulator-tables@npm:6.3.0"
-  checksum: 10c0/59e23ab263b0714845e048a636ae4b77ae43bef1524a65eab9045de7bb0bee43951980daaae625bea0b30a0e480b61a9263a22c56744a9b4d219501a2f2926a3
+"tabulator-tables@npm:^6.3.1":
+  version: 6.3.1
+  resolution: "tabulator-tables@npm:6.3.1"
+  checksum: 10c0/aa42319ce00ec08f0575d5d5887a49c836d4b848e9fc0b53f1228632615450f003371c2a10e02108719a1ea3346a8c5d85f83d03606e1a84d4a06ce7a0520059
   languageName: node
   linkType: hard
 
@@ -12554,7 +12554,7 @@ __metadata:
     shave: "npm:^5.0.4"
     simple-statistics: "npm:^7.8.8"
     string-mask: "npm:^0.3.0"
-    tabulator-tables: "npm:^6.3.0"
+    tabulator-tables: "npm:^6.3.1"
     tsx: "npm:^4.19.2"
     typescript: "npm:^5.6.3"
     vue-tsc: "npm:^2.1.10"
