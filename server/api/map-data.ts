@@ -97,9 +97,23 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
     let jenksBreaks: number[] = []
 
     try {
-      if (numericalValues.length >= NUM_BREAKS) {
+      // Ensure there are enough unique values for Jenks calculation
+      const uniqueNumericalValues = [...new Set(numericalValues)]
+      if (uniqueNumericalValues.length >= NUM_BREAKS) {
         jenksBreaks = jenks(numericalValues, NUM_BREAKS)
+      } else if (uniqueNumericalValues.length > 0 && uniqueNumericalValues.length < NUM_BREAKS) {
+        // Fallback: if there are some unique values but not enough for NUM_BREAKS,
+        // create a simpler break system. For example, use unique values as breaks
+        // or a subset if there are too many for a simple scale but too few for Jenks.
+        // This is a placeholder, adjust according to desired behavior.
+        // For now, we can just use the unique values, sorted.
+        jenksBreaks = uniqueNumericalValues.sort((a, b) => a - b)
+        // If you need exactly NUM_BREAKS, you might need to pad this array
+        // or handle it differently in the frontend.
+        // For simplicity, if we have 1 to 4 unique values, we'll use them.
+        // The frontend already checks for jenksBreaks.length < 5.
       }
+      // If uniqueNumericalValues.length is 0, jenksBreaks remains []
     } catch (error) {
       console.error('Jenks calculation failed:', error)
       jenksBreaks = []
