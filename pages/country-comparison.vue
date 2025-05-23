@@ -32,6 +32,20 @@
   const colorStore = useColorStore()
   const { isCBFriendly } = storeToRefs(colorStore)
 
+  useSyncRouteFilters({
+    cb: {
+      ref: isCBFriendly,
+      parse: (val: unknown) => {
+        if (Array.isArray(val)) val = val[0]
+        if (typeof val === 'string') {
+          return ['1', 'true'].includes(val.toLowerCase())
+        }
+        return false
+      },
+      stringify: (val: boolean) => (val ? '1' : '')
+    }
+  })
+
   const { isDesktop } = useResponsive()
 
   const route = useRoute()

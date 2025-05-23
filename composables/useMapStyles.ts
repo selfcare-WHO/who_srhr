@@ -18,6 +18,8 @@ export const useMapStyles = ({
   const colorStore = useColorStore()
   const { isCBFriendly } = storeToRefs(colorStore)
 
+  const mapLoaded = ref(false)
+
   const targetsPaint = computed<mapboxgl.LayerSpecification['paint']>(() => ({
     'fill-opacity': [
       'case',
@@ -79,6 +81,8 @@ export const useMapStyles = ({
   })
 
   const countriesPaint = computed<mapboxgl.LayerSpecification['paint']>(() => {
+    if (!mapLoaded.value) return {}
+
     if (dataTypeFilterValue?.value === 'numerical_categorical') {
       if (indicator?.value?.type === 'Nominal') return targetsPaint.value
       else return heatmapPaint.value
@@ -139,6 +143,7 @@ export const useMapStyles = ({
     }
 
     map.on('load', () => {
+      mapLoaded.value = true
       registerHatchPattern()
 
       watchImmediate(
@@ -150,6 +155,8 @@ export const useMapStyles = ({
         },
         { flush: 'post' }
       )
+
+      nextTick(() => map.triggerRepaint())
     })
   })
 
