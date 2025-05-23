@@ -14,7 +14,7 @@
             img(
               src="@assets/images/indicators_and_data_diagram.png"
               alt="The SRHR indicators diagram"
-              class="max-w-full h-auto "
+              class="max-w-full h-auto"
             )
 
       .data-availability-section(class="flex flex-col gap-8 mt-10")

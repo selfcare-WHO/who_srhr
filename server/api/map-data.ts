@@ -69,10 +69,15 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
         ? JSON.parse(indicator.translateValue)?.[dp?.value || '']
         : dp?.value
 
-      if (color && dp?.change) {
+      if (color && dp?.change && name) {
         legend.set(dp.change, {
-          name: name ?? 'No Data',
+          name: name,
           color
+        })
+      } else {
+        legend.set(dp.change ?? 'noData', {
+          name: 'No Data',
+          hatchPattern: true
         })
       }
     })
