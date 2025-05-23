@@ -29,10 +29,37 @@
 </template>
 
 <script lang="ts" setup>
+  import { useSyncRouteFilters } from '~/composables/useSyncRouteFilters'
+  import { storeToRefs } from 'pinia'
+
   defineOptions({ name: 'CountryComparisonCharts' })
 
   const chartFiltersStore = useChartFiltersStore()
+
+  const {
+    indicatorFilterValue,
+    countryFilterValue,
+    highlightFilterValue
+  } = storeToRefs(chartFiltersStore)
+
   const { chartFilters } = chartFiltersStore
+
+  // Keep filter refs <-> route query synchronized
+  useSyncRouteFilters({
+    indicator: {
+      ref: indicatorFilterValue,
+      parse: (raw: any) => (Array.isArray(raw) ? raw : typeof raw === 'string' ? raw.split(',') : []),
+      stringify: (val: string[]) => val.join(',')
+    },
+    country: {
+      ref: countryFilterValue,
+      parse: (raw: any) => (Array.isArray(raw) ? raw : typeof raw === 'string' ? raw.split(',') : []),
+      stringify: (val: string[]) => val.join(',')
+    },
+    highlight: {
+      ref: highlightFilterValue
+    }
+  })
 
   // // For color blind friendly colors
   // const colorStore = useColorStore()
