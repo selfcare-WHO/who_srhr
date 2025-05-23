@@ -3,6 +3,7 @@ declare global {
     type Option = {
       id: string | number
       name?: string
+      label?: string
       value?: string
       children?: Option[]
     }

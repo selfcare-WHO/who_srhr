@@ -55,7 +55,7 @@
     ElOption(
       v-for="option in options"
       :key="option.id"
-      :label="option.name"
+      :label="option.label || option.name"
       :value="option.id"
     )
   </template>
