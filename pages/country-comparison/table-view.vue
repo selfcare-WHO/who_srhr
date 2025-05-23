@@ -46,7 +46,7 @@
 <script lang="ts" setup>
   import { TabulatorFull as Tabulator } from 'tabulator-tables'
 
-  const TABLE_HEIGHT = 780
+  const TABLE_HEIGHT = 785
 
   defineOptions({ name: 'CountryComparisonTable' })
 
