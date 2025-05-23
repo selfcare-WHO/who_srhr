@@ -13,7 +13,7 @@ export const useMapData = () => {
   const { data: mapData } = useAsyncData<Map.DataPoints | null>(
     '/api/map-data',
     async () => {
-      if (!indicatorFilterValue.value) return Promise.resolve(null)
+      if (!indicatorFilterValue.value || !subgroupFilterValue.value) return Promise.resolve(null)
 
       isFetching.value = true
       const data = await $fetch<Map.DataPoints>('/api/map-data', {
