@@ -1,4 +1,7 @@
 export default (num: number, digits: number, indicator?: Prisma.Indicator) => {
+  if (num === null || typeof num === 'undefined') {
+    return ''
+  }
   const lookup = [
     { value: 1, symbol: '' },
     { value: 1e3, symbol: 'k' },
