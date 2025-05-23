@@ -45,14 +45,49 @@
 
 <script lang="ts" setup>
   import { TabulatorFull as Tabulator } from 'tabulator-tables'
+  import { useSyncRouteFilters } from '~/composables/useSyncRouteFilters'
 
   const TABLE_HEIGHT = 785
 
   defineOptions({ name: 'CountryComparisonTable' })
 
   const tableFiltersStore = useTableFiltersStore()
-  const { filterValues } = storeToRefs(tableFiltersStore)
-  const { tableFilters } = tableFiltersStore
+  const {
+    dataTypeFilterValue,
+    indicatorFilterValue,
+    countryFilterValue,
+    filterValues
+  } = storeToRefs(tableFiltersStore)
+
+  const { tableFilters, indicatorFilter } = tableFiltersStore
+
+  // Keep filter refs <-> URL query synchronized
+  useSyncRouteFilters({
+    dataType: {
+      ref: dataTypeFilterValue,
+      validValues: ['numerical_categorical', 'laws_policies']
+    },
+    indicator: {
+      ref: indicatorFilterValue,
+      parse: (raw: any) => (Array.isArray(raw) ? raw : typeof raw === 'string' ? raw.split(',') : []),
+      stringify: (val: string[]) => val.join(','),
+      validate: (vals: string[]) =>
+        vals.every(v =>
+          indicatorFilter.options?.some(opt => {
+            if (Array.isArray(opt.children)) {
+              return opt.children.some(child => child.id === v)
+            }
+            return false
+          })
+        ),
+      waitForReady: () => indicatorFilter.options?.length > 0,
+    },
+    country: {
+      ref: countryFilterValue,
+      parse: (raw: any) => (Array.isArray(raw) ? raw : typeof raw === 'string' ? raw.split(',') : []),
+      stringify: (val: string[]) => val.join(',')
+    }
+  })
 
   const tooltipData = reactive<Data.IndicatorTooltipData>({})
   const showTooltip = ref(false)
@@ -96,7 +131,11 @@
       paginationMode: 'remote',
       reactiveData: true,
       ajaxParams: () => ({
-        filters: JSON.stringify(filterValues.value)
+        filters: JSON.stringify({
+          dataType: dataTypeFilterValue.value,
+          indicator: indicatorFilterValue.value,
+          country: countryFilterValue.value
+        })
       }),
       ajaxRequesting: () => {
         isFetching.value = true

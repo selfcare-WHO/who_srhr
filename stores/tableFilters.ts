@@ -130,6 +130,7 @@ export const useTableFiltersStore = defineStore('TableFilters', () => {
     indicatorFilter,
     filterValues,
     filteredIndicators,
+    dataTypeFilterValue,
     indicatorFilterValue,
     countryFilterValue
   }

@@ -10,7 +10,7 @@
         class="h-full min-h-[80vh] w-full rounded-lg"
         map-id="world-map"
         :options="mapOptions"
-        @wheel="onWheel"
+        @wheel.passive="onWheel"
         @drag="showPopover = false"
         @mouseleave="showPopover = false"
       )
