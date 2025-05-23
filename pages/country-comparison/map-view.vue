@@ -40,6 +40,7 @@
           v-model="showPopover"
           :popover-data="popoverData"
           :current-indicator="currentIndicator"
+          :current-subgroup="currentSubgroup"
           popper-class="!z-10"
         )
 

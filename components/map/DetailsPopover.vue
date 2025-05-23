@@ -14,6 +14,8 @@
       h3(class="text-[20px] leading-tight font-bold") {{ popoverData.country }}
       h4(class="text-md font-bold")
         | {{ currentIndicator.displayName }}
+      h4(class="text-md" v-if="currentSubgroup && currentSubgroup.name !== 'Data'")
+        | {{ currentSubgroup.name }}
       span.text-md {{ popoverData.value }}
   </template>
 
@@ -21,6 +23,7 @@
   defineProps<{
     popoverData: Map.PopoverData
     currentIndicator: Prisma.SerializedIndicatorWithSubgroups
+    currentSubgroup?: Prisma.Subgroup
     popperClass?: string
   }>()
 
