@@ -43,7 +43,15 @@ export const useMapStyles = ({
   }))
 
   const heatmapPaint = computed<mapboxgl.LayerSpecification['paint']>(() => {
-    if (!jenksBreaks?.value) return {}
+    if (!jenksBreaks?.value || jenksBreaks.value.length < 5) return {}
+
+    // Ensure all break points are numeric literals – Mapbox requires literal numbers, not strings
+    const breaks = jenksBreaks.value.map(breakPoint =>
+      typeof breakPoint === 'string' ? Number(breakPoint) : breakPoint
+    )
+
+    // In case any breakpoint could not be converted to a number, skip styling to avoid Mapbox validation errors
+    if (breaks.some(value => Number.isNaN(value))) return {}
 
     return {
       'fill-pattern': [
@@ -51,7 +59,6 @@ export const useMapStyles = ({
         ['to-boolean', ['get', 'value']],
         [
           'case',
-          // Yep, this hack sucks... ¯\_(ツ)_/¯
           [
             '!=',
             ['to-number', ['get', 'value'], -999999999999999],
@@ -60,21 +67,18 @@ export const useMapStyles = ({
           [
             'step',
             ['to-number', ['get', 'value']],
-            // jenksBreaks.value[0],
             'jenks-0',
-            jenksBreaks.value[1],
+            breaks[1],
             'jenks-1',
-            jenksBreaks.value[2],
+            breaks[2],
             'jenks-2',
-            jenksBreaks.value[3],
+            breaks[3],
             'jenks-3',
-            jenksBreaks.value[4],
+            breaks[4],
             'jenks-4'
           ],
-          // Fallback for non-numeric values
           'other'
         ],
-        // Default case when property doesn't exist (No data)
         'hatch-pattern'
       ]
     }
