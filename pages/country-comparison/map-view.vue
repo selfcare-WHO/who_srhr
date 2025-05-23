@@ -171,7 +171,6 @@
 
   onBeforeUnmount(() => {
     showPopover.value = false
-    mapRef.value?.remove()
   })
 </script>
 
