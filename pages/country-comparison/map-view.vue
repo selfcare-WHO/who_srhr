@@ -92,18 +92,50 @@
   const colorStore = useColorStore()
   const { isCBFriendly } = storeToRefs(colorStore)
 
+  const mapFiltersStore = useMapFiltersStore()
+  const {
+    dataTypeFilterValue,
+    indicatorFilterValue,
+    subgroupFilterValue,
+    indicatorOptions,
+    currentIndicator
+  } = storeToRefs(mapFiltersStore)
+
   const {
     mapData,
     isFetching,
     linkedFeaturesSource,
-    currentIndicator,
+    currentIndicator: currentIndicatorFromUseMapData,
     currentSubgroup,
-    dataTypeFilterValue,
+    dataTypeFilterValue: dataTypeFromUseMapData,
     hasOther,
     hasNoData,
     nominalLegend,
     jenksBreaks
   } = useMapData()
+
+  const { isInitializing } = useSyncRouteFilters({
+    dataType: {
+      ref: dataTypeFilterValue,
+      validValues: ['numerical_categorical', 'laws_policies', 'targets']
+    },
+    indicator: {
+      ref: indicatorFilterValue,
+      validate: (val: string) =>
+        indicatorOptions.value.some(domain =>
+          domain.children?.some(indicator => indicator.id === val)
+        ),
+      waitForReady: () => indicatorOptions.value.length > 0
+    },
+    subgroup: {
+      ref: subgroupFilterValue,
+      validate: (val: string) =>
+        currentIndicator.value?.subgroups?.some(
+          subgroup => String(subgroup.id) === val
+        ) ?? false,
+      waitForReady: () => currentIndicator.value?.subgroups?.length > 0
+    }
+  })
 
   const { countriesPaint } = useMapStyles({
     dataTypeFilterValue,
