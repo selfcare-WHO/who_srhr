@@ -86,7 +86,7 @@ MCP tooling:
 - Always assume the app is running on http://localhost:3000/
 - There is no need to run the dev command
 - Use the playwrite-mcp browser tools when necessary, like navigating, scrolling, clicking, debugging and taking screenshots
-- make sure to always scroll down until the element being edited appears on the screen
+- make sure to scroll down until the element being edited appears on the screen when not visible
 
 
 
