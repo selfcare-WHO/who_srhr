@@ -89,10 +89,29 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
 
     const legendObject = Object.fromEntries(sortedLegend)
 
-    const numericalValues = Array.from(dataPointsByCountry.values())
-      .map(dp => Number(dp.value))
-      .filter(val => !isNullish(val) && !isNaN(val))
+    const processValue = (dataPoint: any): number | null => {
+      if (!dataPoint?.value) return null
+      
+      const isRange = dataPoint.value.match(/^\d+-\d+$/) !== null
+      if (isRange) {
+        const [rangeMin, rangeMax] = dataPoint.value.split('-').map(Number)
+        return (rangeMin + rangeMax) / 2
+      }
+      
+      const isLessThan = dataPoint.value.includes('<')
+      if (isLessThan) return Number(dataPoint.value.trim().split('<')[1])
+      
+      const isMoreThan = dataPoint.value.includes('>')
+      if (isMoreThan) return Number(dataPoint.value.trim().split('>')[1])
+      
+      return Number(dataPoint.value)
+    }
 
+    // Process values and strictly filter to only include numbers
+    const numericalValues: number[] = Array.from(dataPointsByCountry.values())
+      .map(dp => processValue(dp))
+      .filter((val): val is number => val !== null && !isNaN(val))
+    
     const NUM_BREAKS = 5
     let jenksBreaks: number[] = []
 
@@ -138,13 +157,7 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
         const isLessThan = dataPoint?.value?.includes('<')
         const isMoreThan = dataPoint?.value?.includes('>')
 
-        const value = (() => {
-          if (isRange) return rangeAverage
-          if (isLessThan) return dataPoint?.value.trim().split('<')[1]
-          if (isMoreThan) return dataPoint?.value.trim().split('>')[1]
-
-          return dataPoint?.value
-        })()
+        const value = dataPoint ? processValue(dataPoint) : null
 
         return {
           ...feature,
