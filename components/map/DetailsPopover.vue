@@ -15,7 +15,7 @@
       h4(class="text-md font-bold")
         | {{ currentIndicator.displayName }}
       h4(class="text-md" v-if="currentSubgroup && currentSubgroup.name !== 'Data'")
-        | {{ currentSubgroup.name }}
+        | {{ currentSubgroup.fullName }}
       span.text-md {{ popoverData.value }}
   </template>
 
