@@ -6,7 +6,4 @@ printWidth: 80
 arrowParens: avoid
 endOfLine: lf
 vueIndentScriptAndStyle: true
-pugSingleQuote: false
-pugAttributeSeparator: none
-pugClassNotation: literal
-tsxBracketSameLine: true
+bracketSameLine: true

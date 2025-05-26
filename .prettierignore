@@ -1,0 +1,34 @@
+# Dependencies
+node_modules/
+.yarn/
+
+# Build outputs
+.nuxt/
+.output/
+dist/
+
+# Generated files
+.DS_Store
+*.log
+*.lock
+
+# Database
+prisma/migrations/
+
+# IDE
+.vscode/
+.idea/
+
+# Temporary files
+*.tmp
+*.temp
+
+# Package manager files
+yarn.lock
+package-lock.json
+
+# Environment files
+.env*
+
+# Git
+.git/ 

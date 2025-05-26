@@ -17,7 +17,10 @@
     "preview": "nuxi preview",
     "start": "node .output/server/index.mjs",
     "generate": "nuxi generate",
-    "postinstall": "nuxi prepare"
+    "postinstall": "nuxi prepare",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint:format": "prettier --check . && echo 'All files are formatted correctly!'"
   },
   "prisma": {
     "seed": "node node_modules/.bin/tsx ./prisma/seed.ts"
