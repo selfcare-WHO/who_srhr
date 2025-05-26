@@ -4,7 +4,6 @@ import { fileURLToPath } from 'url'
 import { jenks } from 'simple-statistics'
 import mapDataPoints from '../services/mapDataPoints'
 import { useEnum } from '~/composables/useEnum'
-import isNullish from '~/utils/isNullish'
 import { capitalizeNominalValue } from '~/utils/capitalizeNominalValue'
 
 // Cache the GeoJSON file in memory
@@ -113,36 +112,42 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
       .map(dp => processValue(dp))
       .filter((val): val is number => val !== null && !isNaN(val))
 
-    console.log('🚀 ~: numericalValues', numericalValues)
     const NUM_BREAKS = 5
     let jenksBreaks: number[] = []
 
     try {
       // Ensure there are enough unique values for Jenks calculation
       const uniqueNumericalValues = [...new Set(numericalValues)]
+
       if (uniqueNumericalValues.length >= NUM_BREAKS) {
-        jenksBreaks = jenks(numericalValues, NUM_BREAKS)
+        const rawJenksBreaks = jenks(numericalValues, NUM_BREAKS)
+        // Remove duplicates from Jenks breaks and ensure we have unique values
+        jenksBreaks = [...new Set(rawJenksBreaks)]
+
+        // If we lost breaks due to duplicates, try with fewer breaks
+        if (
+          jenksBreaks.length < NUM_BREAKS &&
+          uniqueNumericalValues.length > jenksBreaks.length
+        ) {
+          const adjustedBreaks = Math.min(
+            uniqueNumericalValues.length,
+            jenksBreaks.length + 1
+          )
+          const newRawBreaks = jenks(numericalValues, adjustedBreaks)
+          jenksBreaks = [...new Set(newRawBreaks)]
+        }
       } else if (
         uniqueNumericalValues.length > 0 &&
         uniqueNumericalValues.length < NUM_BREAKS
       ) {
-        // Fallback: if there are some unique values but not enough for NUM_BREAKS,
-        // create a simpler break system. For example, use unique values as breaks
-        // or a subset if there are too many for a simple scale but too few for Jenks.
-        // This is a placeholder, adjust according to desired behavior.
-        // For now, we can just use the unique values, sorted.
+        // Use the unique values as breaks when we don't have enough for Jenks
         jenksBreaks = uniqueNumericalValues.sort((a, b) => a - b)
-        // If you need exactly NUM_BREAKS, you might need to pad this array
-        // or handle it differently in the frontend.
-        // For simplicity, if we have 1 to 4 unique values, we'll use them.
-        // The frontend already checks for jenksBreaks.length < 5.
       }
       // If uniqueNumericalValues.length is 0, jenksBreaks remains []
     } catch (error) {
       console.error('Jenks calculation failed:', error)
       jenksBreaks = []
     }
-    console.log('🚀 ~: jenksBreaks', jenksBreaks)
 
     const linkedFeatures: GeoJSON.Feature[] =
       geoJsonFeatures?.map((feature: GeoJSON.Feature) => {

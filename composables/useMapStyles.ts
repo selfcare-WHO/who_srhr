@@ -65,17 +65,17 @@ export const useMapStyles = ({
             -999999999999999
           ],
           [
-            'step',
-            ['to-number', ['get', 'value']],
-            'jenks-0',
-            breaks[1],
-            'jenks-1',
-            breaks[2],
-            'jenks-2',
-            breaks[3],
+            'case',
+            ...(breaks[4]
+              ? [['>', ['to-number', ['get', 'value']], breaks[4]], 'jenks-4']
+              : []),
+            ['>', ['to-number', ['get', 'value']], breaks[3]],
             'jenks-3',
-            breaks[4],
-            'jenks-4'
+            ['>', ['to-number', ['get', 'value']], breaks[2]],
+            'jenks-2',
+            ['>', ['to-number', ['get', 'value']], breaks[1]],
+            'jenks-1',
+            'jenks-0'
           ],
           'other'
         ],
