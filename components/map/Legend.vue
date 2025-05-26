@@ -25,7 +25,7 @@
         )
           div(
             v-if="status?.solidColor"
-            class="rounded-full h-4 w-4 min-h-4 min-w-4 border-2 flex items-center justify-center"
+            class="rounded-full h-4 w-4 min-h-4 min-w-4 flex items-center justify-center"
             :style="{ backgroundColor: status?.solidColor }"
           )
 
