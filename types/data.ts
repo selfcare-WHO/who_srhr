@@ -65,7 +65,7 @@ declare global {
         name: string
         dbValue?: string
         color?: string
-        icon?: string
+        icon?: any
         iconColor?: string
         bgColor?: string
         borderColor?: string

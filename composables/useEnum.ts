@@ -1,7 +1,7 @@
-import { reactive, onMounted, getCurrentInstance } from 'vue'
+import { shallowReactive, onMounted, getCurrentInstance, markRaw } from 'vue'
 
 export const useEnum = () => {
-  const impactOnSrhr = reactive<Data.Legend>({
+  const impactOnSrhr = shallowReactive<Data.Legend>({
     supportive: {
       dbValue: 'Achieved',
       name: 'Supportive',
@@ -89,10 +89,10 @@ export const useEnum = () => {
           import('@assets/icons/question-mark.svg').then(m => m.default)
         ])
 
-        impactOnSrhr.supportive.icon = checkMark
-        impactOnSrhr.partial.icon = minus
-        impactOnSrhr.punitive.icon = closeBold
-        impactOnSrhr.noData.icon = questionMark
+        impactOnSrhr.supportive.icon = markRaw(checkMark as any)
+        impactOnSrhr.partial.icon = markRaw(minus as any)
+        impactOnSrhr.punitive.icon = markRaw(closeBold as any)
+        impactOnSrhr.noData.icon = markRaw(questionMark as any)
       }
     })
   }

@@ -29,7 +29,7 @@
     "@element-plus/icons-vue": "^2.3.1",
     "@tailwindcss/typography": "^0.5.15",
     "d3": "^7.9.0",
-    "element-plus": "^2.8.7",
+    "element-plus": "^2.9.11",
     "shave": "^5.0.4",
     "simple-statistics": "^7.8.8",
     "string-mask": "^0.3.0",
