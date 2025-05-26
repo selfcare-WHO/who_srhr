@@ -21,12 +21,7 @@ declare global {
       hatchPattern?: boolean
     }
 
-    type JenksKey =
-      | 'jenks-0'
-      | 'jenks-1'
-      | 'jenks-2'
-      | 'jenks-3'
-      | 'jenks-4'
+    type JenksKey = 'jenks-0' | 'jenks-1' | 'jenks-2' | 'jenks-3' | 'jenks-4'
 
     type OtherKey = 'other'
 

@@ -131,25 +131,27 @@ export const useMapFiltersStore = defineStore('MapFilters', () => {
     subgroupFilter
   ])
 
-  watchImmediate(indicatorOptions, async (val) => {
+  watchImmediate(indicatorOptions, async val => {
     await nextTick()
-    
+
     const indicatorId = val[0]?.children?.[0]?.id
     const newIndicatorValue = indicatorId ? String(indicatorId) : ''
-    
+
     if (!indicatorFilterValue.value && newIndicatorValue) {
       indicatorFilterValue.value = newIndicatorValue
     }
   })
 
-  watch(currentIndicator, async (val) => {
+  watch(currentIndicator, async val => {
     await nextTick()
-    
+
     const subgroupId = val?.subgroups?.[0]?.id
     const newSubgroupValue = subgroupId ? String(subgroupId) : ''
-    
-    const currentSubgroupExists = val?.subgroups?.some(sg => String(sg.id) === subgroupFilterValue.value)
-    
+
+    const currentSubgroupExists = val?.subgroups?.some(
+      sg => String(sg.id) === subgroupFilterValue.value
+    )
+
     if (!subgroupFilterValue.value || !currentSubgroupExists) {
       subgroupFilterValue.value = newSubgroupValue
     }

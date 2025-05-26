@@ -31,8 +31,7 @@
     },
     {
       title: 'Country comparison',
-      description:
-        'Tables, charts and maps comparing countries and regions',
+      description: 'Tables, charts and maps comparing countries and regions',
       imgSrc: countriesRegions,
       path: 'country-comparison/table-view',
       active: comparisonFeatureActive

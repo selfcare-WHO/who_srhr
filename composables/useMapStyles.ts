@@ -101,23 +101,22 @@ export const useMapStyles = ({
 
   useMapbox('world-map', map => {
     const registerSolidPatterns = () => {
-      const solidColorMap: Record<Map.JenksKey | Map.StatusKey | Map.OtherKey, string> = {
+      const solidColorMap: Record<
+        Map.JenksKey | Map.StatusKey | Map.OtherKey,
+        string
+      > = {
         'jenks-0': generateSolidColorSVG(parseCssVar('--el-bg-color-jenks-0')),
         'jenks-1': generateSolidColorSVG(parseCssVar('--el-bg-color-jenks-1')),
         'jenks-2': generateSolidColorSVG(parseCssVar('--el-bg-color-jenks-2')),
         'jenks-3': generateSolidColorSVG(parseCssVar('--el-bg-color-jenks-3')),
         'jenks-4': generateSolidColorSVG(parseCssVar('--el-bg-color-jenks-4')),
-        'other': generateSolidColorSVG(parseCssVar('--el-color-warning')),
+        other: generateSolidColorSVG(parseCssVar('--el-color-warning')),
         achieved: generateSolidColorSVG(parseCssVar('--achieved')),
-        'challenges-remain': generateSolidColorSVG(
-          parseCssVar('--challenges')
-        ),
+        'challenges-remain': generateSolidColorSVG(parseCssVar('--challenges')),
         'major-challenges-remain': generateSolidColorSVG(
           parseCssVar('--major-challenges')
         ),
-        'data-not-available': generateSolidColorSVG(
-          parseCssVar('--no-data')
-        )
+        'data-not-available': generateSolidColorSVG(parseCssVar('--no-data'))
       }
 
       Object.entries(solidColorMap).forEach(([patternName, svg]) => {
@@ -154,7 +153,7 @@ export const useMapStyles = ({
         isCBFriendly,
         () => {
           registerSolidPatterns()
-  
+
           nextTick(() => map.triggerRepaint())
         },
         { flush: 'post' }

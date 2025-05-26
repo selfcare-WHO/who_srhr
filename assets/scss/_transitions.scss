@@ -10,7 +10,9 @@
 
 .layout-enter-active,
 .layout-leave-active {
-  transition: opacity 0.1s, filter 0.1s;
+  transition:
+    opacity 0.1s,
+    filter 0.1s;
 }
 .layout-enter-from,
 .layout-leave-to {

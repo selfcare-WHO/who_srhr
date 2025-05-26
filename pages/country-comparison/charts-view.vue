@@ -36,11 +36,8 @@
 
   const chartFiltersStore = useChartFiltersStore()
 
-  const {
-    indicatorFilterValue,
-    countryFilterValue,
-    highlightFilterValue
-  } = storeToRefs(chartFiltersStore)
+  const { indicatorFilterValue, countryFilterValue, highlightFilterValue } =
+    storeToRefs(chartFiltersStore)
 
   const { chartFilters } = chartFiltersStore
 
@@ -48,12 +45,22 @@
   useSyncRouteFilters({
     indicator: {
       ref: indicatorFilterValue,
-      parse: (raw: any) => (Array.isArray(raw) ? raw : typeof raw === 'string' ? raw.split(',') : []),
+      parse: (raw: any) =>
+        Array.isArray(raw)
+          ? raw
+          : typeof raw === 'string'
+            ? raw.split(',')
+            : [],
       stringify: (val: string[]) => val.join(',')
     },
     country: {
       ref: countryFilterValue,
-      parse: (raw: any) => (Array.isArray(raw) ? raw : typeof raw === 'string' ? raw.split(',') : []),
+      parse: (raw: any) =>
+        Array.isArray(raw)
+          ? raw
+          : typeof raw === 'string'
+            ? raw.split(',')
+            : [],
       stringify: (val: string[]) => val.join(',')
     },
     highlight: {

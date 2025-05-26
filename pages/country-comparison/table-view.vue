@@ -69,7 +69,12 @@
     },
     indicator: {
       ref: indicatorFilterValue,
-      parse: (raw: any) => (Array.isArray(raw) ? raw : typeof raw === 'string' ? raw.split(',') : []),
+      parse: (raw: any) =>
+        Array.isArray(raw)
+          ? raw
+          : typeof raw === 'string'
+            ? raw.split(',')
+            : [],
       stringify: (val: string[]) => val.join(','),
       validate: (vals: string[]) =>
         vals.every(v =>
@@ -80,11 +85,16 @@
             return false
           })
         ),
-      waitForReady: () => indicatorFilter.options?.length > 0,
+      waitForReady: () => indicatorFilter.options?.length > 0
     },
     country: {
       ref: countryFilterValue,
-      parse: (raw: any) => (Array.isArray(raw) ? raw : typeof raw === 'string' ? raw.split(',') : []),
+      parse: (raw: any) =>
+        Array.isArray(raw)
+          ? raw
+          : typeof raw === 'string'
+            ? raw.split(',')
+            : [],
       stringify: (val: string[]) => val.join(',')
     }
   })

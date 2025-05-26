@@ -168,7 +168,7 @@ function createChartData(
     value:
       indicator.type === 'Nominal'
         ? (capitalizeNominalValue(point.value) as string)
-        : point.value ?? undefined,
+        : (point.value ?? undefined),
     isHighlighted: String(point.countryId) === highlightId
   }))
 

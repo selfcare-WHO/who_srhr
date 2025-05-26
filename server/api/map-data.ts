@@ -92,19 +92,19 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
 
     const processValue = (dataPoint: any): number | null => {
       if (!dataPoint?.value) return null
-      
+
       const isRange = dataPoint.value.match(/^\d+-\d+$/) !== null
       if (isRange) {
         const [rangeMin, rangeMax] = dataPoint.value.split('-').map(Number)
         return (rangeMin + rangeMax) / 2
       }
-      
+
       const isLessThan = dataPoint.value.includes('<')
       if (isLessThan) return Number(dataPoint.value.trim().split('<')[1])
-      
+
       const isMoreThan = dataPoint.value.includes('>')
       if (isMoreThan) return Number(dataPoint.value.trim().split('>')[1])
-      
+
       return Number(dataPoint.value)
     }
 
@@ -112,7 +112,8 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
     const numericalValues: number[] = Array.from(dataPointsByCountry.values())
       .map(dp => processValue(dp))
       .filter((val): val is number => val !== null && !isNaN(val))
-    
+
+    console.log('🚀 ~: numericalValues', numericalValues)
     const NUM_BREAKS = 5
     let jenksBreaks: number[] = []
 
@@ -121,7 +122,10 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
       const uniqueNumericalValues = [...new Set(numericalValues)]
       if (uniqueNumericalValues.length >= NUM_BREAKS) {
         jenksBreaks = jenks(numericalValues, NUM_BREAKS)
-      } else if (uniqueNumericalValues.length > 0 && uniqueNumericalValues.length < NUM_BREAKS) {
+      } else if (
+        uniqueNumericalValues.length > 0 &&
+        uniqueNumericalValues.length < NUM_BREAKS
+      ) {
         // Fallback: if there are some unique values but not enough for NUM_BREAKS,
         // create a simpler break system. For example, use unique values as breaks
         // or a subset if there are too many for a simple scale but too few for Jenks.
@@ -138,6 +142,7 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
       console.error('Jenks calculation failed:', error)
       jenksBreaks = []
     }
+    console.log('🚀 ~: jenksBreaks', jenksBreaks)
 
     const linkedFeatures: GeoJSON.Feature[] =
       geoJsonFeatures?.map((feature: GeoJSON.Feature) => {
@@ -177,12 +182,13 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
 
     return {
       features: linkedFeatures,
-      dataPoints: type === 'Nominal' 
-        ? dataPoints.map(dp => ({
-            ...dp,
-            value: capitalizeNominalValue(dp.value) as any
-          }))
-        : dataPoints,
+      dataPoints:
+        type === 'Nominal'
+          ? dataPoints.map(dp => ({
+              ...dp,
+              value: capitalizeNominalValue(dp.value) as any
+            }))
+          : dataPoints,
       legend: legendObject,
       jenksBreaks
     }

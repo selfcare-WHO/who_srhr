@@ -57,7 +57,9 @@ export interface FilterSyncConfig<T = string> {
   waitForReady?: () => boolean | Promise<unknown>
 }
 
-export function useSyncRouteFilters(filters: Record<string, FilterSyncConfig<any>>) {
+export function useSyncRouteFilters(
+  filters: Record<string, FilterSyncConfig<any>>
+) {
   const route = useRoute()
   const router = useRouter()
 
@@ -94,7 +96,8 @@ export function useSyncRouteFilters(filters: Record<string, FilterSyncConfig<any
       if (cfg.waitForReady) {
         const readyResult = cfg.waitForReady()
         if (typeof readyResult === 'boolean') {
-          if (!readyResult) await waitUntil(() => cfg.waitForReady!() as boolean)
+          if (!readyResult)
+            await waitUntil(() => cfg.waitForReady!() as boolean)
         } else if (readyResult instanceof Promise) {
           await readyResult
         }
@@ -167,4 +170,4 @@ export function useSyncRouteFilters(filters: Record<string, FilterSyncConfig<any
   return {
     isInitializing
   }
-} 
+}
