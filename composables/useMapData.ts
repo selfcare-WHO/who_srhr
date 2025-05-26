@@ -13,7 +13,11 @@ export const useMapData = () => {
   const { data: mapData } = useAsyncData<Map.DataPoints | null>(
     '/api/map-data',
     async () => {
-      if (!indicatorFilterValue.value || !subgroupFilterValue.value)
+      if (
+        !indicatorFilterValue.value ||
+        !subgroupFilterValue.value ||
+        !dataTypeFilterValue.value
+      )
         return Promise.resolve(null)
 
       isFetching.value = true
@@ -28,7 +32,7 @@ export const useMapData = () => {
       return data
     },
     {
-      watch: [indicatorFilterValue, subgroupFilterValue],
+      watch: [indicatorFilterValue, subgroupFilterValue, dataTypeFilterValue],
       immediate: true
     }
   )

@@ -157,6 +157,26 @@ export const useMapFiltersStore = defineStore('MapFilters', () => {
     }
   })
 
+  watch(dataTypeFilterValue, async () => {
+    await nextTick()
+
+    const availableIndicators = indicatorOptions.value.flatMap(
+      option => option.children ?? []
+    )
+
+    const currentIndicatorId = indicatorFilterValue.value
+    const currentIndicatorStillAvailable = availableIndicators.some(
+      indicator => String(indicator.id) === currentIndicatorId
+    )
+
+    if (!currentIndicatorStillAvailable) {
+      const firstAvailableId = availableIndicators[0]?.id
+      indicatorFilterValue.value = firstAvailableId
+        ? String(firstAvailableId)
+        : ''
+    }
+  })
+
   return {
     mapFilters,
     dataTypeOptions,
