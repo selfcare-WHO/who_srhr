@@ -105,7 +105,7 @@ export const useTableColumns = () => {
 
         element.appendChild(numberElement)
 
-        // useClamp({ id: numberElement.id, singleLine: true })
+        useClamp({ id: numberElement.id, singleLine: true })
 
         return element
       }
