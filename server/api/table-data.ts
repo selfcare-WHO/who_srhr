@@ -1,6 +1,5 @@
 import type { H3Event } from 'h3'
 import prisma from '~/lib/prisma'
-import { capitalizeNominalValue } from '~/utils/capitalizeNominalValue'
 
 export default defineEventHandler(async (event: H3Event) => {
   const query = getQuery(event)
@@ -58,13 +57,6 @@ export default defineEventHandler(async (event: H3Event) => {
         },
         subgroup: true,
         country: true
-      }
-    })
-
-    // Capitalize nominal values
-    dataPoints.forEach(dp => {
-      if (dp.indicator.type === 'Nominal') {
-        dp.value = capitalizeNominalValue(dp.value) as any
       }
     })
 

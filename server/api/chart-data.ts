@@ -1,6 +1,5 @@
 import prisma from '~/lib/prisma'
 import isNullish from '~/utils/isNullish'
-import { capitalizeNominalValue } from '~/utils/capitalizeNominalValue'
 import type { Prisma, Indicator, Subgroup } from '@prisma/client'
 
 type ChartFilters = {
@@ -165,10 +164,7 @@ function createChartData(
   const mappedDataPoints: Chart.DataPoint[] = filteredDataPoints.map(point => ({
     countryId: String(point.countryId),
     countryName: point.country.name,
-    value:
-      indicator.type === 'Nominal'
-        ? (capitalizeNominalValue(point.value) as string)
-        : (point.value ?? undefined),
+    value: point.value ?? undefined,
     isHighlighted: String(point.countryId) === highlightId
   }))
 

@@ -4,7 +4,6 @@ import { fileURLToPath } from 'url'
 import { jenks } from 'simple-statistics'
 import mapDataPoints from '../services/mapDataPoints'
 import { useEnum } from '~/composables/useEnum'
-import { capitalizeNominalValue } from '~/utils/capitalizeNominalValue'
 
 // Cache the GeoJSON file in memory
 let geoJsonFeatures: GeoJSON.Feature[] | null = null
@@ -71,7 +70,7 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
 
       if (color && dp?.change && name) {
         legend.set(dp.change, {
-          name: capitalizeNominalValue(name) as string,
+          name: name,
           color
         })
       } else {
@@ -177,7 +176,7 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
             dataPointId: dataPoint?.id.toString(),
             change: dataPoint?.change,
             originalValue: dataPoint?.originalValue,
-            value: capitalizeNominalValue(value) as any,
+            value,
             isRange,
             isLessThan,
             isMoreThan
@@ -187,13 +186,7 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
 
     return {
       features: linkedFeatures,
-      dataPoints:
-        type === 'Nominal'
-          ? dataPoints.map(dp => ({
-              ...dp,
-              value: capitalizeNominalValue(dp.value) as any
-            }))
-          : dataPoints,
+      dataPoints,
       legend: legendObject,
       jenksBreaks
     }
