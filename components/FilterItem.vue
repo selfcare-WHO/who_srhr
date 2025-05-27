@@ -15,6 +15,7 @@
     :size="size"
     :check-on-click-node="true"
     :expand-on-click-node="false"
+    :render-after-expand="false"
     :loading="isFetchingFilters"
     :disabled="isFetchingFilters"
     :placeholder="placeholder || `All ${label}s`"
