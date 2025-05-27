@@ -19,7 +19,7 @@
   const popoverValue = computed(() => {
     return formatData({
       indicator: currentIndicator.value,
-      value: Number(popover.value)
+      value: popover.value
     })
   })
 

@@ -1,3 +1,5 @@
+import { capitalizeNominalValue } from './capitalizeNominalValue'
+
 export default ({
   indicator,
   dataPoint,
@@ -5,38 +7,53 @@ export default ({
 }: {
   indicator?: Prisma.IndicatorWithSubgroups
   dataPoint?: Prisma.DataPoint
-  value?: number
+  value?: string
 }): string => {
   const { type, translateValue, displayValue } = indicator || {}
   const { value: dataPointValue, originalValue } = dataPoint || {}
   const renderedValue = (() => {
+    let returnValue: Data.Value
+
     if (dataPoint) {
-      return displayValue === 'original_value' ? originalValue : dataPointValue
+      returnValue =
+        displayValue === 'original_value' ? originalValue : dataPointValue
+    } else if (
+      value !== undefined &&
+      value !== null &&
+      !Number.isNaN(Number(value))
+    ) {
+      returnValue = Number.isInteger(Number(value))
+        ? value.toString()
+        : Number(value).toFixed(2)
+    } else {
+      returnValue = ''
     }
 
-    return value !== undefined && value !== null
-      ? Number.isInteger(value)
-        ? value.toString()
-        : value.toFixed(2)
-      : ''
+    return returnValue
   })()
 
   const postfix = type === 'Percentage' ? '%' : ''
 
-  if ([null, undefined, ''].includes(renderedValue)) return 'No data'
+  if (
+    renderedValue === '' ||
+    renderedValue === null ||
+    renderedValue === undefined
+  )
+    return 'No data'
 
   if (translateValue) {
     const translateObject = JSON.parse(translateValue)
 
     if (renderedValue && translateObject[renderedValue]) {
       const translatedValue = translateObject[renderedValue]
-      return `${translatedValue}${postfix}`
+      const capitalizedValue = capitalizeNominalValue(translatedValue)
+      return `${capitalizedValue}${postfix}`
     }
   }
 
   const formatter = new Intl.NumberFormat('en-US')
   const formattedNumber = isNaN(Number(renderedValue))
-    ? renderedValue
+    ? capitalizeNominalValue(renderedValue)
     : formatter.format(Number(renderedValue))
 
   return `${formattedNumber}${postfix}`
