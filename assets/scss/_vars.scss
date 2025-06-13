@@ -15,12 +15,12 @@
   --el-color-info-dark: #0077b6;
   --el-color-info-light: #8dc5ff;
 
-  --achieved-secondary: #ed2cd0;
-  --challenges-secondary: #0044ff;
-  --major-challenges-secondary: #32e5df;
+  --el-color-primary-secondary: #32e5df;
+  --el-color-warning-secondary: #0044ff;
+  --el-color-danger-secondary: #ed2cd0;
 
   /* color-blind-friendly secondary colours */
-  --achieved-secondary-cbf: #8043a1;
-  --challenges-secondary-cbf: #55a772;
-  --major-challenges-secondary-cbf: #3595b6;
+  --el-color-primary-secondary-cbf: #8043a1;
+  --el-color-warning-secondary-cbf: #55a772;
+  --el-color-danger-secondary-cbf: #3595b6;
 }
