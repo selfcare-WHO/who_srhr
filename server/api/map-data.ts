@@ -46,39 +46,53 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
 
     const { targetStatus } = useEnum()
 
+    // Keep track of how many buckets we already assigned per target status
+    const statusCounters = new Map<string, number>()
+
     dataPoints.forEach(dp => {
       dataPointsByCountry.set(dp.country.code, dp)
 
+      if (type !== 'Nominal') return
+
+      const bucketKey =
+        indicator.displayValue === 'original_value'
+          ? dp.originalValue
+          : dp.value
+
+      const bucketKeyStr = String(bucketKey)
+
+      if (!bucketKeyStr) return
+
+      // Avoid duplicating legend entries
+      if (legend.has(bucketKeyStr)) return
+
+      const statusKey = String(dp?.change ?? 'noData')
+
       if (
-        type !== 'Nominal' ||
-        legend.size === Object.keys(targetStatus).length ||
-        (dp?.change &&
-          legend.has(dp.change) &&
-          legend.get(dp.change)?.name !== dp?.value)
+        statusKey === 'noData' ||
+        !targetStatus[statusKey as keyof typeof targetStatus]
       ) {
-        return
-      }
-
-      const statusKey = (dp?.change as keyof typeof targetStatus) ?? 'noData'
-
-      const target = targetStatus[statusKey]
-      const color = target?.color
-
-      const name = indicator.translateValue
-        ? JSON.parse(indicator.translateValue)?.[dp?.value || '']
-        : dp?.value
-
-      if (color && dp?.change && name) {
-        legend.set(dp.change, {
-          name: name,
-          color
-        })
-      } else {
-        legend.set(dp.change ?? 'noData', {
+        legend.set(bucketKeyStr, {
           name: 'No Data',
           hatchPattern: true
         })
+        return
       }
+
+      const target = targetStatus[statusKey as keyof typeof targetStatus]
+
+      const alreadyUsed = statusCounters.get(statusKey) ?? 0
+      const chosenColor =
+        alreadyUsed === 0
+          ? target.color
+          : (target.secondaryColor ?? target.color)
+
+      statusCounters.set(statusKey, alreadyUsed + 1)
+
+      legend.set(bucketKeyStr, {
+        name: bucketKeyStr,
+        color: chosenColor
+      })
     })
 
     const sortedLegend = [...legend].sort(
@@ -179,7 +193,13 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
             value,
             isRange,
             isLessThan,
-            isMoreThan
+            isMoreThan,
+            bucketKey:
+              type === 'Nominal'
+                ? ((indicator.displayValue === 'original_value'
+                    ? dataPoint?.originalValue
+                    : dataPoint?.value) ?? null)
+                : undefined
           }
         }
       }) ?? []

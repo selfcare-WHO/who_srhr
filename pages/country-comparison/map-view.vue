@@ -138,7 +138,8 @@
   const { countriesPaint } = useMapStyles({
     dataTypeFilterValue,
     indicator: currentIndicator,
-    jenksBreaks
+    jenksBreaks,
+    nominalLegend
   })
 
   const {

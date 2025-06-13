@@ -32,6 +32,20 @@ export const useColorStore = defineStore('color', () => {
         '--uncategorized',
         'var(--el-color-warning-cbf)'
       )
+
+      // secondary shades
+      document.documentElement.style.setProperty(
+        '--achieved-secondary',
+        'var(--achieved-secondary-cbf)'
+      )
+      document.documentElement.style.setProperty(
+        '--challenges-secondary',
+        'var(--challenges-secondary-cbf)'
+      )
+      document.documentElement.style.setProperty(
+        '--major-challenges-secondary',
+        'var(--major-challenges-secondary-cbf)'
+      )
     } else {
       document.documentElement.style.setProperty(
         '--achieved',
@@ -52,6 +66,20 @@ export const useColorStore = defineStore('color', () => {
       document.documentElement.style.setProperty(
         '--uncategorized',
         'var(--el-color-warning)'
+      )
+
+      // secondary shades (default palette)
+      document.documentElement.style.setProperty(
+        '--achieved-secondary',
+        '#8acd32'
+      )
+      document.documentElement.style.setProperty(
+        '--challenges-secondary',
+        '#ff6633'
+      )
+      document.documentElement.style.setProperty(
+        '--major-challenges-secondary',
+        '#c934b3'
       )
     }
   })

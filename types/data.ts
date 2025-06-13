@@ -72,6 +72,7 @@ declare global {
         solidColor?: string
         twClass?: string
         hatchPattern?: boolean
+        secondaryColor?: string
       }
     }
   }

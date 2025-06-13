@@ -8,11 +8,13 @@ const parseCssVar = (varName: string): string => {
 export const useMapStyles = ({
   dataTypeFilterValue,
   indicator,
-  jenksBreaks
+  jenksBreaks,
+  nominalLegend
 }: {
   dataTypeFilterValue: Ref<string>
   indicator: ComputedRef<Prisma.IndicatorWithSubgroups>
   jenksBreaks: ComputedRef<number[] | undefined>
+  nominalLegend?: ComputedRef<Data.Legend | undefined>
 }) => {
   const { hatchUri } = useHatchPattern()
   const colorStore = useColorStore()
@@ -84,15 +86,45 @@ export const useMapStyles = ({
     }
   })
 
+  const nominalPaint = computed<mapboxgl.LayerSpecification['paint']>(() => {
+    if (
+      !mapLoaded.value ||
+      dataTypeFilterValue.value !== 'numerical_categorical' ||
+      indicator.value?.type !== 'Nominal' ||
+      !nominalLegend?.value
+    )
+      return {}
+
+    const bucketKeys = Object.keys(nominalLegend.value)
+
+    const patternExpression: any[] = ['match', ['get', 'bucketKey']]
+    bucketKeys.forEach(key => {
+      patternExpression.push(key, key)
+    })
+    patternExpression.push('hatch-pattern')
+
+    const paint: any = {
+      'fill-opacity': [
+        'case',
+        ['boolean', ['feature-state', 'hover'], false],
+        0.75,
+        1
+      ],
+      'fill-pattern': patternExpression
+    }
+
+    return paint as mapboxgl.LayerSpecification['paint']
+  })
+
   const countriesPaint = computed<mapboxgl.LayerSpecification['paint']>(() => {
     if (!mapLoaded.value) return {}
 
-    if (dataTypeFilterValue?.value === 'numerical_categorical') {
-      if (indicator?.value?.type === 'Nominal') return targetsPaint.value
-      else return heatmapPaint.value
+    if (dataTypeFilterValue.value === 'numerical_categorical') {
+      if (indicator.value?.type === 'Nominal') return nominalPaint.value
+      return heatmapPaint.value
     }
 
-    if (['laws_policies', 'targets'].includes(dataTypeFilterValue?.value)) {
+    if (['laws_policies', 'targets'].includes(dataTypeFilterValue.value)) {
       return targetsPaint.value
     }
 
@@ -101,10 +133,7 @@ export const useMapStyles = ({
 
   useMapbox('world-map', map => {
     const registerSolidPatterns = () => {
-      const solidColorMap: Record<
-        Map.JenksKey | Map.StatusKey | Map.OtherKey,
-        string
-      > = {
+      const solidColorMap: Record<string, string> = {
         'jenks-0': generateSolidColorSVG(parseCssVar('--el-bg-color-jenks-0')),
         'jenks-1': generateSolidColorSVG(parseCssVar('--el-bg-color-jenks-1')),
         'jenks-2': generateSolidColorSVG(parseCssVar('--el-bg-color-jenks-2')),
@@ -117,6 +146,21 @@ export const useMapStyles = ({
           parseCssVar('--major-challenges')
         ),
         'data-not-available': generateSolidColorSVG(parseCssVar('--no-data'))
+      }
+
+      // Include nominal legend buckets as solid patterns
+      if (nominalLegend?.value) {
+        Object.entries(nominalLegend.value).forEach(([bucketKey, item]) => {
+          if (item?.color) {
+            let colorValue = item.color
+            if (colorValue.startsWith('var(')) {
+              const varName = colorValue.slice(4, -1)
+              colorValue = parseCssVar(varName)
+            }
+
+            solidColorMap[bucketKey] = generateSolidColorSVG(colorValue)
+          }
+        })
       }
 
       Object.entries(solidColorMap).forEach(([patternName, svg]) => {
@@ -153,7 +197,16 @@ export const useMapStyles = ({
         isCBFriendly,
         () => {
           registerSolidPatterns()
+          nextTick(() => map.triggerRepaint())
+        },
+        { flush: 'post' }
+      )
 
+      // Re-register patterns whenever the nominal legend changes
+      watchImmediate(
+        nominalLegend ?? ref({}),
+        () => {
+          registerSolidPatterns()
           nextTick(() => map.triggerRepaint())
         },
         { flush: 'post' }
