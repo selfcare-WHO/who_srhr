@@ -21,18 +21,6 @@ async function seedDomain(row: Data.DataRow) {
   })
 }
 
-async function seedCountry(row: Data.DataRow) {
-  return prisma.country.upsert({
-    where: { code: row.country_code },
-    update: {},
-    create: {
-      name: row.country,
-      code: row.country_code,
-      incomeType: row.country_income_type
-    }
-  })
-}
-
 async function seedSubgroup(row: Data.DataRow) {
   return prisma.subgroup.upsert({
     where: {
@@ -105,6 +93,18 @@ async function seedDataPoint(row: Data.DataRow) {
   })
 }
 
+async function seedCountries(rows: Data.CountryRow[]) {
+  for (const row of rows) {
+    await prisma.country.create({
+      data: {
+        name: row.country,
+        code: row.country_code,
+        region: row.who_region
+      }
+    })
+  }
+}
+
 async function main() {
   await resetDatabase()
 
@@ -114,9 +114,15 @@ async function main() {
 
   const dataRows = xlsx.utils.sheet_to_json(worksheet) satisfies Data.DataRow[]
 
+  const countriesSheet = workbook.Sheets['WHO Countries']
+  const countriesRows = xlsx.utils.sheet_to_json(
+    countriesSheet
+  ) satisfies Data.CountryRow[]
+
+  await seedCountries(countriesRows)
+
   for (const row of dataRows) {
     await seedDomain(row)
-    await seedCountry(row)
     await seedSubgroup(row)
     await seedIndicator(row)
     await seedDataPoint(row)

@@ -74,7 +74,8 @@ model Country {
   name       String      @unique @map("country")
   code       String      @unique @map("country_code")
   dataPoints DataPoint[]
-  incomeType String?     @map("country_income_type")
+  incomeType String?   @map("country_income_type")
+  region     String?   @map("who_region")
 
   @@map("countries")
 }

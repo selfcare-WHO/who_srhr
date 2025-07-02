@@ -42,6 +42,13 @@ declare global {
       display_value?: string
     }
 
+    type CountryRow = {
+      country: string
+      who_region: string
+      country_code: string
+      country_income_type?: string
+    }
+
     interface IndicatorTooltipData {
       fullName?: string
       subheading?: string

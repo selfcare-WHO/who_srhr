@@ -40,19 +40,42 @@ export const useChartFiltersStore = defineStore('ChartFilters', () => {
     return options
   })
 
-  const countryOptions = computed<Filter.Option[]>(() =>
-    countries.value.map(country => ({
-      id: String(country.id),
-      name: country.name
-    }))
+  const countryOptions = computed<Filter.Option[]>(() => {
+    const regionMap = new Map<string, Filter.Option>()
+
+    countries.value.forEach(country => {
+      const region = country.region ?? 'Other'
+
+      if (!regionMap.has(region)) {
+        regionMap.set(region, {
+          id: region,
+          value: `[region]-${region}`,
+          label: region,
+          children: []
+        })
+      }
+
+      regionMap.get(region)!.children!.push({
+        id: String(country.id),
+        value: String(country.id),
+        label: country.name,
+        name: country.name
+      })
+    })
+
+    return Array.from(regionMap.values())
+  })
+
+  const flatCountryOptions = computed<Filter.Option[]>(() =>
+    countryOptions.value.flatMap(option => option.children ?? [])
   )
 
   const highlightOptions = computed<Filter.Option[]>(() => {
-    const filteredOptions = countryFilterValue.value.length
-      ? countryOptions.value.filter(option =>
+    const sourceOptions = countryFilterValue.value.length
+      ? flatCountryOptions.value.filter(option =>
           countryFilterValue.value.includes(String(option.id))
         )
-      : countryOptions.value
+      : flatCountryOptions.value
 
     return [
       {
@@ -60,7 +83,7 @@ export const useChartFiltersStore = defineStore('ChartFilters', () => {
         name: 'None',
         label: 'None'
       },
-      ...filteredOptions
+      ...sourceOptions
     ]
   })
 
@@ -93,6 +116,7 @@ export const useChartFiltersStore = defineStore('ChartFilters', () => {
     value: countryFilterValue,
     multiple: true,
     clearable: true,
+    tree: true,
     options: countryOptions
   })
 

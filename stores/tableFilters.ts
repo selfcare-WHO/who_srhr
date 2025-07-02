@@ -50,12 +50,31 @@ export const useTableFiltersStore = defineStore('TableFilters', () => {
     }, [])
   })
 
-  const countryOptions = computed<Filter.Option[]>(() =>
-    countries.value.map(country => ({
-      id: String(country.id),
-      name: country.name
-    }))
-  )
+  const countryOptions = computed<Filter.Option[]>(() => {
+    const regionMap = new Map<string, Filter.Option>()
+
+    countries.value.forEach(country => {
+      const region = country.region ?? 'Other'
+
+      if (!regionMap.has(region)) {
+        regionMap.set(region, {
+          id: region,
+          value: `[region]-${region}`,
+          label: region,
+          children: []
+        })
+      }
+
+      regionMap.get(region)!.children!.push({
+        id: String(country.id),
+        value: String(country.id),
+        label: country.name,
+        name: country.name
+      })
+    })
+
+    return Array.from(regionMap.values())
+  })
 
   const dataTypeFilterValue = ref<Filter.DataType>('numerical_categorical')
   const indicatorFilterValue = ref<string[]>([])
@@ -96,6 +115,7 @@ export const useTableFiltersStore = defineStore('TableFilters', () => {
     value: countryFilterValue,
     multiple: true,
     clearable: true,
+    tree: true,
     options: countryOptions
   })
 
