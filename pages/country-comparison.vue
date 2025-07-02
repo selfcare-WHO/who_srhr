@@ -2,7 +2,7 @@
   .flex.flex-col.flex-1.min-h-0
     .country-comparison-page.u-content
       h1 Country comparison
-      p Compare data across countries through maps, charts and tables. The chart view only shows numeric data, while the map and table views show numeric and categorical data.
+      p Compare data across countries through maps, charts and tables. The chart view only shows numerical data, while the map and table views show numerical and categorical data.
 
       LayoutMobileEmptyState(v-if="!isDesktop")
 
