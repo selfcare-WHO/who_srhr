@@ -14,7 +14,7 @@
             text
             @click="isMenuOpen = !isMenuOpen"
             v-click-outside="() => isMenuOpen = false"
-          ) 
+          )
             ElIcon(
               class="pt-1"
               size="36"
@@ -27,7 +27,7 @@
               v-for="item in navItems"
               :key="item.path"
               :to="item.path"
-              :class="['text-white text-lg', ...($route.path === item.path ? ['underline'] : [])]"
+              class="text-white text-lg"
             )
               | {{ item.name }}
 
@@ -46,7 +46,7 @@
           src="@assets/images/Selfcare-SDG-logo.png" alt="Selfcare SDG Logo"
           class="h-[48px] md:h-[54px] object-contain self-center"
         )
-    
+
 </template>
 
 <script lang="ts" setup>
@@ -74,6 +74,9 @@
 
       > .logos-container
         @apply flex items-center flex-wrap gap-5
+
+      > .nuxt-link.router-link-active
+        @apply underline
 
     :deep(.menu-popover)
       background-color: var(--el-color-info) !important

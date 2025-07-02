@@ -48,6 +48,12 @@ export default defineNuxtConfig({
     }
   },
 
+  routeRules: {
+    '/country-comparison': {
+      redirect: '/country-comparison/map-view'
+    }
+  },
+
   alias: {
     '@assets': fileURLToPath(new URL('./assets', import.meta.url)),
     '@components': fileURLToPath(new URL('./components', import.meta.url)),

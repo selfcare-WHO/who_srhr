@@ -5,11 +5,11 @@ export const useNavigationStore = defineStore('Navigation', () => {
     public: { comparisonFeatureActive }
   } = useRuntimeConfig()
 
-  const navItems = computed(() => [
+  const navItems = computed<Navigation.Item[]>(() => [
     { name: 'Home', path: '/' },
     { name: 'Country profiles', path: '/country-profiles' },
     ...(comparisonFeatureActive
-      ? [{ name: 'Country comparison', path: '/country-comparison/table-view' }]
+      ? [{ name: 'Country comparison', path: '/country-comparison' }]
       : []),
     { name: 'Indicators & data', path: '/indicators-data' }
   ])

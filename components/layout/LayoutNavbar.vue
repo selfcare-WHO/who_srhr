@@ -5,10 +5,10 @@
         v-for="item in navItems"
         :key="item.path"
         :to="item.path"
-        :class="['text-white', ...($route.path === item.path ? ['underline'] : [])]"
+        class="text-white"
       )
         | {{ item.name }}
-    
+
 </template>
 
 <script lang="ts" setup>
@@ -25,4 +25,7 @@
       font-size: 20px
       font-weight: 500
       line-height: 20px
+
+      &.router-link-active
+        @apply underline
 </style>
