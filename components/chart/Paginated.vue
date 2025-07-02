@@ -36,10 +36,10 @@
       :key="`chart-${chart.indicatorId}-${chart.subgroupName}`"
       :data="chart"
     )
-    
+
     .pagination-controls(class="flex justify-center items-center gap-2 mt-6 mb-4")
       ElPagination(
-        v-model:current-page="page" 
+        v-model:current-page="page"
         :page-size="itemsPerPage"
         :total="total"
         layout="prev, pager, next"
@@ -51,7 +51,7 @@
   ElEmpty(
     v-else
     class="flex items-center justify-center min-h-[200px]"
-    description="Please select at least one indicator and one country to display charts"
+    description="Data not available for the selected indicators in these countries. Try selecting different countries or indicators to view available data."
   )
 </template>
 
