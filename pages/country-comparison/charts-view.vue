@@ -9,7 +9,7 @@
         ElFormItem(
           v-for="filter in chartFilters"
           :key="filter.label"
-          class="w-[375px]"
+          class="flex-1"
           :label="filter.label"
         )
           FilterItem(

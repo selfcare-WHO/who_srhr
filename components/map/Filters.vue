@@ -9,7 +9,7 @@
         v-for="filter in mapFilters"
         v-show="!filter.hide"
         :key="filter.label"
-        class="w-[375px]"
+        class="flex-1"
         :label="filter.label"
       )
         FilterItem(

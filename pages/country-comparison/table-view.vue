@@ -9,7 +9,7 @@
         ElFormItem(
           v-for="filter in tableFilters"
           :key="filter.label"
-          class="w-[375px]"
+          class="flex-1"
           :label="filter.label"
         )
           FilterItem(
@@ -26,7 +26,7 @@
 
       div(class="table-wrapper relative min-h-[700px]")
         div(ref="tableElement" :key="`table-${isCBFriendly}`")
-    
+
     ElTooltip(
       virtual-triggering
       width="200px"
