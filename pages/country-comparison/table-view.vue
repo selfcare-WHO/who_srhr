@@ -2,14 +2,14 @@
   .table-view(class="bg-page py-4")
     div.u-content
       ElForm(
-        class="filters-section flex gap-6"
+        class="filters-section grid grid-cols-3  gap-6"
         #default
         label-position="top"
       )
         ElFormItem(
           v-for="filter in tableFilters"
           :key="filter.label"
-          class="flex-1"
+          class="col-span-1"
           :label="filter.label"
         )
           FilterItem(

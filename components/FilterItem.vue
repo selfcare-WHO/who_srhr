@@ -6,7 +6,6 @@
     ref="selectRef"
     tag-type="primary"
     tag-effect="dark"
-    fit-input-width
     default-expand-all
     collapse-tags
     collapse-tags-tooltip
@@ -37,7 +36,6 @@
     tag-effect="dark"
     v-model="value"
     ref="selectRef"
-    fit-input-width
     collapse-tags
     collapse-tags-tooltip
     :max-collapse-tags="5"
