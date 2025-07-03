@@ -15,7 +15,7 @@
       )
         div(
           class="rounded-full h-4 w-4"
-          :style="{ backgroundColor: target.color }"
+          :style="{ backgroundColor: target.solidColor }"
         )
 
         span {{ target.name }}
@@ -26,7 +26,7 @@
     )
       span(class="text-primary font-bold text-sm")
         | IMPACT ON INTEGRATED SRHR:
-      
+
       .key-item(
         v-for="impact in Object.values(impactOnSrhr)"
         class="flex items-center gap-2"

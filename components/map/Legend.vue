@@ -24,15 +24,15 @@
           class="flex items-center gap-2"
         )
           div(
-            v-if="status?.solidColor"
-            class="rounded-full h-4 w-4 min-h-4 min-w-4 flex items-center justify-center"
-            :style="{ backgroundColor: status?.solidColor }"
+            v-if="status?.hatchPattern"
+            class="h-4 w-6 min-h-4 min-w-6 border-2 flex items-center justify-center"
+            :style="{ background: `url(${hatchUri}) repeat`, backgroundSize: '6px' }"
           )
 
           div(
-            v-else-if="status?.hatchPattern"
-            class="h-4 w-6 min-h-4 min-w-6 border-2 flex items-center justify-center"
-            :style="{ background: `url(${hatchUri}) repeat`, backgroundSize: '6px' }"
+            v-else-if="status?.solidColor"
+            class="rounded-full h-4 w-4 min-h-4 min-w-4 flex items-center justify-center"
+            :style="{ backgroundColor: status?.solidColor }"
           )
 
           div(

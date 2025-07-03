@@ -45,25 +45,29 @@ export const useEnum = () => {
       name: 'Achieved',
       dbValue: 'Achieved',
       color: 'var(--achieved)',
+      solidColor: 'var(--achieved)',
       secondaryColor: 'var(--achieved-secondary)'
     },
     'Challenges remain': {
       name: 'Challenges',
       dbValue: 'Challenges remain',
       color: 'var(--challenges)',
+      solidColor: 'var(--challenges)',
       secondaryColor: 'var(--challenges-secondary)'
     },
     'Major challenges remain': {
       name: 'Major Challenges',
       dbValue: 'Major challenges remain',
       color: 'var(--major-challenges)',
+      solidColor: 'var(--major-challenges)',
       secondaryColor: 'var(--major-challenges-secondary)'
     },
     'Data not available': {
       name: 'No Data',
       dbValue: 'Data not available',
       hatchPattern: true,
-      color: 'url(~/assets/images/hatch-pattern.svg)'
+      color: 'url(~/assets/images/hatch-pattern.svg)',
+      solidColor: 'var(--no-data)'
     }
   }
 
