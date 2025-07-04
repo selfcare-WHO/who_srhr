@@ -62,6 +62,24 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
 
       const bucketKeyStr = String(bucketKey)
 
+      // Treat missing or invalid bucket values as "No Data" so they don't appear as literal "null" in the legend
+      const isMissingBucket =
+        bucketKey === null ||
+        bucketKey === undefined ||
+        bucketKeyStr === 'null' ||
+        bucketKeyStr === 'undefined' ||
+        bucketKeyStr.trim() === ''
+
+      if (isMissingBucket) {
+        if (!legend.has('No Data')) {
+          legend.set('No Data', {
+            name: 'No Data',
+            hatchPattern: true
+          })
+        }
+        return
+      }
+
       if (!bucketKeyStr) return
 
       // Avoid duplicating legend entries
