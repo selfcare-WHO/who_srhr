@@ -85,15 +85,15 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
       // Avoid duplicating legend entries
       if (legend.has(bucketKeyStr)) return
 
-      const statusKey = String(dp?.change ?? 'noData')
+      const statusKey = String(dp?.change ?? 'noChange')
 
       if (
-        statusKey === 'noData' ||
+        statusKey === 'noChange' ||
         !targetStatus[statusKey as keyof typeof targetStatus]
       ) {
         legend.set(bucketKeyStr, {
-          name: 'No Data',
-          hatchPattern: true
+          name: bucketKeyStr,
+          color: 'var(--no-data)'
         })
         return
       }
@@ -115,8 +115,15 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
     })
 
     const sortedLegend = [...legend].sort(
-      (a: [string, Map.Legend], b: [string, Map.Legend]) =>
-        a[1].name.localeCompare(b[1].name)
+      (a: [string, Map.Legend], b: [string, Map.Legend]) => {
+        const aName = a[1].name
+        const bName = b[1].name
+
+        if (aName === 'No Data') return 1 // "No Data" should always come last
+        if (bName === 'No Data') return -1
+
+        return aName.localeCompare(bName)
+      }
     )
 
     const legendObject = Object.fromEntries(sortedLegend)
