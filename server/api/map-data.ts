@@ -5,6 +5,7 @@ import { jenks } from 'simple-statistics'
 import mapDataPoints from '../services/mapDataPoints'
 import { useEnum } from '~/composables/useEnum'
 import isNullish from '~/utils/isNullish'
+import { capitalizeNominalValue } from '~/utils/capitalizeNominalValue'
 
 // Cache the GeoJSON file in memory
 let geoJsonFeatures: GeoJSON.Feature[] | null = null
@@ -40,7 +41,7 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
       })
     }
 
-    const { dataPoints, type } = indicator
+    const { dataPoints, type, displayValue, translateValue } = indicator
     const dataPointsByCountry = new Map()
 
     const legend = new Map<string, Map.Legend>()
@@ -60,9 +61,8 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
           ? dp.originalValue
           : dp.value
 
-      const bucketKeyStr = String(bucketKey)
+      let bucketKeyStr = String(bucketKey)
 
-      // Treat missing or invalid bucket values as "No Data" so they don't appear as literal "null" in the legend
       const isMissingBucket =
         bucketKey === null ||
         bucketKey === undefined ||
@@ -80,10 +80,15 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
         return
       }
 
-      if (!bucketKeyStr) return
-
-      // Avoid duplicating legend entries
       if (legend.has(bucketKeyStr)) return
+
+      const translatedValue = (() => {
+        if (translateValue) {
+          const translateObject = JSON.parse(translateValue)
+          return translateObject[bucketKeyStr]
+        }
+        return bucketKeyStr
+      })()
 
       const statusKey = String(dp?.change ?? 'noChange')
 
@@ -92,7 +97,7 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
         !targetStatus[statusKey as keyof typeof targetStatus]
       ) {
         legend.set(bucketKeyStr, {
-          name: bucketKeyStr,
+          name: translatedValue,
           color: 'var(--no-data)'
         })
         return
@@ -109,7 +114,7 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
       statusCounters.set(statusKey, alreadyUsed + 1)
 
       legend.set(bucketKeyStr, {
-        name: bucketKeyStr,
+        name: translatedValue,
         color: chosenColor
       })
     })
