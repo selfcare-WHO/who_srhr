@@ -97,6 +97,8 @@ export const useMapStyles = ({
 
     const bucketKeys = Object.keys(nominalLegend.value)
 
+    if (bucketKeys.length === 0) return {}
+
     const patternExpression: any[] = ['match', ['get', 'bucketKey']]
     bucketKeys.forEach(key => {
       patternExpression.push(key, key)
