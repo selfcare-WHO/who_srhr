@@ -1,5 +1,7 @@
 import type { Map } from 'mapbox-gl'
 
+const pendingImages = new Set<string>()
+
 const loadSvgAsImage = async ({
   svgDataUri,
   height,
@@ -8,8 +10,8 @@ const loadSvgAsImage = async ({
   height?: number | undefined
   svgDataUri: string
   width?: number | undefined
-}) => {
-  return new Promise<HTMLImageElement>(resolve => {
+}) =>
+  new Promise<HTMLImageElement>(resolve => {
     const image = new Image(width, height)
 
     image.onload = () => {
@@ -19,7 +21,6 @@ const loadSvgAsImage = async ({
 
     image.src = svgDataUri
   })
-}
 
 export default async function loadSvgAsImageInMap({
   svgDataUri,
@@ -36,12 +37,19 @@ export default async function loadSvgAsImageInMap({
   svgDataUri: string
   width?: number
 }): Promise<void> {
-  if (map.hasImage(id)) return
+  if (map.hasImage(id) || pendingImages.has(id)) return
+
+  pendingImages.add(id)
 
   try {
     const image = await loadSvgAsImage({ svgDataUri, height, width })
-    map.addImage(id, image, { pixelRatio })
+
+    if (!map.hasImage(id)) {
+      map.addImage(id, image, { pixelRatio })
+    }
   } catch (error) {
     console.error(`Failed to add image "${id}" to map:`, error)
+  } finally {
+    pendingImages.delete(id)
   }
 }
