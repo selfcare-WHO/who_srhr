@@ -45,15 +45,31 @@ export const useMapStyles = ({
   }))
 
   const heatmapPaint = computed<mapboxgl.LayerSpecification['paint']>(() => {
-    if (!jenksBreaks?.value || jenksBreaks.value.length < 5) return {}
+    if (!jenksBreaks?.value || jenksBreaks.value.length === 0) return {}
 
-    // Ensure all break points are numeric literals – Mapbox requires literal numbers, not strings
     const breaks = jenksBreaks.value.map(breakPoint =>
       typeof breakPoint === 'string' ? Number(breakPoint) : breakPoint
     )
 
-    // In case any breakpoint could not be converted to a number, skip styling to avoid Mapbox validation errors
+    // Abort if any breakpoint cannot be converted to a number
     if (breaks.some(value => Number.isNaN(value))) return {}
+
+    let dynamicClassification: any
+
+    if (breaks.length === 1) {
+      dynamicClassification = 'jenks-0'
+    } else {
+      dynamicClassification = ['case']
+
+      for (let i = breaks.length - 1; i > 0; i -= 1) {
+        dynamicClassification.push(
+          ['>', ['to-number', ['get', 'value']], breaks[i]],
+          `jenks-${i}`
+        )
+      }
+
+      dynamicClassification.push('jenks-0')
+    }
 
     return {
       'fill-pattern': [
@@ -66,19 +82,7 @@ export const useMapStyles = ({
             ['to-number', ['get', 'value'], -999999999999999],
             -999999999999999
           ],
-          [
-            'case',
-            ...(breaks[4]
-              ? [['>', ['to-number', ['get', 'value']], breaks[4]], 'jenks-4']
-              : []),
-            ['>', ['to-number', ['get', 'value']], breaks[3]],
-            'jenks-3',
-            ['>', ['to-number', ['get', 'value']], breaks[2]],
-            'jenks-2',
-            ['>', ['to-number', ['get', 'value']], breaks[1]],
-            'jenks-1',
-            'jenks-0'
-          ],
+          dynamicClassification,
           'other'
         ],
         'hatch-pattern'

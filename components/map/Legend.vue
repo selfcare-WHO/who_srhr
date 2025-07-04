@@ -106,9 +106,13 @@
 
   const { targetStatus, impactOnSrhr } = useEnum()
 
-  const gradientQtd = computed(() =>
-    Array.from({ length: (props.jenksBreaks?.length ?? 1) - 1 })
-  )
+  const gradientQtd = computed(() => {
+    const breaksLen = props.jenksBreaks?.length ?? 0
+
+    if (breaksLen <= 1) return Array.from({ length: 1 })
+
+    return Array.from({ length: breaksLen - 1 })
+  })
 
   const isNominal = computed(() => props.currentIndicator?.type === 'Nominal')
 
@@ -128,7 +132,6 @@
     return ''
   })
 
-  // Use the LegendItem type for heatmap legend items.
   const heatmapLegendItems = computed<Record<string, Map.Legend>>(() => {
     return {
       ...(props.hasOther
@@ -152,6 +155,15 @@
 
   const scaleStyle = (index: number) => {
     const valuesInterval = props.jenksBreaks?.length ?? 0
+
+    if (valuesInterval <= 1) {
+      return {
+        left: '50%',
+        right: 'auto',
+        textAlign: 'center' as const,
+        transform: 'translateX(-50%)'
+      }
+    }
 
     if (index === 0) {
       return {
