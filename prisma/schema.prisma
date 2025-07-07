@@ -42,6 +42,7 @@ model Subgroup {
   id         Int         @id @default(autoincrement())
   name       String      @unique @map("kpi_subgroup")
   fullName   String      @map("kpi_subgroup_full")
+  invertScale Boolean    @default(false) @map("invert_scale")
   indicators Indicator[]
   dataPoints DataPoint[]
 }

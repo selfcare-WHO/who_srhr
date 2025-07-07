@@ -22,7 +22,7 @@
           source-id="who-world-features"
           :source="linkedFeaturesSource"
         )
-        
+
         MapboxLayer(:layer="backgroundLayer" before-layer="countries")
         MapboxLayer(
           :layer="countriesLayer"
@@ -138,6 +138,7 @@
   const { countriesPaint } = useMapStyles({
     dataTypeFilterValue,
     indicator: currentIndicator,
+    subgroup: currentSubgroup,
     jenksBreaks,
     nominalLegend
   })

@@ -56,7 +56,7 @@
           v-for="(_, index) in gradientQtd"
           class="flex-1"
           :key="index"
-          :style="{ backgroundColor: `var(--el-bg-color-jenks-${index})` }"
+          :style="{ backgroundColor: gradientColor(index) }"
         )
 
       div(class="relative mt-2 h-3 w-[calc(100%-2rem)] mx-4")
@@ -106,6 +106,16 @@
 
   const { targetStatus, impactOnSrhr } = useEnum()
 
+  const isNominal = computed(() => props.currentIndicator?.type === 'Nominal')
+
+  const isInvertScale = computed(() => {
+    console.log(
+      '🚀 ~: isInvertScale -> props.currentSubgroup?.invertScale',
+      props.currentSubgroup?.invertScale
+    )
+    return props.currentSubgroup?.invertScale ?? false
+  })
+
   const gradientQtd = computed(() => {
     const breaksLen = props.jenksBreaks?.length ?? 0
 
@@ -114,7 +124,14 @@
     return Array.from({ length: breaksLen - 1 })
   })
 
-  const isNominal = computed(() => props.currentIndicator?.type === 'Nominal')
+  const gradientColor = (index: number) => {
+    const total = gradientQtd.value.length
+    if (total <= 1 || !isInvertScale.value)
+      return `var(--el-bg-color-jenks-${index})`
+
+    const invertedIndex = total - 1 - index
+    return `var(--el-bg-color-jenks-${invertedIndex})`
+  }
 
   const legendItems = computed(() => {
     if (props.dataType === 'numerical_categorical')

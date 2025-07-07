@@ -29,7 +29,8 @@ async function seedSubgroup(row: Data.DataRow) {
     update: {},
     create: {
       name: row.kpi_subgroup,
-      fullName: row.kpi_subgroup_full || ''
+      fullName: row.kpi_subgroup_full || '',
+      invertScale: row.invert_scale === 'Yes'
     }
   })
 }

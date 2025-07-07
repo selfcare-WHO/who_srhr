@@ -8,11 +8,13 @@ const parseCssVar = (varName: string): string => {
 export const useMapStyles = ({
   dataTypeFilterValue,
   indicator,
+  subgroup,
   jenksBreaks,
   nominalLegend
 }: {
   dataTypeFilterValue: Ref<string>
   indicator: ComputedRef<Prisma.IndicatorWithSubgroups>
+  subgroup?: ComputedRef<Prisma.Subgroup | undefined>
   jenksBreaks: ComputedRef<number[] | undefined>
   nominalLegend?: ComputedRef<Data.Legend | undefined>
 }) => {
@@ -21,6 +23,10 @@ export const useMapStyles = ({
   const { isCBFriendly } = storeToRefs(colorStore)
 
   const mapLoaded = ref(false)
+
+  const isInvertScale = computed(() => {
+    return subgroup?.value?.invertScale ?? false
+  })
 
   const targetsPaint = computed<mapboxgl.LayerSpecification['paint']>(() => ({
     'fill-opacity': [
@@ -139,12 +145,23 @@ export const useMapStyles = ({
 
   useMapbox('world-map', map => {
     const registerSolidPatterns = () => {
-      const solidColorMap: Record<string, string> = {
-        'jenks-0': generateSolidColorSVG(parseCssVar('--el-bg-color-jenks-0')),
-        'jenks-1': generateSolidColorSVG(parseCssVar('--el-bg-color-jenks-1')),
-        'jenks-2': generateSolidColorSVG(parseCssVar('--el-bg-color-jenks-2')),
-        'jenks-3': generateSolidColorSVG(parseCssVar('--el-bg-color-jenks-3')),
-        'jenks-4': generateSolidColorSVG(parseCssVar('--el-bg-color-jenks-4')),
+      const solidColorMap: Record<string, string> = {}
+
+      const jenksIndexes = [0, 1, 2, 3, 4]
+
+      const getVarName = (idx: number) => `--el-bg-color-jenks-${idx}`
+
+      jenksIndexes.forEach(originalIdx => {
+        const mappedIdx = isInvertScale.value
+          ? jenksIndexes[jenksIndexes.length - 1 - originalIdx]
+          : originalIdx
+
+        solidColorMap[`jenks-${originalIdx}`] = generateSolidColorSVG(
+          parseCssVar(getVarName(mappedIdx))
+        )
+      })
+
+      Object.assign(solidColorMap, {
         other: generateSolidColorSVG(parseCssVar('--el-color-warning')),
         achieved: generateSolidColorSVG(parseCssVar('--achieved')),
         'challenges-remain': generateSolidColorSVG(parseCssVar('--challenges')),
@@ -152,7 +169,7 @@ export const useMapStyles = ({
           parseCssVar('--major-challenges')
         ),
         'data-not-available': generateSolidColorSVG(parseCssVar('--no-data'))
-      }
+      })
 
       // Include nominal legend buckets as solid patterns
       if (nominalLegend?.value) {
@@ -211,6 +228,16 @@ export const useMapStyles = ({
       // Re-register patterns whenever the nominal legend changes
       watchImmediate(
         nominalLegend ?? ref({}),
+        () => {
+          registerSolidPatterns()
+          nextTick(() => map.triggerRepaint())
+        },
+        { flush: 'post' }
+      )
+
+      // Re-register patterns whenever the colour scale inversion flag changes
+      watchImmediate(
+        isInvertScale,
         () => {
           registerSolidPatterns()
           nextTick(() => map.triggerRepaint())

@@ -43,6 +43,7 @@ declare global {
         id: number
         name: string
         fullName: string
+        invertScale: boolean
       }[]
     }
 

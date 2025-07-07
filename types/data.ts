@@ -40,6 +40,7 @@ declare global {
       is_law?: string
       translate_value?: string
       display_value?: string
+      invert_scale?: string
     }
 
     type CountryRow = {
