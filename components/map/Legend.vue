@@ -52,12 +52,17 @@
 
     template(v-else)
       div(class="mt-2 h-3 w-[calc(100%-2rem)] mx-4 flex")
-        div(
+        ElTooltip(
           v-for="(_, index) in gradientQtd"
-          class="flex-1"
           :key="index"
-          :style="{ backgroundColor: gradientColor(index) }"
+          :content="breakRange(index)"
+          placement="top"
         )
+          div(
+            class="flex-1"
+            :key="index"
+            :style="{ backgroundColor: gradientColor(index) }"
+          )
 
       div(class="relative mt-2 h-3 w-[calc(100%-2rem)] mx-4")
         span(
@@ -211,5 +216,23 @@
       backgroundColor: status?.color ?? status.bgColor,
       borderColor: status?.color ?? status.borderColor
     }
+  }
+
+  const breakRange = (index: number) => {
+    const breaks = props.jenksBreaks ?? []
+    if (breaks.length === 0) return ''
+
+    const lower = breaks[index]
+    const upper = breaks[index + 1]
+
+    if (upper === undefined) {
+      return `≥ ${formatLargeNumbers(lower, 2, props.currentIndicator)}`
+    }
+
+    return `>${formatLargeNumbers(lower, 2, props.currentIndicator)} to ≤${formatLargeNumbers(
+      upper,
+      2,
+      props.currentIndicator
+    )}`
   }
 </script>
