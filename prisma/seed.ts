@@ -71,7 +71,8 @@ async function seedIndicator(row: Data.DataRow) {
       chartView: row.chart_view === 'Yes',
       mapView: row.map_view === 'Yes',
       mapType: row.map_type,
-      displayValue: row.display_value
+      displayValue: row.display_value,
+      endnote: row.endnote?.split('Source: ').pop()?.trim()
     }
   })
 }

@@ -39,6 +39,7 @@ declare global {
       mapView: boolean
       mapType: string | null
       displayName: string
+      endnote: string | null
       subgroups: {
         id: number
         name: string

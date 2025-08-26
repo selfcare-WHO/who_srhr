@@ -26,6 +26,7 @@ model Indicator {
   chartView      Boolean     @default(false) @map("chart_view")
   mapView        Boolean     @default(false) @map("map_view")
   mapType        String?     @map("map_type")
+  endnote        String?     @map("endnote")
 
   @@map("indicators")
 }

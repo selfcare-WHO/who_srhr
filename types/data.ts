@@ -41,6 +41,7 @@ declare global {
       translate_value?: string
       display_value?: string
       invert_scale?: string
+      endnote?: string
     }
 
     type CountryRow = {
