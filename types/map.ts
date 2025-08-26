@@ -13,6 +13,8 @@ declare global {
       element?: HTMLElement
       lngLat?: mapboxgl.LngLatLike
       placement?: 'top' | 'bottom' | 'left' | 'right'
+      source?: string
+      currentYearSource?: string
     }
 
     type Legend = {

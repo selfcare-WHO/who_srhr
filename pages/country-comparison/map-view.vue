@@ -5,7 +5,10 @@
   )
     MapFilters
 
-    .map-container(class="relative h-full min-h-[80vh] w-full" v-loading="isFetching")
+    .map-container(
+      class="relative h-full min-h-[80vh] w-full"
+      v-loading="isFetching || isInitializing"
+    )
       MapboxMap(
         class="h-full min-h-[80vh] w-full rounded-lg"
         map-id="world-map"
@@ -103,9 +106,7 @@
     mapData,
     isFetching,
     linkedFeaturesSource,
-    currentIndicator: currentIndicatorFromUseMapData,
     currentSubgroup,
-    dataTypeFilterValue: dataTypeFromUseMapData,
     hasOther,
     hasNoData,
     nominalLegend,
@@ -174,6 +175,10 @@
 
   onBeforeUnmount(() => {
     showPopover.value = false
+  })
+
+  watchEffect(() => {
+    console.log('currentIndicator', currentIndicator.value)
   })
 </script>
 

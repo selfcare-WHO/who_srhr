@@ -71,6 +71,8 @@ export const useMapPopover = (
       dataPoint
     })
     popoverData.element = undefined
+    popoverData.source = dataPoint?.source ?? undefined
+    popoverData.currentYearSource = dataPoint?.currentYearSource ?? undefined
 
     nextTick(() => {
       popoverData.element = virtualElementRef.value

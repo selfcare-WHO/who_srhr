@@ -10,13 +10,24 @@
     :teleported="false"
     :popper-class="`data-popover pointer-events-none ${popperClass}`"
   )
-    .flex.flex-col.gap-2
+    .flex.flex-col
       h3(class="text-[20px] leading-tight font-bold") {{ popoverData.country }}
-      h4(class="text-md font-bold")
+      h4(class="text-md mt-2")
         | {{ currentIndicator.displayName }}
-      h4(class="text-md" v-if="currentSubgroup && currentSubgroup.name !== 'Data'")
+      h4(
+        class="text-md text-secondary"
+        v-if="currentSubgroup && currentSubgroup.name !== 'Data'"
+      )
         | {{ currentSubgroup.fullName }}
-      span.text-md {{ popoverData.value }}
+      span(
+        class="text-md font-bold mt-2"
+      ) {{ popoverData.value }}
+
+      h4(
+        class="text-xs text-secondary mt-2"
+        v-if="popoverData.source"
+      )
+        | Source: {{ popoverData.source }}
   </template>
 
 <script lang="ts" setup>
