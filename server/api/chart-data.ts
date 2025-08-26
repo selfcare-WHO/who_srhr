@@ -71,8 +71,11 @@ export default defineEventHandler(async event => {
     })
 
     const allChartsData: Chart.Data[] = []
+    let realChartsCount = 0
 
     for (const indicator of indicators) {
+      let pushedAnyForIndicator = false
+
       if (indicator.subgroups?.length) {
         for (const subgroup of indicator.subgroups) {
           const subgroupDataPoints = dataPoints.filter(
@@ -82,46 +85,61 @@ export default defineEventHandler(async event => {
               dp.subgroupId === subgroup.id
           )
 
-          if (
-            filters.highlight !== 'none' &&
-            !hasHighlightedCountryData(subgroupDataPoints, filters.highlight)
-          ) {
-            continue
+          const passesHighlight =
+            filters.highlight === 'none' ||
+            hasHighlightedCountryData(subgroupDataPoints, filters.highlight)
+
+          if (subgroupDataPoints.length && passesHighlight) {
+            const chartData = createChartData(
+              subgroupDataPoints,
+              indicator,
+              subgroup,
+              filters.highlight
+            )
+
+            allChartsData.push(chartData)
+            realChartsCount += 1
+            pushedAnyForIndicator = true
           }
+        }
 
-          const chartData = createChartData(
-            subgroupDataPoints,
-            indicator,
-            subgroup,
-            filters.highlight
-          )
-
-          if (chartData) allChartsData.push(chartData)
+        if (
+          !pushedAnyForIndicator &&
+          filters.indicator?.includes(indicator.id)
+        ) {
+          allChartsData.push(createPlaceholderChartData(indicator))
         }
       } else {
         const indicatorDataPoints = dataPoints.filter(
           dp => !isNullish(dp.value) && dp.indicatorId === indicator.id
         )
 
-        if (
-          filters.highlight !== 'none' &&
-          !hasHighlightedCountryData(indicatorDataPoints, filters.highlight)
-        ) {
-          continue
+        const passesHighlight =
+          filters.highlight === 'none' ||
+          hasHighlightedCountryData(indicatorDataPoints, filters.highlight)
+
+        if (indicatorDataPoints.length && passesHighlight) {
+          const chartData = createChartData(
+            indicatorDataPoints,
+            indicator,
+            undefined,
+            filters.highlight
+          )
+
+          allChartsData.push(chartData)
+          realChartsCount += 1
+          pushedAnyForIndicator = true
         }
 
-        const chartData = createChartData(
-          indicatorDataPoints,
-          indicator,
-          undefined,
-          filters.highlight
-        )
-
-        if (chartData) allChartsData.push(chartData)
+        if (
+          !pushedAnyForIndicator &&
+          filters.indicator?.includes(indicator.id)
+        ) {
+          allChartsData.push(createPlaceholderChartData(indicator))
+        }
       }
     }
 
-    // Pagination
     const page = Number(filters.page)
     const size = Number(filters.size)
     const total = allChartsData.length
@@ -158,9 +176,7 @@ function createChartData(
   indicator: Indicator,
   subgroup?: Subgroup,
   highlightId?: string
-): Chart.Data | undefined {
-  if (!filteredDataPoints.length) return
-
+): Chart.Data {
   const mappedDataPoints: Chart.DataPoint[] = filteredDataPoints.map(point => ({
     countryId: String(point.countryId),
     countryName: point.country.name,
@@ -184,5 +200,18 @@ function createChartData(
     minValue,
     maxValue,
     dataPoints: mappedDataPoints
+  }
+}
+
+function createPlaceholderChartData(indicator: Indicator): Chart.Data {
+  return {
+    indicatorId: indicator.id,
+    indicatorName: indicator.fullName,
+    subheading: indicator.subheading || '',
+    subgroupName: '',
+    type: indicator.type as Data.IndicatorDataType,
+    minValue: 0,
+    maxValue: 1,
+    dataPoints: []
   }
 }
