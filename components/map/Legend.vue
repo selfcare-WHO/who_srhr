@@ -114,10 +114,6 @@
   const isNominal = computed(() => props.currentIndicator?.type === 'Nominal')
 
   const isInvertScale = computed(() => {
-    console.log(
-      '🚀 ~: isInvertScale -> props.currentSubgroup?.invertScale',
-      props.currentSubgroup?.invertScale
-    )
     return props.currentSubgroup?.invertScale ?? false
   })
 
