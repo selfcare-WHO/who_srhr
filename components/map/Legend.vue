@@ -108,7 +108,7 @@
           rel="noopener noreferrer"
           class="underline text-xs"
         ) {{ part.content }}
-        span(v-else) {{ part.content }}
+        span(v-else class="text-xs") {{ part.content }}
 
 </template>
 
