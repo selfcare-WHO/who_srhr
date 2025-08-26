@@ -25,9 +25,12 @@
 
       h4(
         class="text-xs text-secondary mt-2"
-        v-if="popoverData.source"
+        v-if="popoverData.source || popoverData.currentYearSource"
       )
-        | Source: {{ popoverData.source }}
+        template(v-if="popoverData.source")
+          | Source: {{ popoverData.source }}
+        template(v-if="popoverData.currentYearSource")
+          | Source year: {{ popoverData.currentYearSource }}
   </template>
 
 <script lang="ts" setup>

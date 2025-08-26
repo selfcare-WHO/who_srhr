@@ -1,6 +1,6 @@
 <template lang="pug">
   .map-view-legend(class="w-[375px] rounded-lg bg-secondary bg-opacity-20 p-4")
-    .mb-3
+    .mb-3.flex.flex-col
       p(class="m-0 text-[17px] font-[700] text-primary")
         | {{ currentIndicator?.fullName }}
 
@@ -94,9 +94,27 @@
           span(class="text-sm text-regular")
             | {{ legendItem?.name }}
 
+    p(
+      v-if="currentIndicator?.endnote"
+      class="text-xs mb-0 text-secondary"
+      :style="{ overflowWrap: 'anywhere' }"
+    )
+      | Source:&nbsp;
+      template(v-for="(part, index) in endnoteParts" :key="index")
+        a(
+          v-if="part.type === 'link'"
+          :href="part.url"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="underline text-xs"
+        ) {{ part.content }}
+        span(v-else) {{ part.content }}
+
 </template>
 
 <script lang="ts" setup>
+  import { linkifyText } from '~/utils/linkifyText'
+
   const { hatchUri } = useHatchPattern()
 
   const props = defineProps<{
@@ -115,6 +133,11 @@
 
   const isInvertScale = computed(() => {
     return props.currentSubgroup?.invertScale ?? false
+  })
+
+  const endnoteParts = computed(() => {
+    if (!props.currentIndicator?.endnote) return []
+    return linkifyText(props.currentIndicator.endnote)
   })
 
   const gradientQtd = computed(() => {
