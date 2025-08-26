@@ -13,8 +13,10 @@ export const useChartFiltersStore = defineStore('ChartFilters', () => {
       const filteredIndicators = indicators.value
         .filter(indicator => {
           const belongsToDomain = indicator.domainId === domain.id
+          const isNominal = indicator.type === 'Nominal'
+          const isLaw = indicator.isLaw
 
-          return belongsToDomain && !indicator.isLaw
+          return belongsToDomain && indicator.mapView && !isNominal && !isLaw
         })
         .map(indicator => ({
           id: indicator.id,
