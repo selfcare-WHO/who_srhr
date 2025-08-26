@@ -176,10 +176,6 @@
   onBeforeUnmount(() => {
     showPopover.value = false
   })
-
-  watchEffect(() => {
-    console.log('currentIndicator', currentIndicator.value)
-  })
 </script>
 
 <style lang="sass">
