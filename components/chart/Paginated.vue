@@ -38,13 +38,14 @@
     )
 
   ElEmpty(
-    v-else
+    v-else-if="!isFetching"
     class="flex-1 flex self-center min-h-[200px] max-w-[400px]"
     description="Data not available for the selected indicators in these countries. Try selecting different countries or indicators to view available data."
   )
 
   .pagination-controls(class="flex-none flex justify-center items-center gap-2 mt-6 mb-4")
     ElPagination(
+      v-if="!isFetching"
       v-model:current-page="page"
       :page-size="itemsPerPage"
       :total="total"
@@ -52,5 +53,5 @@
       @current-change="goToPage"
       :pager-count="5"
       background
-      )
+    )
 </template>
