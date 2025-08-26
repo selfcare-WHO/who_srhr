@@ -46,8 +46,7 @@ export const useChartData = (options?: { pagination?: boolean }) => {
         highlightFilterValue,
         ...(options?.pagination ? [page, itemsPerPage] : [])
       ],
-      deep: true,
-      immediate: true
+      deep: true
     }
   )
 

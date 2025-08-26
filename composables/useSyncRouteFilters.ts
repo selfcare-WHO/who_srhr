@@ -163,7 +163,7 @@ export function useSyncRouteFilters(
     { deep: true }
   )
 
-  onMounted(() => {
+  onBeforeMount(() => {
     initializeFromQuery()
   })
 

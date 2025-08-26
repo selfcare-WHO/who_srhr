@@ -42,6 +42,8 @@
   }
   const circlesData = ref<CircleData[]>([])
 
+  const hasData = computed(() => props.data.dataPoints?.length > 0)
+
   onMounted(() => {
     updateChartSize()
     window.addEventListener('resize', updateChartSize)
@@ -116,10 +118,14 @@
   const renderChart = () => {
     if (!chartContainer.value) return
 
+    // Clear any previous content
+    d3.select(chartContainer.value).selectAll('*').remove()
+
+    // Do not render chart when there is no data
+    if (!hasData.value) return
+
     const width = chartWidth.value
     const height = 60
-
-    d3.select(chartContainer.value).selectAll('*').remove()
 
     const svg = d3
       .select(chartContainer.value)
@@ -225,7 +231,18 @@
   h3(class="text-sm") {{ data.subheading }}
   h4(v-if="data.subgroupName && data.subgroupName !== 'Data'" class="text-sm text-gray-600") {{ data.subgroupName }}
 
-  div(ref="chartContainer")
+  // Chart or Empty State
+  div(v-if="hasData" ref="chartContainer")
+  ElEmpty(
+    v-else
+    class="flex !flex-row items-center !justify-start gap-4 min-h-[80px]"
+    :style=`{
+      '--el-empty-description-margin-top': 0,
+      '--el-empty-padding': '0.5rem 0'
+    }`
+    description="Data not available for the selected indicators in at least one of these countries."
+    :image-size="60"
+  )
 
   ElPopover(
     popper-class="data-popover pointer-events-none"

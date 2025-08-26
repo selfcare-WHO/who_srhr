@@ -26,10 +26,10 @@
 </script>
 
 <template lang="pug">
-.chart-table(class="w-full" v-loading="isFetching")
+.chart-table(v-loading="isFetching" class="flex flex-col bg-white rounded-lg p-5")
   .charts-container(
     v-if="chartData?.length"
-    class="flex flex-col gap-4"
+    class="flex-1 flex flex-col gap-4 w-full items-center"
   )
     ChartDotPlot(
       v-for="chart in chartData"
@@ -37,27 +37,20 @@
       :data="chart"
     )
 
-    .pagination-controls(class="flex justify-center items-center gap-2 mt-6 mb-4")
-      ElPagination(
-        v-model:current-page="page"
-        :page-size="itemsPerPage"
-        :total="total"
-        layout="prev, pager, next"
-        @current-change="goToPage"
-        :pager-count="5"
-        background
-      )
-
   ElEmpty(
     v-else
-    class="flex items-center justify-center min-h-[200px]"
+    class="flex-1 flex self-center min-h-[200px] max-w-[400px]"
     description="Data not available for the selected indicators in these countries. Try selecting different countries or indicators to view available data."
   )
-</template>
 
-<style lang="sass" scoped>
-  .chart-table
-    background-color: white
-    border-radius: 8px
-    padding: 20px
-</style>
+  .pagination-controls(class="flex-none flex justify-center items-center gap-2 mt-6 mb-4")
+    ElPagination(
+      v-model:current-page="page"
+      :page-size="itemsPerPage"
+      :total="total"
+      layout="prev, pager, next"
+      @current-change="goToPage"
+      :pager-count="5"
+      background
+      )
+</template>

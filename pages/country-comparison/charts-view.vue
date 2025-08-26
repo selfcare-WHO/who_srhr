@@ -24,8 +24,8 @@
 
       ChartKey
 
-      div(class="chart-wrapper relative min-h-[700px]")
-        ChartPaginated(class="w-full h-full")
+      div(class="chart-wrapper relative min-h-[700px] flex flex-col items-center")
+        ChartPaginated(class="w-full flex-1")
 </template>
 
 <script lang="ts" setup>
