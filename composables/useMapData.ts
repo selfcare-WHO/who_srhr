@@ -1,3 +1,5 @@
+let cachedGeoJSON: GeoJSON.FeatureCollection | null = null
+
 export const useMapData = () => {
   const mapFiltersStore = useMapFiltersStore()
   const {
@@ -9,6 +11,27 @@ export const useMapData = () => {
   } = storeToRefs(mapFiltersStore)
 
   const isFetching = ref(false)
+  const geoJSONFeatures = ref<GeoJSON.Feature[]>([])
+
+  const loadGeoJSON = async () => {
+    if (cachedGeoJSON) {
+      geoJSONFeatures.value = cachedGeoJSON.features
+      return
+    }
+
+    try {
+      const response = await fetch('/maps/who_countries.json')
+      cachedGeoJSON = await response.json()
+      geoJSONFeatures.value = cachedGeoJSON?.features || []
+    } catch (error) {
+      console.error('Failed to load GeoJSON:', error)
+      geoJSONFeatures.value = []
+    }
+  }
+
+  onMounted(() => {
+    loadGeoJSON()
+  })
 
   const { data: mapData } = useAsyncData<Map.DataPoints | null>(
     '/api/map-data',
@@ -39,10 +62,32 @@ export const useMapData = () => {
 
   const nominalLegend = computed(() => mapData.value?.legend)
 
-  const linkedGeoJSON = computed<GeoJSON.FeatureCollection>(() => ({
-    type: 'FeatureCollection',
-    features: mapData.value?.features || []
-  }))
+  const linkedGeoJSON = computed<GeoJSON.FeatureCollection>(() => {
+    if (!mapData.value || !geoJSONFeatures.value.length) {
+      return {
+        type: 'FeatureCollection',
+        features: []
+      }
+    }
+
+    const features = geoJSONFeatures.value.map(feature => {
+      const countryCode = feature.properties?.ISO_3_CODE
+      const dataProperties = mapData.value?.propertiesMap?.[countryCode] || {}
+
+      return {
+        ...feature,
+        properties: {
+          ...feature.properties,
+          ...dataProperties
+        }
+      }
+    })
+
+    return {
+      type: 'FeatureCollection',
+      features
+    }
+  })
 
   const linkedFeaturesSource = computed<mapboxgl.SourceSpecification>(() => ({
     type: 'geojson',
@@ -50,7 +95,7 @@ export const useMapData = () => {
   }))
 
   const hasOther = computed(() => {
-    return mapData.value?.features.some(feature => {
+    return linkedGeoJSON.value.features.some(feature => {
       const value = feature.properties?.value
 
       const isNull = value === null || value === undefined
@@ -62,13 +107,17 @@ export const useMapData = () => {
   })
 
   const hasNoData = computed(() => {
-    return mapData.value?.features.some(feature => {
+    return linkedGeoJSON.value.features.some(feature => {
       const value = feature.properties?.value
       return value === undefined || value === null
     })
   })
 
   const jenksBreaks = computed(() => mapData.value?.jenksBreaks)
+
+  onUnmounted(() => {
+    cachedGeoJSON = null
+  })
 
   return {
     mapData,

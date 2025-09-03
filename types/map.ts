@@ -1,7 +1,7 @@
 declare global {
   namespace Map {
     type DataPoints = {
-      features: GeoJSON.Feature[]
+      propertiesMap: Record<string, any>
       dataPoints: Prisma.DataPoint[]
       legend: Data.Legend
       jenksBreaks?: number[]

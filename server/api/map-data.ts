@@ -1,12 +1,7 @@
-import { readFileSync } from 'fs'
-import { join } from 'path'
-import { fileURLToPath } from 'url'
 import { jenks } from 'simple-statistics'
 import mapDataPoints from '../services/mapDataPoints'
 import { useEnum } from '~/composables/useEnum'
 import isNullish from '~/utils/isNullish'
-
-let geoJsonFeatures: GeoJSON.Feature[] | null = null
 
 export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
   const {
@@ -22,14 +17,6 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
   }
 
   try {
-    if (!geoJsonFeatures) {
-      const relativePath = '../../assets/maps/who_countries.json'
-      const currentDir = fileURLToPath(new URL('.', import.meta.url))
-      const geoJsonPath = join(currentDir, relativePath)
-      const { features } = JSON.parse(readFileSync(geoJsonPath, 'utf-8'))
-      geoJsonFeatures = features
-    }
-
     const indicator = await mapDataPoints(indicatorId, subgroupId)
 
     if (!indicator) {
@@ -79,7 +66,7 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
     const allUniqueValues = new Set<string>()
     const valueToNumbers = new Map<string, number[]>()
 
-    dataPoints.forEach(dp => {
+    for (const dp of dataPoints) {
       if (type === 'Nominal') {
         const bucketKey =
           indicator.displayValue === 'original_value'
@@ -102,7 +89,7 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
           }
         }
       }
-    })
+    }
 
     const useJenksColors = type === 'Nominal' && allUniqueValues.size > 3
 
@@ -118,14 +105,14 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
     }
 
     const jenksColorMap = new Map<string, number>()
-    sortedValuesByNumber.forEach((value, index) => {
-      jenksColorMap.set(value, index)
-    })
+    for (let index = 0; index < sortedValuesByNumber.length; index++) {
+      jenksColorMap.set(sortedValuesByNumber[index], index)
+    }
 
-    dataPoints.forEach(dp => {
+    for (const dp of dataPoints) {
       dataPointsByCountry.set(dp.country.code, dp)
 
-      if (type !== 'Nominal') return
+      if (type !== 'Nominal') continue
 
       const bucketKey =
         indicator.displayValue === 'original_value'
@@ -148,10 +135,10 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
             hatchPattern: true
           })
         }
-        return
+        continue
       }
 
-      if (legend.has(bucketKeyStr)) return
+      if (legend.has(bucketKeyStr)) continue
 
       const translatedValue = (() => {
         if (translateValue) {
@@ -200,7 +187,7 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
             name: translatedValue,
             color: 'var(--no-data)'
           })
-          return
+          continue
         }
 
         const target = targetStatus[statusKey as keyof typeof targetStatus]
@@ -210,7 +197,7 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
           color: target.color
         })
       }
-    })
+    }
 
     const sortedLegend = [...legend].sort(
       (a: [string, Map.Legend], b: [string, Map.Legend]) => {
@@ -262,56 +249,54 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
       jenksBreaks = []
     }
 
-    const linkedFeatures: GeoJSON.Feature[] =
-      geoJsonFeatures?.map((feature: GeoJSON.Feature) => {
-        const { ISO_3_CODE } = feature.properties as {
-          ISO_3_CODE: string
-        }
-        const dataPoint = dataPointsByCountry.get(ISO_3_CODE)
+    const propertiesMap: Record<string, any> = {}
+    
+    for (const [countryCode, dataPoint] of dataPointsByCountry) {
+      const isRange = dataPoint?.value
+        ? dataPoint.value.match(/^\d+-\d+$/) !== null
+        : false
+      const [rangeMin, rangeMax] = dataPoint?.value
+        ?.split('-')
+        .map(Number) ?? [0, 0]
 
-        const isRange = dataPoint?.value
-          ? dataPoint.value.match(/^\d+-\d+$/) !== null
-          : false
-        const [rangeMin, rangeMax] = dataPoint?.value
-          ?.split('-')
-          .map(Number) ?? [0, 0]
+      const rangeAverage = (rangeMin + rangeMax) / 2
 
-        const rangeAverage = (rangeMin + rangeMax) / 2
+      const isLessThan = dataPoint?.value?.includes('<')
+      const isMoreThan = dataPoint?.value?.includes('>')
 
-        const isLessThan = dataPoint?.value?.includes('<')
-        const isMoreThan = dataPoint?.value?.includes('>')
+      const value = (() => {
+        if (isRange) return rangeAverage
+        if (isLessThan) return dataPoint?.value.trim().split('<')[1]
+        if (isMoreThan) return dataPoint?.value.trim().split('>')[1]
 
-        const value = (() => {
-          if (isRange) return rangeAverage
-          if (isLessThan) return dataPoint?.value.trim().split('<')[1]
-          if (isMoreThan) return dataPoint?.value.trim().split('>')[1]
+        return dataPoint?.value
+      })()
 
-          return dataPoint?.value
-        })()
+      propertiesMap[countryCode] = {
+        dataPointId: dataPoint?.id.toString(),
+        change: dataPoint?.change,
+        originalValue: dataPoint?.originalValue,
+        value,
+        isRange,
+        isLessThan,
+        isMoreThan,
+        bucketKey:
+          type === 'Nominal'
+            ? ((indicator.displayValue === 'original_value'
+                ? dataPoint?.originalValue
+                : dataPoint?.value) ?? null)
+            : undefined
+      }
+    }
 
-        return {
-          ...feature,
-          properties: {
-            ...feature.properties,
-            dataPointId: dataPoint?.id.toString(),
-            change: dataPoint?.change,
-            originalValue: dataPoint?.originalValue,
-            value,
-            isRange,
-            isLessThan,
-            isMoreThan,
-            bucketKey:
-              type === 'Nominal'
-                ? ((indicator.displayValue === 'original_value'
-                    ? dataPoint?.originalValue
-                    : dataPoint?.value) ?? null)
-                : undefined
-          }
-        }
-      }) ?? []
+    allUniqueValues.clear()
+    valueToNumbers.clear()
+    jenksColorMap.clear()
+    dataPointsByCountry.clear()
+    legend.clear()
 
     return {
-      features: linkedFeatures,
+      propertiesMap,
       dataPoints,
       legend: legendObject,
       jenksBreaks
