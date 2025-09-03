@@ -20,7 +20,13 @@
     "postinstall": "nuxi prepare",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "lint:format": "prettier --check . && echo 'All files are formatted correctly!'"
+    "lint:format": "prettier --check . && echo 'All files are formatted correctly!'",
+    "memory:monitor": "node scripts/memory-monitor.js",
+    "memory:snapshot": "node --expose-gc scripts/heap-snapshot.js",
+    "memory:load-test": "node scripts/load-test.js",
+    "memory:analyze": "yarn build && yarn memory:monitor",
+    "memory:debug": "node scripts/debug-memory-leak.js",
+    "memory:profile": "node scripts/memory-profiler.js"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
