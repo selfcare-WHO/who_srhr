@@ -22,9 +22,6 @@
     "format:check": "prettier --check .",
     "lint:format": "prettier --check . && echo 'All files are formatted correctly!'"
   },
-  "prisma": {
-    "seed": "node node_modules/.bin/tsx ./prisma/seed.ts"
-  },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
     "@tailwindcss/typography": "^0.5.15",
@@ -42,7 +39,7 @@
     "@nuxtjs/tailwindcss": "^6.12.2",
     "@pinia/nuxt": "^0.5.1",
     "@prettier/plugin-pug": "^3.2.1",
-    "@prisma/client": "^5.22.0",
+    "@prisma/client": "6",
     "@types/d3": "^7",
     "@types/node": "^22.9.0",
     "@types/tabulator-tables": "^6",
@@ -58,7 +55,7 @@
     "prettier-plugin-classnames": "^0.7.6",
     "prettier-plugin-merge": "^0.7.2",
     "prettier-plugin-tailwindcss": "^0.6.11",
-    "prisma": "^5.22.0",
+    "prisma": "6",
     "pug": "^3.0.3",
     "sass": "^1.69.5",
     "tsx": "^4.19.2",
