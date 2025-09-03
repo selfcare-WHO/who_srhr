@@ -5,9 +5,7 @@ import { jenks } from 'simple-statistics'
 import mapDataPoints from '../services/mapDataPoints'
 import { useEnum } from '~/composables/useEnum'
 import isNullish from '~/utils/isNullish'
-import { capitalizeNominalValue } from '~/utils/capitalizeNominalValue'
 
-// Cache the GeoJSON file in memory
 let geoJsonFeatures: GeoJSON.Feature[] | null = null
 
 export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
@@ -41,15 +39,90 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
       })
     }
 
-    const { dataPoints, type, displayValue, translateValue } = indicator
+    const { dataPoints, type, translateValue } = indicator
     const dataPointsByCountry = new Map()
 
     const legend = new Map<string, Map.Legend>()
 
     const { targetStatus } = useEnum()
 
-    // Keep track of how many buckets we already assigned per target status
     const statusCounters = new Map<string, number>()
+
+    const extractNumbers = (value: string): number[] => {
+      const numbers: number[] = []
+
+      const percentageMatches = value.match(/(\d+(?:\.\d+)?)\s*%/g)
+      if (percentageMatches) {
+        percentageMatches.forEach(match => {
+          const num = parseFloat(match.replace('%', ''))
+          numbers.push(num)
+        })
+      }
+
+      const rangeMatches = value.match(/(\d+)\s*-\s*(\d+)/g)
+      if (rangeMatches && !percentageMatches) {
+        rangeMatches.forEach(match => {
+          const [min, max] = match.split('-').map(s => parseFloat(s.trim()))
+          numbers.push((min + max) / 2)
+        })
+      }
+
+      const standaloneMatches = value.match(/<?\s*(\d+)(?![\d%-])/g)
+      if (standaloneMatches && !percentageMatches && !rangeMatches) {
+        standaloneMatches.forEach(match => {
+          const num = parseFloat(match.replace(/[<>]/g, '').trim())
+          numbers.push(num)
+        })
+      }
+
+      return numbers
+    }
+
+    const allUniqueValues = new Set<string>()
+    const valueToNumbers = new Map<string, number[]>()
+
+    dataPoints.forEach(dp => {
+      if (type === 'Nominal') {
+        const bucketKey =
+          indicator.displayValue === 'original_value'
+            ? dp.originalValue
+            : dp.value
+
+        if (bucketKey !== null && bucketKey !== undefined) {
+          const bucketKeyStr = String(bucketKey).trim()
+          if (
+            bucketKeyStr !== '' &&
+            bucketKeyStr !== 'null' &&
+            bucketKeyStr !== 'undefined'
+          ) {
+            allUniqueValues.add(bucketKeyStr)
+
+            const numbers = extractNumbers(bucketKeyStr)
+            if (numbers.length > 0) {
+              valueToNumbers.set(bucketKeyStr, numbers)
+            }
+          }
+        }
+      }
+    })
+
+    const useJenksColors = type === 'Nominal' && allUniqueValues.size > 3
+
+    let sortedValuesByNumber: string[] = []
+    if (useJenksColors) {
+      sortedValuesByNumber = Array.from(valueToNumbers.entries())
+        .sort((a, b) => {
+          const aNum = Math.min(...a[1])
+          const bNum = Math.min(...b[1])
+          return aNum - bNum
+        })
+        .map(entry => entry[0])
+    }
+
+    const jenksColorMap = new Map<string, number>()
+    sortedValuesByNumber.forEach((value, index) => {
+      jenksColorMap.set(value, index)
+    })
 
     dataPoints.forEach(dp => {
       dataPointsByCountry.set(dp.country.code, dp)
@@ -90,33 +163,70 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
         return bucketKeyStr
       })()
 
-      const statusKey = String(dp?.change ?? 'noChange')
+      if (useJenksColors) {
+        const jenksIndex = jenksColorMap.get(bucketKeyStr)
 
-      if (
-        statusKey === 'noChange' ||
-        !targetStatus[statusKey as keyof typeof targetStatus]
-      ) {
+        if (jenksIndex !== undefined) {
+          legend.set(bucketKeyStr, {
+            name: translatedValue,
+            color: `var(--el-bg-color-jenks-${jenksIndex})`
+          })
+        } else {
+          const statusKey = String(dp?.change ?? 'noChange')
+
+          if (
+            statusKey === 'noChange' ||
+            !targetStatus[statusKey as keyof typeof targetStatus]
+          ) {
+            legend.set(bucketKeyStr, {
+              name: translatedValue,
+              color: 'var(--no-data)'
+            })
+          } else {
+            const target = targetStatus[statusKey as keyof typeof targetStatus]
+            const alreadyUsed = statusCounters.get(statusKey) ?? 0
+            const chosenColor =
+              alreadyUsed === 0
+                ? target.color
+                : (target.secondaryColor ?? target.color)
+
+            statusCounters.set(statusKey, alreadyUsed + 1)
+
+            legend.set(bucketKeyStr, {
+              name: translatedValue,
+              color: chosenColor
+            })
+          }
+        }
+      } else {
+        const statusKey = String(dp?.change ?? 'noChange')
+
+        if (
+          statusKey === 'noChange' ||
+          !targetStatus[statusKey as keyof typeof targetStatus]
+        ) {
+          legend.set(bucketKeyStr, {
+            name: translatedValue,
+            color: 'var(--no-data)'
+          })
+          return
+        }
+
+        const target = targetStatus[statusKey as keyof typeof targetStatus]
+
+        const alreadyUsed = statusCounters.get(statusKey) ?? 0
+        const chosenColor =
+          alreadyUsed === 0
+            ? target.color
+            : (target.secondaryColor ?? target.color)
+
+        statusCounters.set(statusKey, alreadyUsed + 1)
+
         legend.set(bucketKeyStr, {
           name: translatedValue,
-          color: 'var(--no-data)'
+          color: chosenColor
         })
-        return
       }
-
-      const target = targetStatus[statusKey as keyof typeof targetStatus]
-
-      const alreadyUsed = statusCounters.get(statusKey) ?? 0
-      const chosenColor =
-        alreadyUsed === 0
-          ? target.color
-          : (target.secondaryColor ?? target.color)
-
-      statusCounters.set(statusKey, alreadyUsed + 1)
-
-      legend.set(bucketKeyStr, {
-        name: translatedValue,
-        color: chosenColor
-      })
     })
 
     const sortedLegend = [...legend].sort(
@@ -124,7 +234,7 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
         const aName = a[1].name
         const bName = b[1].name
 
-        if (aName === 'No Data') return 1 // "No Data" should always come last
+        if (aName === 'No Data') return 1
         if (bName === 'No Data') return -1
 
         return aName.localeCompare(bName)
@@ -141,15 +251,12 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
     let jenksBreaks: number[] = []
 
     try {
-      // Ensure there are enough unique values for Jenks calculation
       const uniqueNumericalValues = [...new Set(numericalValues)]
 
       if (uniqueNumericalValues.length >= NUM_BREAKS) {
         const rawJenksBreaks = jenks(numericalValues, NUM_BREAKS)
-        // Remove duplicates from Jenks breaks and ensure we have unique values
         jenksBreaks = [...new Set(rawJenksBreaks)]
 
-        // If we lost breaks due to duplicates, try with fewer breaks
         if (
           jenksBreaks.length < NUM_BREAKS &&
           uniqueNumericalValues.length > jenksBreaks.length
@@ -165,10 +272,8 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
         uniqueNumericalValues.length > 0 &&
         uniqueNumericalValues.length < NUM_BREAKS
       ) {
-        // Use the unique values as breaks when we don't have enough for Jenks
         jenksBreaks = uniqueNumericalValues.sort((a, b) => a - b)
       }
-      // If uniqueNumericalValues.length is 0, jenksBreaks remains []
     } catch (error) {
       console.error('Jenks calculation failed:', error)
       jenksBreaks = []
