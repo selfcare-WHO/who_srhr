@@ -15,7 +15,7 @@ export default {
     fontFamily: {
       sans: ['Nunito', 'sans-serif'],
       serif: ['Merriweather', 'serif'],
-      title: ['"Source Sans Pro', 'sans-serif']
+      title: ['"Source Sans 3', 'sans-serif']
     },
 
     extend: {

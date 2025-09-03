@@ -50,6 +50,7 @@ This is a **Nuxt 3 SSR-disabled (SPA)** application for the WHO SRHR (Sexual and
 ### Data Architecture
 
 **Database Structure** (`prisma/schema.prisma`):
+
 - **Country**: Country entities with metadata
 - **Indicator**: Health indicators with types (Numerical, Categorical, Nominal)
 - **Subgroup**: Optional subgroups for indicators
@@ -57,6 +58,7 @@ This is a **Nuxt 3 SSR-disabled (SPA)** application for the WHO SRHR (Sexual and
 - **Region**: Geographic regions for grouping countries
 
 **Data Management**:
+
 - SQLite database at `prisma/database.sqlite3`
 - Seed data from Excel files (`prisma/data.xlsx`)
 - Prisma migrations for schema evolution
@@ -64,30 +66,36 @@ This is a **Nuxt 3 SSR-disabled (SPA)** application for the WHO SRHR (Sexual and
 ### Component Architecture
 
 **Layout Components** (`components/layout/`):
+
 - `LayoutHeader.vue`: Main site header with WHO branding
 - `LayoutNavbar.vue`: Navigation bar with section links
 - `MobileEmptyState.vue`: Mobile device warning
 
 **Chart Components** (`components/chart/`):
+
 - `DotPlot.vue`: D3-based dot plot visualization
 - `Paginated.vue`: Paginated chart container
 - `Key.vue`: Chart legend/key display
 
 **Map Components** (`components/map/`):
+
 - `Filters.vue`: Map-specific filter controls
 - `Legend.vue`: Map legend for data ranges
 - `DetailsPopover.vue`: Country detail popover
 
 **Table Components** (`components/table/`):
+
 - `KeySection.vue`: Table legend display
 
 **UI Components** (`components/ui/`):
+
 - `SwitchToggle.vue`: Custom toggle switch
 - `FilterItem.vue`: Reusable filter component
 
 ### State Management (Pinia Stores)
 
 **Filter Stores** (`stores/`):
+
 - `filters.ts`: Global filter options
 - `chartFilters.ts`: Chart-specific filters
 - `mapFilters.ts`: Map-specific filters
@@ -98,6 +106,7 @@ This is a **Nuxt 3 SSR-disabled (SPA)** application for the WHO SRHR (Sexual and
 ### API Endpoints
 
 **Server Routes** (`server/api/`):
+
 - `/api/filter-options`: Available filter options
 - `/api/chart-data`: Paginated chart data with empty state handling
 - `/api/map-data`: Geographic data for map visualization
@@ -106,19 +115,22 @@ This is a **Nuxt 3 SSR-disabled (SPA)** application for the WHO SRHR (Sexual and
 ### Key Technical Details
 
 **Styling**:
+
 - **Tailwind CSS** with custom SCSS modules in `assets/scss/`
 - Element Plus theming customizations
 - Tabulator table styling
 - Responsive design with mobile-first approach
-- Custom fonts: Source Sans Pro (Adobe Fonts)
+- Custom fonts: Source Sans 3 (Adobe Fonts)
 
 **Data Visualization**:
+
 - **D3.js** for custom chart components (dot plots)
 - **Mapbox GL** for interactive maps
 - **Tabulator** for complex data tables
 - SVG patterns for map hatching (missing data)
 
 **Performance**:
+
 - SSR disabled for SPA performance
 - Lazy loading for routes
 - Pagination for large datasets
@@ -127,6 +139,7 @@ This is a **Nuxt 3 SSR-disabled (SPA)** application for the WHO SRHR (Sexual and
 ### Development Guidelines
 
 **Code Style and Structure**:
+
 - Use TypeScript with strict mode enabled
 - Composition API with `<script setup>` syntax
 - No semicolons - prettier will handle formatting
@@ -135,29 +148,34 @@ This is a **Nuxt 3 SSR-disabled (SPA)** application for the WHO SRHR (Sexual and
 - Use descriptive variable names (e.g., isLoading, hasError)
 
 **Component Conventions**:
+
 - Use Pug templates for cleaner markup
 - PascalCase for component names (e.g., `DotPlot.vue`)
 - camelCase for composables (e.g., `useChartData.ts`)
 - kebab-case for directories (e.g., `country-comparison/`)
 
 **State Management**:
+
 - Use Pinia stores for global state
 - Keep filter state synchronized with URL query params
 - Use composables for shared logic (`composables/`)
 
 **Data Handling**:
+
 - Always validate data from API responses
 - Handle empty states explicitly
 - Use proper TypeScript types for all data structures
 - Format large numbers appropriately (`formatLargeNumbers` utility)
 
 **Testing Workflow**:
+
 - Always use Playwright MCP on full-screen for UI testing
 - Test with multiple indicators and countries selected
 - Verify empty states appear correctly
 - Check responsive behavior on different screen sizes
 
 **UI/UX Guidelines**:
+
 - Use Element Plus components for consistency
 - Implement proper loading states
 - Show meaningful empty states when no data
@@ -165,12 +183,14 @@ This is a **Nuxt 3 SSR-disabled (SPA)** application for the WHO SRHR (Sexual and
 - Mobile warning for complex visualizations
 
 **API Development**:
+
 - Return consistent response structures
 - Include pagination metadata
 - Handle missing data gracefully
 - Return placeholder data for empty indicators
 
 **Database Guidelines**:
+
 - Use Prisma migrations for schema changes
 - Keep seed data in Excel format for easy updates
 - Use transactions for complex operations
@@ -179,18 +199,21 @@ This is a **Nuxt 3 SSR-disabled (SPA)** application for the WHO SRHR (Sexual and
 ### File Structure Notes
 
 **Key Utilities** (`utils/`):
+
 - `formatData.ts`: Format data based on indicator type
 - `formatLargeNumbers.ts`: Number formatting with units
 - `isNullish.ts`: Null/undefined checking
 - `getStatusColor.ts`: Color coding for data values
 
 **Key Composables** (`composables/`):
+
 - `useChartData.ts`: Chart data fetching and pagination
 - `useMapData.ts`: Map data management
 - `useSyncRouteFilters.ts`: URL query sync
 - `useMapStyles.ts`: Dynamic map styling
 
 **Type Definitions** (`types/`):
+
 - `chart.ts`: Chart data structures
 - `map.ts`: Map configuration types
 - `filter.ts`: Filter option types
@@ -209,17 +232,20 @@ This is a **Nuxt 3 SSR-disabled (SPA)** application for the WHO SRHR (Sexual and
 ### Common Tasks
 
 **Adding New Indicators**:
+
 1. Update Excel data file (`prisma/data.xlsx`)
 2. Run database seed: `npx prisma db seed`
 3. Test all three views (map, charts, table)
 
 **Debugging Empty States**:
+
 1. Check API response in Network tab
 2. Verify placeholder data is returned for missing indicators
 3. Ensure chart components handle empty dataPoints arrays
 4. Test with multiple indicators and countries
 
 **Performance Optimization**:
+
 1. Use pagination for large datasets
 2. Implement virtual scrolling for long lists
 3. Optimize D3 rendering with proper data binding

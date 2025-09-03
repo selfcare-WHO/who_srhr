@@ -87,14 +87,10 @@ export default defineNuxtConfig({
   ],
 
   fonts: {
-    adobe: {
-      id: ['zpe4zmg']
-    },
-
     families: [
       {
-        name: 'Source Sans Pro',
-        provider: 'adobe',
+        name: 'Source Sans 3',
+        provider: 'google',
         weights: [400, 500, 600, 700]
       },
       {
