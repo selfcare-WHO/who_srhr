@@ -46,8 +46,6 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
 
     const { targetStatus } = useEnum()
 
-    const statusCounters = new Map<string, number>()
-
     const extractNumbers = (value: string): number[] => {
       const numbers: number[] = []
 
@@ -184,17 +182,10 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
             })
           } else {
             const target = targetStatus[statusKey as keyof typeof targetStatus]
-            const alreadyUsed = statusCounters.get(statusKey) ?? 0
-            const chosenColor =
-              alreadyUsed === 0
-                ? target.color
-                : (target.secondaryColor ?? target.color)
-
-            statusCounters.set(statusKey, alreadyUsed + 1)
 
             legend.set(bucketKeyStr, {
               name: translatedValue,
-              color: chosenColor
+              color: target.color
             })
           }
         }
@@ -214,17 +205,9 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
 
         const target = targetStatus[statusKey as keyof typeof targetStatus]
 
-        const alreadyUsed = statusCounters.get(statusKey) ?? 0
-        const chosenColor =
-          alreadyUsed === 0
-            ? target.color
-            : (target.secondaryColor ?? target.color)
-
-        statusCounters.set(statusKey, alreadyUsed + 1)
-
         legend.set(bucketKeyStr, {
           name: translatedValue,
-          color: chosenColor
+          color: target.color
         })
       }
     })
