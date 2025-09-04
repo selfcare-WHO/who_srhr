@@ -12,10 +12,10 @@
             div(class="mb-2 md:mb-4")
 
             h3(class="text-primary bg-[#FFFFFFE6] px-2 inline box-decoration-clone")
-              | Test Data Portal
+              | Data Portal
 
       LayoutNavbar(class="hidden md:block")
-
+    
     .layout-content
       slot
 
