@@ -34,7 +34,7 @@ export const useMapData = () => {
   })
 
   const { data: mapData } = useAsyncData<Map.DataPoints | null>(
-    '/api/map-data',
+    () => `/api/map-data-${indicatorFilterValue.value}-${subgroupFilterValue.value}`,
     async () => {
       if (
         !indicatorFilterValue.value ||
