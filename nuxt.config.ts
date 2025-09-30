@@ -30,7 +30,6 @@ export default defineNuxtConfig({
       meta: [
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
         {
-          hid: 'description',
           name: 'description',
           content: `World Health Organization
             Sexual and Reproductive Health and Rights
@@ -118,7 +117,9 @@ export default defineNuxtConfig({
     css: {
       preprocessorOptions: {
         scss: {
+          // @ts-ignore - api option is valid but not in current types
           api: 'modern-compiler',
+
           additionalData: `@use "@/assets/scss/element_plus.scss" as element;`,
           quietDeps: true
         }
