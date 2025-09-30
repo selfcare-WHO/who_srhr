@@ -8,6 +8,8 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
     indicatorId,
     subgroupId
   }: { indicatorId: string; subgroupId: string } = getQuery(event)
+  console.log('🚀 ~: subgroupId', subgroupId)
+  console.log('🚀 ~: indicatorId', indicatorId)
 
   if (!indicatorId || !subgroupId) {
     throw createError({
@@ -18,6 +20,7 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
 
   try {
     const indicator = await mapDataPoints(indicatorId, subgroupId)
+    console.log('🚀 ~: indicator', indicator)
 
     if (!indicator) {
       throw createError({
@@ -27,6 +30,7 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
     }
 
     const { dataPoints, type, translateValue } = indicator
+    console.log('🚀 ~: type', type)
     const dataPointsByCountry = new Map()
 
     const legend = new Map<string, Map.Legend>()
@@ -250,14 +254,14 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
     }
 
     const propertiesMap: Record<string, any> = {}
-    
+
     for (const [countryCode, dataPoint] of dataPointsByCountry) {
       const isRange = dataPoint?.value
         ? dataPoint.value.match(/^\d+-\d+$/) !== null
         : false
-      const [rangeMin, rangeMax] = dataPoint?.value
-        ?.split('-')
-        .map(Number) ?? [0, 0]
+      const [rangeMin, rangeMax] = dataPoint?.value?.split('-').map(Number) ?? [
+        0, 0
+      ]
 
       const rangeAverage = (rangeMin + rangeMax) / 2
 
@@ -295,6 +299,7 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
     dataPointsByCountry.clear()
     legend.clear()
 
+    console.log('🚀 ~: dataPoints', dataPoints)
     return {
       propertiesMap,
       dataPoints,
