@@ -1,4 +1,4 @@
-import type { MapboxComponentOptions } from 'nuxt-mapbox'
+import type { MapboxComponentOptions } from 'nuxt-mapbox/dist/runtime/utils/types'
 
 export const useMapConfiguration = (
   countriesPaint: ComputedRef<mapboxgl.LayerSpecification['paint']>
