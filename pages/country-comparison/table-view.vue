@@ -134,7 +134,6 @@
       renderHorizontal: 'basic',
       renderVertical: 'virtual',
       layout: 'fitDataFill',
-      selectable: false,
       pagination: true,
       paginationSize: 12,
       ajaxURL: '/api/table-data',
