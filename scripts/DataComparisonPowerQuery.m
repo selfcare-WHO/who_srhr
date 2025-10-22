@@ -4,7 +4,8 @@ let
     Data_to_load = Source{[Name="Table1"]}[Content],
     KPI_ID = Source{[Name="KPI_ID"]}[Content],
     KPI_subgroups = Source{[Name="KPI_subgroups"]}[Content],
-    AllDomains = Source{[Name="KPI_details"]}[Content], // Single combined dimension table
+    AllDomains = Source{[Name="KPI_details"]}[Content],
+    Endnote = Source{[Name="Endnote_to_load"]}[Content],
 
     // Convert columns to text where necessary
     KPI_subgroups_Typed = Table.TransformColumnTypes(KPI_subgroups, {{"kpi_subgroup", type text}}),
@@ -51,20 +52,30 @@ let
     // Merge with AllDomains to get all domain-related info
     #"Merged with AllDomains" = Table.NestedJoin(#"Expanded KPI_ID", {"kpi_id"}, AllDomains, {"Indicator no."}, "AllDomains", JoinKind.LeftOuter),
     #"Expanded AllDomains" = Table.ExpandTableColumn(#"Merged with AllDomains", "AllDomains",
-        {"Heading", "Subheading", "Target", "Table", "Map", "Map type", "Law", "String mask", "Data type", "Domain", "Domain ID", "Translate value", "Display value", "Invert scale"},
-        {"kpi_full_name", "kpi_subheading", "has_target", "table_view", "map_view", "map_type", "is_law", "mask", "kpi_data_type", "domain_name", "domain_id", "translate_value", "display_value", "invert_scale"}),
+        {"Heading", "Subheading", "Target", "Table", "Map", "Map type", "Law", "String mask", "Data type", "Domain", "Domain ID", "Translate value", "Display value" },
+        {"kpi_full_name", "kpi_subheading", "has_target", "table_view", "map_view", "map_type", "is_law", "mask", "kpi_data_type", "domain_name", "domain_id", "translate_value", "display_value" }),
 
     // Merge with KPI_subgroups to get kpi_subgroup_full
     #"Merged with KPI_subgroups" = Table.NestedJoin(
         #"Expanded AllDomains",
-        {"kpi_name", "kpi_subgroup"},   // List both columns from the main table
+        {"kpi_name", "kpi_subgroup" },
         KPI_subgroups_Typed,
-        {"kpi_name", "kpi_subgroup"},   // Matching columns from the KPI_subgroups table
+        {"kpi_name", "kpi_subgroup" },
         "KPI_subgroups",
         JoinKind.LeftOuter
     ),
 
-    #"Expanded KPI_subgroups" = Table.ExpandTableColumn(#"Merged with KPI_subgroups", "KPI_subgroups", {"kpi_subgroup_full"}, {"kpi_subgroup_full"}),
-    #"Filtered Rows" = Table.SelectRows(#"Expanded KPI_subgroups", each true)
+    #"Expanded KPI_subgroups" = Table.ExpandTableColumn(#"Merged with KPI_subgroups", "KPI_subgroups", {"kpi_subgroup_full" , "invert_scale" }, {"kpi_subgroup_full", "invert_scale" }),
+    #"Filtered Rows" = Table.SelectRows(#"Expanded KPI_subgroups", each true),
+
+    // Ensure join column types match
+    #"Typed Join Columns" = Table.TransformColumnTypes(#"Filtered Rows", {{"kpi_id", type text}, {"country", type text}}),
+
+    // Ensure Endnote join columns are text
+    Endnote_Typed = Table.TransformColumnTypes(Endnote, {{"Key", type text}, {"Country", type text}}),
+
+    // Merge with Endnote
+    #"Merged with Endnote" = Table.NestedJoin(#"Typed Join Columns", {"kpi_id", "country"}, Endnote_Typed, {"Key", "Country"}, "endnote", JoinKind.LeftOuter),
+    #"Expanded Endnote" = Table.ExpandTableColumn(#"Merged with Endnote", "endnote", {"Value"}, {"endnote"})
 in
-     #"Filtered Rows"
+    #"Expanded Endnote"
