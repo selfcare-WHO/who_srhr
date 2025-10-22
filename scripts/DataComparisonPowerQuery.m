@@ -1,3 +1,34 @@
+// ============================================================================
+// WHO SRHR Data Comparison - Power Query Script
+// ============================================================================
+//
+// IMPORTANT: This file is stored in the repository for reference only.
+//
+// The actual query is embedded within the Excel workbook (prisma/data.xlsx)
+// and should be modified using Excel's Power Query Editor interface.
+//
+// To access and edit this query in Excel:
+// 1. Open prisma/data.xlsx
+// 2. Go to Data tab > Get Data > Launch Power Query Editor
+// 3. Select the "Comparison data" query
+// 4. Make your modifications in the Advanced Editor
+// 5. Click "Close & Load" to apply changes
+//
+// This script transforms raw data from multiple Excel sheets into the
+// "Comparison data" sheet format required by the database seeding process.
+//
+// It performs the following operations:
+// - Merges data from Main_Data, KPI_ID, KPI_details, and KPI_subgroups
+// - Standardizes column names and types
+// - Integrates endnote information
+// - Applies data transformations for database compatibility
+//
+// After making changes to this query in Excel, you should:
+// 1. Copy the updated M code to this file for version control
+// 2. Re-run the database seed: npx prisma db seed
+//
+// ============================================================================
+
 let
     Source = Excel.CurrentWorkbook(),
     Main_Data = Source{[Name="Main_Data"]}[Content],
