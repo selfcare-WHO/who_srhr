@@ -10,7 +10,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"yarn dev:nuxt\" \"yarn dev:prisma\" --names \"nuxt, prisma\" --prefix-colors green,magenta",
+    "dev": "clear && concurrently \"yarn dev:nuxt\" \"yarn dev:prisma\" --names \"nuxt, prisma\" --prefix-colors green,magenta",
     "dev:nuxt": "nuxi dev",
     "dev:prisma": "prisma studio --browser none",
     "build": "nuxi build",
