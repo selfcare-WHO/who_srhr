@@ -23,6 +23,8 @@ export const useMapStyles = ({
   const { isCBFriendly } = storeToRefs(colorStore)
 
   const mapLoaded = ref(false)
+  const patternsReady = ref(false)
+  let registeringPatterns = false
 
   const isInvertScale = computed(() => {
     return subgroup?.value?.invertScale ?? false
@@ -129,7 +131,7 @@ export const useMapStyles = ({
   })
 
   const countriesPaint = computed<mapboxgl.LayerSpecification['paint']>(() => {
-    if (!mapLoaded.value) return {}
+    if (!mapLoaded.value || !patternsReady.value) return {}
 
     if (dataTypeFilterValue.value === 'numerical_categorical') {
       if (indicator.value?.type === 'Nominal') return nominalPaint.value
@@ -144,61 +146,82 @@ export const useMapStyles = ({
   })
 
   useMapbox('world-map', map => {
-    const registerSolidPatterns = () => {
-      const solidColorMap: Record<string, string> = {}
+    const registerSolidPatterns = async () => {
+      // Prevent concurrent pattern registration
+      if (registeringPatterns) return
+      registeringPatterns = true
 
-      const jenksIndexes = [0, 1, 2, 3, 4]
+      try {
+        // Temporarily disable paint to prevent rendering with missing patterns
+        patternsReady.value = false
 
-      const getVarName = (idx: number) => `--el-bg-color-jenks-${idx}`
+        const solidColorMap: Record<string, string> = {}
 
-      jenksIndexes.forEach(originalIdx => {
-        const mappedIdx = isInvertScale.value
-          ? jenksIndexes[jenksIndexes.length - 1 - originalIdx]
-          : originalIdx
+        const jenksIndexes = [0, 1, 2, 3, 4]
 
-        solidColorMap[`jenks-${originalIdx}`] = generateSolidColorSVG(
-          parseCssVar(getVarName(mappedIdx))
-        )
-      })
+        const getVarName = (idx: number) => `--el-bg-color-jenks-${idx}`
 
-      Object.assign(solidColorMap, {
-        other: generateSolidColorSVG(parseCssVar('--el-color-warning')),
-        achieved: generateSolidColorSVG(parseCssVar('--achieved')),
-        'challenges-remain': generateSolidColorSVG(parseCssVar('--challenges')),
-        'major-challenges-remain': generateSolidColorSVG(
-          parseCssVar('--major-challenges')
-        ),
-        'data-not-available': generateSolidColorSVG(parseCssVar('--no-data'))
-      })
+        jenksIndexes.forEach(originalIdx => {
+          const mappedIdx = isInvertScale.value
+            ? jenksIndexes[jenksIndexes.length - 1 - originalIdx]
+            : originalIdx
 
-      // Include nominal legend buckets as solid patterns
-      if (nominalLegend?.value) {
-        Object.entries(nominalLegend.value).forEach(([bucketKey, item]) => {
-          if (item?.color) {
-            let colorValue = item.color
-            if (colorValue.startsWith('var(')) {
-              const varName = colorValue.slice(4, -1)
-              colorValue = parseCssVar(varName)
-            }
-
-            solidColorMap[bucketKey] = generateSolidColorSVG(colorValue)
-          }
+          solidColorMap[`jenks-${originalIdx}`] = generateSolidColorSVG(
+            parseCssVar(getVarName(mappedIdx))
+          )
         })
-      }
 
-      Object.entries(solidColorMap).forEach(([patternName, svg]) => {
-        // Remove existing image to allow re-adding with new data
-        if (map.hasImage(patternName)) {
-          map.removeImage(patternName)
+        Object.assign(solidColorMap, {
+          other: generateSolidColorSVG(parseCssVar('--el-color-warning')),
+          achieved: generateSolidColorSVG(parseCssVar('--achieved')),
+          'challenges-remain': generateSolidColorSVG(parseCssVar('--challenges')),
+          'major-challenges-remain': generateSolidColorSVG(
+            parseCssVar('--major-challenges')
+          ),
+          'data-not-available': generateSolidColorSVG(parseCssVar('--no-data'))
+        })
+
+        // Include nominal legend buckets as solid patterns
+        if (nominalLegend?.value) {
+          Object.entries(nominalLegend.value).forEach(([bucketKey, item]) => {
+            if (item?.color) {
+              let colorValue = item.color
+              if (colorValue.startsWith('var(')) {
+                const varName = colorValue.slice(4, -1)
+                colorValue = parseCssVar(varName)
+              }
+
+              solidColorMap[bucketKey] = generateSolidColorSVG(colorValue)
+            }
+          })
         }
 
-        loadSVGAsImage({
-          id: patternName,
-          map,
-          svgDataUri: svg as string,
-          pixelRatio: 1
+        // Collect all promises to wait for all patterns to load before repainting
+        const loadPromises: Promise<void>[] = []
+
+        Object.entries(solidColorMap).forEach(([patternName, svg]) => {
+          // Remove existing image to allow re-adding with new data
+          if (map.hasImage(patternName)) {
+            map.removeImage(patternName)
+          }
+
+          loadPromises.push(
+            loadSVGAsImage({
+              id: patternName,
+              map,
+              svgDataUri: svg as string,
+              pixelRatio: 1
+            })
+          )
         })
-      })
+
+        // Wait for all patterns to be loaded before triggering repaint
+        await Promise.all(loadPromises)
+      } finally {
+        // Always reset the mutex and re-enable paint
+        registeringPatterns = false
+        patternsReady.value = true
+      }
     }
 
     const registerHatchPattern = () => {
@@ -212,14 +235,17 @@ export const useMapStyles = ({
       }
     }
 
-    map.on('load', () => {
+    map.on('load', async () => {
       mapLoaded.value = true
       registerHatchPattern()
 
+      // Initial pattern registration
+      await registerSolidPatterns()
+
       watchImmediate(
         isCBFriendly,
-        () => {
-          registerSolidPatterns()
+        async () => {
+          await registerSolidPatterns()
           nextTick(() => map.triggerRepaint())
         },
         { flush: 'post' }
@@ -228,8 +254,8 @@ export const useMapStyles = ({
       // Re-register patterns whenever the nominal legend changes
       watchImmediate(
         nominalLegend ?? ref({}),
-        () => {
-          registerSolidPatterns()
+        async () => {
+          await registerSolidPatterns()
           nextTick(() => map.triggerRepaint())
         },
         { flush: 'post' }
@@ -238,8 +264,8 @@ export const useMapStyles = ({
       // Re-register patterns whenever the colour scale inversion flag changes
       watchImmediate(
         isInvertScale,
-        () => {
-          registerSolidPatterns()
+        async () => {
+          await registerSolidPatterns()
           nextTick(() => map.triggerRepaint())
         },
         { flush: 'post' }
