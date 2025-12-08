@@ -8,6 +8,7 @@ declare global {
       | 'Rate'
       | 'Nominal'
       | 'Ratio/Rank'
+      | 'Monetary'
 
     type DataRow = {
       kpi_id: string

@@ -33,6 +33,7 @@ export default ({
   })()
 
   const postfix = type === 'Percentage' ? '%' : ''
+  const prefix = type === 'Monetary' ? '$' : ''
 
   if (
     renderedValue === '' ||
@@ -47,8 +48,29 @@ export default ({
     if (renderedValue && translateObject[renderedValue]) {
       const translatedValue = translateObject[renderedValue]
       const capitalizedValue = capitalizeNominalValue(translatedValue)
-      return `${capitalizedValue}${postfix}`
+      return `${prefix}${capitalizedValue}${postfix}`
     }
+  }
+
+  // Handle Monetary type with special formatting
+  if (type === 'Monetary' && !isNaN(Number(renderedValue))) {
+    const numericValue = Number(renderedValue)
+
+    // For small numbers (< 1000), show 2 decimal places
+    if (Math.abs(numericValue) < 1000) {
+      const formattedSmall = new Intl.NumberFormat('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(numericValue)
+      return `${prefix}${formattedSmall}`
+    }
+
+    // For large numbers (>= 1000), omit decimals and add commas
+    const formattedLarge = new Intl.NumberFormat('en-US', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(numericValue)
+    return `${prefix}${formattedLarge}`
   }
 
   const formatter = new Intl.NumberFormat('en-US')
@@ -56,5 +78,5 @@ export default ({
     ? capitalizeNominalValue(renderedValue)
     : formatter.format(Number(renderedValue))
 
-  return `${formattedNumber}${postfix}`
+  return `${prefix}${formattedNumber}${postfix}`
 }
