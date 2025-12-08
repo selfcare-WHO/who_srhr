@@ -73,10 +73,9 @@ export default ({
     return `${prefix}${formattedLarge}`
   }
 
-  const formatter = new Intl.NumberFormat('en-US')
   const formattedNumber = isNaN(Number(renderedValue))
     ? capitalizeNominalValue(renderedValue)
-    : formatter.format(Number(renderedValue))
+    : renderedValue
 
   return `${prefix}${formattedNumber}${postfix}`
 }
