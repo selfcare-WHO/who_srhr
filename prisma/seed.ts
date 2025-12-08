@@ -11,11 +11,12 @@ async function resetDatabase() {
 }
 
 async function seedDomain(row: Data.DataRow) {
+  const domainId = typeof row.domain_id === 'string' ? parseInt(row.domain_id, 10) : row.domain_id
   return prisma.domain.upsert({
-    where: { id: row.domain_id },
+    where: { id: domainId },
     update: {},
     create: {
-      id: row.domain_id,
+      id: domainId,
       name: row.domain_name
     }
   })
@@ -40,6 +41,8 @@ async function seedIndicator(row: Data.DataRow) {
     where: { indicators: { some: { id: String(row.kpi_id) } } }
   })
 
+  const domainId = typeof row.domain_id === 'string' ? parseInt(row.domain_id, 10) : row.domain_id
+
   return prisma.indicator.upsert({
     where: { name: row.kpi_name },
     update: {
@@ -58,7 +61,7 @@ async function seedIndicator(row: Data.DataRow) {
         row.kpi_subheading?.trim() === '-'
           ? ''
           : row.kpi_subheading?.trim() || '',
-      domain: { connect: { id: row.domain_id } },
+      domain: { connect: { id: domainId } },
       type: row.kpi_data_type,
       subgroups: {
         connect: { name: row.kpi_subgroup }
@@ -78,17 +81,24 @@ async function seedIndicator(row: Data.DataRow) {
 }
 
 async function seedDataPoint(row: Data.DataRow) {
+  const currentYear = typeof row.current_year === 'string' ? parseInt(row.current_year, 10) : row.current_year
+
+  // Convert values to strings, preserving formatting from Excel
+  const originalValue = row.original_value != null ? String(row.original_value) : undefined
+  const parsedValue = row.value_to_use != null ? String(row.value_to_use) : undefined
+  const value = row.value != null ? String(row.value) : undefined
+
   return prisma.dataPoint.create({
     data: {
       indicator: { connect: { id: String(row.kpi_id) } },
       subgroup: { connect: { name: row.kpi_subgroup } },
       country: { connect: { code: row.country_code } },
       currentYearSource: row.current_year_source,
-      currentYear: row.current_year,
+      currentYear: currentYear,
       source: row.source,
-      originalValue: row.original_value?.toString(),
-      parsedValue: row.value_to_use?.toString(),
-      value: row.value?.toString(),
+      originalValue,
+      parsedValue,
+      value,
       change: row.change,
       trend: row.trend_color
     }
@@ -111,10 +121,10 @@ async function main() {
   await resetDatabase()
 
   const path = fileURLToPath(new URL('./data.xlsx', import.meta.url))
-  const workbook = xlsx.readFile(path)
+  const workbook = xlsx.readFile(path, { cellText: false, cellDates: false })
   const worksheet = workbook.Sheets['Comparison data']
 
-  const dataRows = xlsx.utils.sheet_to_json(worksheet) satisfies Data.DataRow[]
+  const dataRows = xlsx.utils.sheet_to_json(worksheet, { raw: false, defval: null }) satisfies Data.DataRow[]
 
   const countriesSheet = workbook.Sheets['WHO Countries']
   const countriesRows = xlsx.utils.sheet_to_json(
