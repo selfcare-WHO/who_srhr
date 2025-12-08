@@ -53,8 +53,7 @@ else "stop"),
   #"Removed columns 2" = Table.RemoveColumns(#"Inserted conditional column 1", {"Value"}),
   #"Renamed columns 2" = Table.RenameColumns(#"Removed columns 2", {{"Custom", "Value"}}),
   #"Inserted conditional column 2" = Table.AddColumn(#"Renamed columns 2", "Custom", each if [load status] = "stop" then "" else [Value to use]),
-  #"Changed column type 1" = Table.TransformColumnTypes(#"Inserted conditional column 2", {{"Custom", type number}}),
-  #"Removed columns 3" = Table.RemoveColumns(#"Changed column type 1", {"Value to use"}),
+  #"Removed columns 3" = Table.RemoveColumns(#"Inserted conditional column 2", {"Value to use"}),
   #"Renamed columns 3" = Table.RenameColumns(#"Removed columns 3", {{"Custom", "Value to use"}}),
   #"Inserted conditional column 3" = Table.AddColumn(#"Renamed columns 3", "Custom", each if [load status] = "stop" then "" else [Value adv]),
   #"Removed columns 4" = Table.RemoveColumns(#"Inserted conditional column 3", {"Value adv"}),
@@ -64,6 +63,8 @@ else "stop"),
   #"Renamed columns 5" = Table.RenameColumns(#"Removed columns 5", {{"Custom", "Change"}}),
   #"Added custom 2" = Table.AddColumn(#"Renamed columns 5", "trend color new", each if [load status]="stop" and [Trend color]<>"No Data" and [Trend color]<>null then "No Data" else [Trend color]),
   #"Removed columns 6" = Table.RemoveColumns(#"Added custom 2", {"Trend color"}),
-  #"Renamed columns 6" = Table.RenameColumns(#"Removed columns 6", {{"trend color new", "Trend color"}})
+  #"Renamed columns 6" = Table.RenameColumns(#"Removed columns 6", {{"trend color new", "Trend color"}}),
+  #"Formatted Value to use" = Table.TransformColumns(#"Renamed columns 6", {{"Value to use", each if _ is number then Number.ToText(_, "0.0") else _, type text}}),
+  #"Formatted Value adv" = Table.TransformColumns(#"Formatted Value to use", {{"Value adv", each if _ is number then Number.ToText(_, "0.0") else if _ is text then _ else null, type text}})
 in
-    #"Renamed columns 6"
+    #"Formatted Value adv"
