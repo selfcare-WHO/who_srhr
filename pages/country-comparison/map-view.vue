@@ -163,10 +163,12 @@
   const {
     showPopover,
     virtualElementRef,
-    popoverData,
+    popoverData: _popoverData,
     coordinatesStyle,
     onGlobalMouseMove
   } = popover
+
+  const popoverData = computed(() => _popoverData as Map.PopoverData)
 
   const { onCenterMap, onWheel, onMouseMove, onMouseLeave } = useMapEvents(
     mapRef,

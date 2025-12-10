@@ -5,7 +5,7 @@ export const useMapPopover = (
   const showPopover = ref(false)
   const hoveredFeatureId = ref<string | number>('')
   const virtualElementRef = ref<HTMLElement | undefined>()
-  const popoverData = reactive<Map.PopoverData>({})
+  const popoverData = reactive({} as Map.PopoverData)
   const popoverCoordinates = ref<mapboxgl.Point | undefined>()
 
   const coordinatesStyle = computed(() =>

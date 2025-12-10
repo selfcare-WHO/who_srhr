@@ -128,7 +128,7 @@
       return
     }
 
-    tabulator.value = new Tabulator(tableElement.value, {
+    tabulator.value = new Tabulator(tableElement.value as HTMLElement, {
       height: TABLE_HEIGHT,
       columnHeaderVertAlign: 'bottom',
       renderHorizontal: 'basic',

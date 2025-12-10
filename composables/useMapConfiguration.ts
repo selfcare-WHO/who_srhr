@@ -1,9 +1,7 @@
-import type { MapboxComponentOptions } from 'nuxt-mapbox'
-
 export const useMapConfiguration = (
   countriesPaint: ComputedRef<mapboxgl.LayerSpecification['paint']>
 ) => {
-  const mapOptions: MapboxComponentOptions = {
+  const mapOptions = {
     center: [20, 20],
     maxBounds: [
       [-200, -70],

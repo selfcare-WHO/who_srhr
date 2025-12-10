@@ -100,7 +100,7 @@
 
       if (distance < minDistance) {
         minDistance = distance
-        closestCircle = circle
+        closestCircle = circle as CircleData
       }
     })
 
@@ -119,7 +119,7 @@
     if (!chartContainer.value) return
 
     // Clear any previous content
-    d3.select(chartContainer.value).selectAll('*').remove()
+    d3.select(chartContainer.value as HTMLElement).selectAll('*').remove()
 
     // Do not render chart when there is no data
     if (!hasData.value) return
@@ -128,7 +128,7 @@
     const height = 60
 
     const svg = d3
-      .select(chartContainer.value)
+      .select(chartContainer.value as HTMLElement)
       .append('svg')
       .attr('width', chartWidth.value)
       .attr('height', height)
@@ -142,7 +142,7 @@
           .join(';')
       )
 
-    d3.select(chartContainer.value)
+    d3.select(chartContainer.value as HTMLElement)
       .select('svg')
       .on('mousemove', useThrottleFn(handleMouseMove, 100))
       .on('mouseleave', () => {
