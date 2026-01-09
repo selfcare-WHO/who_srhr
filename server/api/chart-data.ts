@@ -2,25 +2,9 @@ import prisma from '~/lib/prisma'
 import isNullish from '~/utils/isNullish'
 import type { Prisma, Indicator, Subgroup } from '@prisma/client'
 
-type ChartFilters = {
-  indicator: string[]
-  country: string[]
-  highlight: string
-  size?: number
-  page?: number
-}
-
-type DataPointInclude = Prisma.DataPointGetPayload<{
-  include: {
-    country: true
-    indicator: true
-    subgroup: true
-  }
-}>
-
 export default defineEventHandler(async event => {
   const query = getQuery(event)
-  const filters: ChartFilters = {
+  const filters: Filter.ChartFilters = {
     indicator: Array.isArray(query.indicator)
       ? query.indicator
       : query.indicator
@@ -172,7 +156,7 @@ function hasHighlightedCountryData(
 }
 
 function createChartData(
-  filteredDataPoints: DataPointInclude[],
+  filteredDataPoints: Chart.DataPointInclude[],
   indicator: Indicator,
   subgroup?: Subgroup,
   highlightId?: string

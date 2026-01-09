@@ -1,3 +1,5 @@
+import type { Prisma } from '@prisma/client'
+
 declare global {
   namespace Chart {
     type DataPoint = {
@@ -17,5 +19,13 @@ declare global {
       maxValue: number
       dataPoints: DataPoint[]
     }
+
+    type DataPointInclude = Prisma.DataPointGetPayload<{
+      include: {
+        country: true
+        indicator: true
+        subgroup: true
+      }
+    }>
   }
 }

@@ -58,5 +58,13 @@ declare global {
       country: string[]
       highlight: string
     }
+
+    type ChartFilters = {
+      indicator: string[]
+      country: string[]
+      highlight: string
+      size?: number
+      page?: number
+    }
   }
 }
