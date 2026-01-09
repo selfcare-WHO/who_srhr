@@ -9,20 +9,20 @@ import type {
 
 declare global {
   namespace Prisma {
-    export type Domain = PrismaDomain
-    export type Country = PrismaCountry
-    export type Subgroup = PrismaSubgroup
-    export type Indicator = PrismaIndicator
-    export type DataPoint = PrismaDataPoint
+    type Domain = PrismaDomain
+    type Country = PrismaCountry
+    type Subgroup = PrismaSubgroup
+    type Indicator = PrismaIndicator
+    type DataPoint = PrismaDataPoint
 
-    export type DataPointWhereInput = PrismaClient.DataPointWhereInput
+    type DataPointWhereInput = PrismaClient.DataPointWhereInput
 
-    export type IndicatorWithSubgroups = PrismaClient.IndicatorGetPayload<{
+    type IndicatorWithSubgroups = PrismaClient.IndicatorGetPayload<{
       include: { subgroups: true }
     }>
 
     // Serialized version of IndicatorWithSubgroups for use with API responses
-    export type SerializedIndicatorWithSubgroups = {
+    type SerializedIndicatorWithSubgroups = {
       id: string
       name: string
       fullName: string
@@ -48,7 +48,7 @@ declare global {
       }[]
     }
 
-    export type DataPointWithType = DataPoint & {
+    type DataPointWithType = DataPoint & {
       indicator: {
         type: string
         id: string
@@ -56,12 +56,12 @@ declare global {
     }
 
     // Type including the country relation
-    export type DataPointWithCountry = PrismaClient.DataPointGetPayload<{
+    type DataPointWithCountry = PrismaClient.DataPointGetPayload<{
       include: { country: true }
     }>
 
     // Type for indicator with data points and country
-    export type IndicatorWithDataPoints = PrismaClient.IndicatorGetPayload<{
+    type IndicatorWithDataPoints = PrismaClient.IndicatorGetPayload<{
       include: {
         dataPoints: {
           include: { country: true }

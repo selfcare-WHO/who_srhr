@@ -52,25 +52,25 @@ declare global {
       country_income_type?: string
     }
 
-    interface IndicatorTooltipData {
+    type IndicatorTooltipData = {
       fullName?: string
       subheading?: string
       element?: HTMLElement
     }
 
-    interface TableRow {
+    type TableRow = {
       country: string
       [key: string]: any
     }
 
-    interface TableData {
+    type TableData = {
       columns: ColumnDefinition[]
       data: TableRow[]
     }
 
     type Value = number | string | null | undefined
 
-    interface Legend {
+    type Legend = {
       [key: string]: {
         name: string
         dbValue?: string

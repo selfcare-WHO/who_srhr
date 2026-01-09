@@ -1,13 +1,13 @@
 declare global {
   namespace Chart {
-    export interface DataPoint {
+    type DataPoint = {
       countryId: string
       countryName: string
       value?: string
       isHighlighted: boolean
     }
 
-    export interface Data {
+    type Data = {
       indicatorId: string
       indicatorName: string
       subheading: string
