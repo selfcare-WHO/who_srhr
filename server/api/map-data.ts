@@ -143,7 +143,7 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
       const translatedValue = (() => {
         if (translateValue) {
           const translateObject = JSON.parse(translateValue)
-          return translateObject[bucketKeyStr]
+          return translateObject[bucketKeyStr] ?? bucketKeyStr
         }
         return bucketKeyStr
       })()
@@ -250,14 +250,14 @@ export default defineEventHandler(async (event): Promise<Map.DataPoints> => {
     }
 
     const propertiesMap: Record<string, any> = {}
-    
+
     for (const [countryCode, dataPoint] of dataPointsByCountry) {
       const isRange = dataPoint?.value
         ? dataPoint.value.match(/^\d+-\d+$/) !== null
         : false
-      const [rangeMin, rangeMax] = dataPoint?.value
-        ?.split('-')
-        .map(Number) ?? [0, 0]
+      const [rangeMin, rangeMax] = dataPoint?.value?.split('-').map(Number) ?? [
+        0, 0
+      ]
 
       const rangeAverage = (rangeMin + rangeMax) / 2
 
