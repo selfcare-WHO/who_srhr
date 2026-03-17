@@ -17,7 +17,12 @@ export const useMapConfiguration = (
     maxZoom: 6,
     minZoom: 0.5,
     projection: 'mercator',
-    maxTileCacheSize: 0
+    maxTileCacheSize: 0,
+    maxPitch: 0,
+    pitchWithRotate: false,
+    touchPitch: false,
+    touchZoomRotate: false,
+    dragRotate: false
   }
 
   const tilesUrl =
