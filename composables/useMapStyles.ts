@@ -8,6 +8,7 @@ const parseCssVar = (varName: string): string => {
 
 /** Mix a hex color 25 % toward white (same visual effect as 0.75 opacity over white). */
 const lighten = (hex: string, amount = 0.25): string => {
+  if (!/^#[0-9a-fA-F]{6}$/.test(hex)) return hex
   const r = parseInt(hex.slice(1, 3), 16)
   const g = parseInt(hex.slice(3, 5), 16)
   const b = parseInt(hex.slice(5, 7), 16)
