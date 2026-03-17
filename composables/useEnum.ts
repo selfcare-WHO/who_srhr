@@ -79,10 +79,6 @@ export const useEnum = () => {
     other: {
       name: 'Other countries',
       twClass: 'h-4 w-4 rounded-full bg-info-light/60'
-    },
-    globalTarget: {
-      name: 'Global target',
-      twClass: 'h-4 w-1 bg-primary'
     }
   }
 

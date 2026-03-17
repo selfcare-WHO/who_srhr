@@ -196,7 +196,7 @@ function createChartData(
     indicatorId: indicator.id,
     indicatorName: indicator.fullName,
     subheading: indicator.subheading || '',
-    subgroupName: subgroup?.name || '',
+    subgroupName: subgroup?.fullName || '',
     type: indicator.type as Data.IndicatorDataType,
     minValue,
     maxValue,
