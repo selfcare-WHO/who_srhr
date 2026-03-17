@@ -181,6 +181,7 @@ function createChartData(
     countryId: String(point.countryId),
     countryName: point.country.name,
     value: point.value ?? undefined,
+    originalValue: point.originalValue ?? undefined,
     isHighlighted: String(point.countryId) === highlightId
   }))
 

@@ -1,5 +1,32 @@
 import { capitalizeNominalValue } from './capitalizeNominalValue'
 
+const COMPARISON_RE = /^([<>≤≥])\s*(.+)/
+
+/** Separate a leading comparison operator (`<`, `>`, `≤`, `≥`) from the rest. */
+const parseComparison = (raw: string) => {
+  const m = raw.match(COMPARISON_RE)
+  return m ? { sign: m[1], body: m[2] } : { sign: '', body: raw }
+}
+
+/** Format a number respecting indicator-type conventions. */
+const formatNumber = (n: number, type?: string): string => {
+  if (type === 'Monetary') {
+    const fractionDigits = Math.abs(n) < 1000 ? 2 : 0
+    return new Intl.NumberFormat('en-US', {
+      minimumFractionDigits: fractionDigits,
+      maximumFractionDigits: fractionDigits
+    }).format(n)
+  }
+  return new Intl.NumberFormat('en-US').format(n)
+}
+
+/** Wrap a formatted body with the indicator-type prefix ($) and postfix (%). */
+const applyTypeAffixes = (body: string, type?: string): string => {
+  const pre = type === 'Monetary' ? '$' : ''
+  const post = type === 'Percentage' ? '%' : ''
+  return `${pre}${body}${post}`
+}
+
 export default ({
   indicator,
   dataPoint,
@@ -10,73 +37,38 @@ export default ({
   value?: string
 }): string => {
   const { type, translateValue, displayValue } = indicator || {}
-  const { value: dataPointValue, originalValue } = dataPoint || {}
-  const renderedValue = (() => {
-    let returnValue: Data.Value
 
+  // 1. Resolve the raw display string
+  const raw = (() => {
     if (dataPoint) {
-      returnValue =
-        displayValue === 'original_value' ? originalValue : dataPointValue
-    } else if (
-      value !== undefined &&
-      value !== null &&
-      !Number.isNaN(Number(value))
-    ) {
-      returnValue = Number.isInteger(Number(value))
-        ? value.toString()
-        : Number(value).toFixed(2)
-    } else {
-      returnValue = ''
+      const v =
+        displayValue === 'original_value'
+          ? dataPoint.originalValue
+          : dataPoint.value
+      return v?.trim() ?? ''
     }
-
-    return returnValue
+    return value?.trim() ?? ''
   })()
 
-  const postfix = type === 'Percentage' ? '%' : ''
-  const prefix = type === 'Monetary' ? '$' : ''
+  if (!raw) return 'No data'
 
-  if (
-    renderedValue === '' ||
-    renderedValue === null ||
-    renderedValue === undefined
-  )
-    return 'No data'
-
+  // 2. Translate categorical values via the indicator's lookup map
   if (translateValue) {
-    const translateObject = JSON.parse(translateValue)
-
-    if (renderedValue && translateObject[renderedValue]) {
-      const translatedValue = translateObject[renderedValue]
-      const capitalizedValue = capitalizeNominalValue(translatedValue)
-      return `${prefix}${capitalizedValue}${postfix}`
-    }
+    const map = JSON.parse(translateValue)
+    if (map[raw])
+      return applyTypeAffixes(
+        capitalizeNominalValue(map[raw]) as string,
+        type
+      )
   }
 
-  // Handle Monetary type with special formatting
-  if (type === 'Monetary' && !isNaN(Number(renderedValue))) {
-    const numericValue = Number(renderedValue)
+  // 3. Separate optional comparison sign and parse the numeric body
+  const { sign, body } = parseComparison(raw)
+  const num = Number(body)
 
-    // For small numbers (< 1000), show 2 decimal places
-    if (Math.abs(numericValue) < 1000) {
-      const formattedSmall = new Intl.NumberFormat('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      }).format(numericValue)
-      return `${prefix}${formattedSmall}`
-    }
+  if (Number.isNaN(num))
+    return applyTypeAffixes(capitalizeNominalValue(raw) as string, type)
 
-    // For large numbers (>= 1000), omit decimals and add commas
-    const formattedLarge = new Intl.NumberFormat('en-US', {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(numericValue)
-    return `${prefix}${formattedLarge}`
-  }
-
-  const formatter = new Intl.NumberFormat('en-US')
-  const formattedNumber = isNaN(Number(renderedValue))
-    ? capitalizeNominalValue(renderedValue)
-    : formatter.format(Number(renderedValue))
-
-  return `${prefix}${formattedNumber}${postfix}`
+  // 4. Format and wrap
+  return applyTypeAffixes(`${sign}${formatNumber(num, type)}`, type)
 }

@@ -4,6 +4,7 @@ declare global {
       countryId: string
       countryName: string
       value?: string
+      originalValue?: string
       isHighlighted: boolean
     }
 
