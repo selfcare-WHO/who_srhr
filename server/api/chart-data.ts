@@ -81,6 +81,7 @@ export default defineEventHandler(async event => {
           const subgroupDataPoints = dataPoints.filter(
             dp =>
               !isNullish(dp.value) &&
+              !isNaN(Number(dp.value)) &&
               dp.indicatorId === indicator.id &&
               dp.subgroupId === subgroup.id
           )
@@ -111,7 +112,10 @@ export default defineEventHandler(async event => {
         }
       } else {
         const indicatorDataPoints = dataPoints.filter(
-          dp => !isNullish(dp.value) && dp.indicatorId === indicator.id
+          dp =>
+            !isNullish(dp.value) &&
+            !isNaN(Number(dp.value)) &&
+            dp.indicatorId === indicator.id
         )
 
         const passesHighlight =
@@ -167,7 +171,10 @@ function hasHighlightedCountryData(
   highlightId: string
 ): boolean {
   return dataPoints.some(
-    dp => dp.countryId === Number(highlightId) && !isNullish(dp.value)
+    dp =>
+      dp.countryId === Number(highlightId) &&
+      !isNullish(dp.value) &&
+      !isNaN(Number(dp.value))
   )
 }
 
