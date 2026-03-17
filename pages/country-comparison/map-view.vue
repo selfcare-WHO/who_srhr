@@ -7,10 +7,11 @@
 
     .map-container(
       class="relative h-full min-h-[80vh] w-full"
-      v-loading="isFetching || isInitializing"
+      v-loading="isFetching || isInitializing || isMapRefreshing"
     )
       MapboxMap(
-        class="h-full min-h-[80vh] w-full rounded-lg"
+        class="h-full min-h-[80vh] w-full rounded-lg transition-opacity duration-150"
+        :class="{ 'opacity-0': isFetching || isInitializing || isMapRefreshing }"
         map-id="world-map"
         :options="mapOptions"
         @wheel.passive="onWheel"
@@ -171,6 +172,98 @@
   } = popover
 
   const popoverData = computed(() => _popoverData as Map.PopoverData)
+  const isMapRefreshing = ref(false)
+  let repaintTimeout: number | undefined
+  let refreshToken = 0
+
+  /**
+   * Yield long enough for the browser to paint a frame (keeps v-loading alive).
+   * requestAnimationFrame fires *before* the next paint, and the nested
+   * setTimeout fires *after* that paint, so we're guaranteed the compositor
+   * ran at least once between our JS chunks.
+   */
+  const yieldToBrowser = () =>
+    new Promise<void>(resolve => {
+      requestAnimationFrame(() => {
+        setTimeout(resolve, 0)
+      })
+    })
+
+  const queueMapRepaint = (map: mapboxgl.Map) => {
+    if (repaintTimeout) {
+      window.clearTimeout(repaintTimeout)
+    }
+
+    repaintTimeout = window.setTimeout(() => {
+      map.triggerRepaint()
+      repaintTimeout = undefined
+    }, 0)
+  }
+
+  const waitForMapIdle = (map: mapboxgl.Map, token: number) =>
+    new Promise<void>(resolve => {
+      let timeoutId: number | undefined
+
+      const finalize = () => {
+        map.off('idle', handleIdle)
+
+        if (timeoutId) {
+          clearTimeout(timeoutId)
+        }
+
+        resolve()
+      }
+
+      const handleIdle = () => {
+        finalize()
+      }
+
+      map.on('idle', handleIdle)
+      queueMapRepaint(map)
+
+      requestAnimationFrame(() => {
+        if (
+          token === refreshToken &&
+          map.loaded() &&
+          !map.isMoving() &&
+          map.areTilesLoaded()
+        ) {
+          finalize()
+        }
+      })
+
+      timeoutId = window.setTimeout(finalize, 1500)
+    })
+
+  watch(
+    [isFetching, isInitializing, linkedFeaturesSource, countriesPaint],
+    async () => {
+      const map = mapRef.value
+      const token = ++refreshToken
+
+      if (isFetching.value || isInitializing.value) {
+        isMapRefreshing.value = true
+        return
+      }
+
+      if (!map) {
+        isMapRefreshing.value = false
+        return
+      }
+
+      isMapRefreshing.value = true
+      await nextTick()
+      await yieldToBrowser()
+      await waitForMapIdle(map, token)
+
+      if (token !== refreshToken) {
+        return
+      }
+
+      isMapRefreshing.value = false
+    },
+    { flush: 'post' }
+  )
 
   const { onCenterMap, onWheel, onMouseMove, onMouseLeave } = useMapEvents(
     mapRef,
@@ -179,6 +272,11 @@
 
   onBeforeUnmount(() => {
     showPopover.value = false
+    isMapRefreshing.value = false
+
+    if (repaintTimeout) {
+      clearTimeout(repaintTimeout)
+    }
   })
 </script>
 
