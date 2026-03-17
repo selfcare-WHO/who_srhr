@@ -1,7 +1,7 @@
 export const useMapConfiguration = (
   countriesPaint: ComputedRef<mapboxgl.LayerSpecification['paint']>
 ) => {
-  const mapOptions = {
+  const mapOptions: Omit<mapboxgl.MapOptions, 'container'> = {
     center: [20, 20],
     maxBounds: [
       [-200, -70],
@@ -16,7 +16,8 @@ export const useMapConfiguration = (
     zoom: 1.5,
     maxZoom: 6,
     minZoom: 0.5,
-    projection: 'mercator'
+    projection: 'mercator',
+    maxTileCacheSize: 0
   }
 
   const tilesUrl =
@@ -44,6 +45,13 @@ export const useMapConfiguration = (
     source: 'who-world-features',
     paint: countriesPaint.value as mapboxgl.FillLayerSpecification['paint']
   }))
+
+  const countriesHatchLayer: mapboxgl.LayerSpecification = {
+    id: 'countries-hatch',
+    type: 'fill',
+    source: 'who-world-features',
+    paint: { 'fill-pattern': 'hatch-pattern' }
+  }
 
   const countriesBoundaryLayer: mapboxgl.LayerSpecification = {
     id: 'countries-boundary',
@@ -123,6 +131,7 @@ export const useMapConfiguration = (
     WHOWorldBasemapSource,
     backgroundLayer,
     countriesLayer,
+    countriesHatchLayer,
     countriesBoundaryLayer,
     admin0Layer,
     disputedTerritoriesLayer,

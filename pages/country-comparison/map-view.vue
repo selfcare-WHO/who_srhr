@@ -26,7 +26,8 @@
           :source="linkedFeaturesSource"
         )
 
-        MapboxLayer(:layer="backgroundLayer" before-layer="countries")
+        MapboxLayer(:layer="backgroundLayer" before-layer="countries-hatch")
+        MapboxLayer(:layer="countriesHatchLayer" before-layer="countries")
         MapboxLayer(
           :layer="countriesLayer"
           @mousemove="onMouseMove"
@@ -149,6 +150,7 @@
     WHOWorldBasemapSource,
     backgroundLayer,
     countriesLayer,
+    countriesHatchLayer,
     countriesBoundaryLayer,
     admin0Layer,
     disputedTerritoriesLayer,

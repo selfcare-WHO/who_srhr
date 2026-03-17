@@ -1,8 +1,20 @@
 const parseCssVar = (varName: string): string => {
   return (
-    getComputedStyle(document.documentElement).getPropertyValue(varName) ||
-    '#cccccc'
+    getComputedStyle(document.documentElement)
+      .getPropertyValue(varName)
+      .trim() || '#cccccc'
   )
+}
+
+/** Mix a hex color 25 % toward white (same visual effect as 0.75 opacity over white). */
+const lighten = (hex: string, amount = 0.25): string => {
+  const r = parseInt(hex.slice(1, 3), 16)
+  const g = parseInt(hex.slice(3, 5), 16)
+  const b = parseInt(hex.slice(5, 7), 16)
+  const lr = Math.round(r + (255 - r) * amount)
+  const lg = Math.round(g + (255 - g) * amount)
+  const lb = Math.round(b + (255 - b) * amount)
+  return `#${lr.toString(16).padStart(2, '0')}${lg.toString(16).padStart(2, '0')}${lb.toString(16).padStart(2, '0')}`
 }
 
 export const useMapStyles = ({
@@ -22,65 +34,90 @@ export const useMapStyles = ({
   const colorStore = useColorStore()
   const { isCBFriendly } = storeToRefs(colorStore)
 
-  const mapLoaded = ref(false)
-  const patternsReady = ref(false)
-  let registeringPatterns = false
-
   const isInvertScale = computed(() => {
     return subgroup?.value?.invertScale ?? false
   })
 
-  const targetsPaint = computed<mapboxgl.LayerSpecification['paint']>(() => ({
-    'fill-opacity': [
-      'case',
-      ['boolean', ['feature-state', 'hover'], false],
-      0.75,
-      1
-    ],
-    'fill-pattern': [
-      'case',
-      ['==', ['get', 'change'], 'Achieved'],
-      'achieved',
-      ['==', ['get', 'change'], 'Challenges remain'],
-      'challenges-remain',
-      ['==', ['get', 'change'], 'Major challenges remain'],
-      'major-challenges-remain',
-      ['==', ['get', 'change'], 'Data not available'],
-      'hatch-pattern',
-      // fallback color
-      'hatch-pattern'
-    ]
-  }))
+  const targetsPaint = computed<mapboxgl.LayerSpecification['paint']>(() => {
+    // Read isCBFriendly to create a Vue dependency — parseCssVar reads
+    // CSS variables that the color store sets synchronously
+    void isCBFriendly.value
+
+    const achieved = parseCssVar('--achieved')
+    const challenges = parseCssVar('--challenges')
+    const majorChallenges = parseCssVar('--major-challenges')
+
+    return {
+      'fill-color': [
+        'case',
+        ['boolean', ['feature-state', 'hover'], false],
+        [
+          'case',
+          ['==', ['get', 'change'], 'Achieved'],
+          lighten(achieved),
+          ['==', ['get', 'change'], 'Challenges remain'],
+          lighten(challenges),
+          ['==', ['get', 'change'], 'Major challenges remain'],
+          lighten(majorChallenges),
+          'rgba(0,0,0,0)'
+        ],
+        [
+          'case',
+          ['==', ['get', 'change'], 'Achieved'],
+          achieved,
+          ['==', ['get', 'change'], 'Challenges remain'],
+          challenges,
+          ['==', ['get', 'change'], 'Major challenges remain'],
+          majorChallenges,
+          'rgba(0,0,0,0)'
+        ]
+      ]
+    }
+  })
 
   const heatmapPaint = computed<mapboxgl.LayerSpecification['paint']>(() => {
+    // Reactive dependency on CBF and invert scale
+    void isCBFriendly.value
+    void isInvertScale.value
+
     if (!jenksBreaks?.value || jenksBreaks.value.length === 0) return {}
 
     const breaks = jenksBreaks.value.map(breakPoint =>
       typeof breakPoint === 'string' ? Number(breakPoint) : breakPoint
     )
 
-    // Abort if any breakpoint cannot be converted to a number
     if (breaks.some(value => Number.isNaN(value))) return {}
+
+    const jenksIndexes = [0, 1, 2, 3, 4]
+
+    const resolveJenksColor = (originalIdx: number) => {
+      const mappedIdx = isInvertScale.value
+        ? jenksIndexes[jenksIndexes.length - 1 - originalIdx]
+        : originalIdx
+      return parseCssVar(`--el-bg-color-jenks-${mappedIdx}`)
+    }
 
     let dynamicClassification: any
 
     if (breaks.length === 1) {
-      dynamicClassification = 'jenks-0'
+      dynamicClassification = resolveJenksColor(0)
     } else {
       dynamicClassification = ['case']
 
       for (let i = breaks.length - 1; i > 0; i -= 1) {
         dynamicClassification.push(
           ['>', ['to-number', ['get', 'value']], breaks[i]],
-          `jenks-${i}`
+          resolveJenksColor(i)
         )
       }
 
-      dynamicClassification.push('jenks-0')
+      dynamicClassification.push(resolveJenksColor(0))
     }
 
+    const otherColor = parseCssVar('--el-color-warning')
+
     return {
-      'fill-pattern': [
+      'fill-color': [
         'case',
         ['to-boolean', ['get', 'value']],
         [
@@ -91,16 +128,18 @@ export const useMapStyles = ({
             -999999999999999
           ],
           dynamicClassification,
-          'other'
+          otherColor
         ],
-        'hatch-pattern'
+        'rgba(0,0,0,0)'
       ]
     }
   })
 
   const nominalPaint = computed<mapboxgl.LayerSpecification['paint']>(() => {
+    // Reactive dependency on CBF
+    void isCBFriendly.value
+
     if (
-      !mapLoaded.value ||
       dataTypeFilterValue.value !== 'numerical_categorical' ||
       indicator.value?.type !== 'Nominal' ||
       !nominalLegend?.value
@@ -111,28 +150,32 @@ export const useMapStyles = ({
 
     if (bucketKeys.length === 0) return {}
 
-    const patternExpression: any[] = ['match', ['get', 'bucketKey']]
+    const colorExpression: any[] = ['match', ['get', 'bucketKey']]
+    const hoverColorExpression: any[] = ['match', ['get', 'bucketKey']]
     bucketKeys.forEach(key => {
-      patternExpression.push(key, key)
+      const item = nominalLegend!.value![key]
+      let colorValue = item?.color || '#cccccc'
+      if (colorValue.startsWith('var(')) {
+        const varName = colorValue.slice(4, -1)
+        colorValue = parseCssVar(varName)
+      }
+      colorExpression.push(key, colorValue)
+      hoverColorExpression.push(key, lighten(colorValue))
     })
-    patternExpression.push('hatch-pattern')
+    colorExpression.push('rgba(0,0,0,0)')
+    hoverColorExpression.push('rgba(0,0,0,0)')
 
-    const paint: any = {
-      'fill-opacity': [
+    return {
+      'fill-color': [
         'case',
         ['boolean', ['feature-state', 'hover'], false],
-        0.75,
-        1
-      ],
-      'fill-pattern': patternExpression
-    }
-
-    return paint as mapboxgl.LayerSpecification['paint']
+        hoverColorExpression,
+        colorExpression
+      ]
+    } as mapboxgl.LayerSpecification['paint']
   })
 
   const countriesPaint = computed<mapboxgl.LayerSpecification['paint']>(() => {
-    if (!mapLoaded.value || !patternsReady.value) return {}
-
     if (dataTypeFilterValue.value === 'numerical_categorical') {
       if (indicator.value?.type === 'Nominal') return nominalPaint.value
       return heatmapPaint.value
@@ -142,89 +185,12 @@ export const useMapStyles = ({
       return targetsPaint.value
     }
 
-    return {}
+    return { 'fill-color': 'rgba(0,0,0,0)' }
   })
 
+  // Register the hatch pattern image once on map load
   useMapbox('world-map', map => {
-    const registerSolidPatterns = async () => {
-      // Prevent concurrent pattern registration
-      if (registeringPatterns) return
-      registeringPatterns = true
-
-      try {
-        // Temporarily disable paint to prevent rendering with missing patterns
-        patternsReady.value = false
-
-        const solidColorMap: Record<string, string> = {}
-
-        const jenksIndexes = [0, 1, 2, 3, 4]
-
-        const getVarName = (idx: number) => `--el-bg-color-jenks-${idx}`
-
-        jenksIndexes.forEach(originalIdx => {
-          const mappedIdx = isInvertScale.value
-            ? jenksIndexes[jenksIndexes.length - 1 - originalIdx]
-            : originalIdx
-
-          solidColorMap[`jenks-${originalIdx}`] = generateSolidColorSVG(
-            parseCssVar(getVarName(mappedIdx))
-          )
-        })
-
-        Object.assign(solidColorMap, {
-          other: generateSolidColorSVG(parseCssVar('--el-color-warning')),
-          achieved: generateSolidColorSVG(parseCssVar('--achieved')),
-          'challenges-remain': generateSolidColorSVG(parseCssVar('--challenges')),
-          'major-challenges-remain': generateSolidColorSVG(
-            parseCssVar('--major-challenges')
-          ),
-          'data-not-available': generateSolidColorSVG(parseCssVar('--no-data'))
-        })
-
-        // Include nominal legend buckets as solid patterns
-        if (nominalLegend?.value) {
-          Object.entries(nominalLegend.value).forEach(([bucketKey, item]) => {
-            if (item?.color) {
-              let colorValue = item.color
-              if (colorValue.startsWith('var(')) {
-                const varName = colorValue.slice(4, -1)
-                colorValue = parseCssVar(varName)
-              }
-
-              solidColorMap[bucketKey] = generateSolidColorSVG(colorValue)
-            }
-          })
-        }
-
-        // Collect all promises to wait for all patterns to load before repainting
-        const loadPromises: Promise<void>[] = []
-
-        Object.entries(solidColorMap).forEach(([patternName, svg]) => {
-          // Remove existing image to allow re-adding with new data
-          if (map.hasImage(patternName)) {
-            map.removeImage(patternName)
-          }
-
-          loadPromises.push(
-            loadSVGAsImage({
-              id: patternName,
-              map,
-              svgDataUri: svg as string,
-              pixelRatio: 1
-            })
-          )
-        })
-
-        // Wait for all patterns to be loaded before triggering repaint
-        await Promise.all(loadPromises)
-      } finally {
-        // Always reset the mutex and re-enable paint
-        registeringPatterns = false
-        patternsReady.value = true
-      }
-    }
-
-    const registerHatchPattern = () => {
+    map.on('load', () => {
       if (!map.hasImage('hatch-pattern')) {
         loadSVGAsImage({
           id: 'hatch-pattern',
@@ -233,45 +199,6 @@ export const useMapStyles = ({
           pixelRatio: 2
         })
       }
-    }
-
-    map.on('load', async () => {
-      mapLoaded.value = true
-      registerHatchPattern()
-
-      // Initial pattern registration
-      await registerSolidPatterns()
-
-      watchImmediate(
-        isCBFriendly,
-        async () => {
-          await registerSolidPatterns()
-          nextTick(() => map.triggerRepaint())
-        },
-        { flush: 'post' }
-      )
-
-      // Re-register patterns whenever the nominal legend changes
-      watchImmediate(
-        nominalLegend ?? ref({}),
-        async () => {
-          await registerSolidPatterns()
-          nextTick(() => map.triggerRepaint())
-        },
-        { flush: 'post' }
-      )
-
-      // Re-register patterns whenever the colour scale inversion flag changes
-      watchImmediate(
-        isInvertScale,
-        async () => {
-          await registerSolidPatterns()
-          nextTick(() => map.triggerRepaint())
-        },
-        { flush: 'post' }
-      )
-
-      nextTick(() => map.triggerRepaint())
     })
   })
 
