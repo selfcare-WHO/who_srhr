@@ -1,28 +1,39 @@
-# Issue tracker: Notion Kanban
+# Issue tracker: Linear
 
-Issues and tasks for this repo live in a Notion kanban board: **who-srhr-dashboard**
-https://www.notion.so/36343d46cf1c818e9c90f847537448f5
+Issues for this repo live in **Linear** under the **WHO SRHR** project.
 
-## Workflow
+- **Workspace**: Advaita Software
+- **Team**: Advaita Software (team key: ADV)
+- **Project**: WHO SRHR
+- **Project URL**: https://linear.app/advaita-software/project/who-srhr-1d370a105fbd
 
-Tasks move through columns based on status:
-- **Ideas** — Backlog, awaiting refinement
-- **PRD** — Product requirements defined, ready for planning
-- **Ready** — Estimated and ready to start
-- **In Progress** — Currently being worked on
-- **Done** — Completed
+## Workflow statuses
 
-## When creating a new task
+Issues move through these statuses:
 
-1. Create a row in the **who-srhr-dashboard** Notion database
-2. Set the task name and initial status (usually "Ideas")
-3. Add detailed description in the task page (include context, related issues, links to designs/docs)
-4. Link related tasks if applicable
+- **Backlog** — created but not yet evaluated
+- **Todo** — specified and ready to start
+- **In Progress** — currently being worked on
+- **In Review** — implementation complete, under review
+- **Done** — completed
+- **Canceled** — will not be actioned (or duplicate)
+
+## When creating a new issue
+
+Use the Linear MCP tool `mcp__plugin_linear_linear__save_issue` with:
+- `team`: "Advaita Software"
+- `project`: "WHO SRHR"
+- `title` and `description` as appropriate
+- `state`: appropriate workflow status (default "Backlog")
 
 ## When a skill says "publish to the issue tracker"
 
-Create a new task in the Notion kanban (Ideas column by default).
+Create a new issue in Linear under the WHO SRHR project (Backlog status by default).
 
 ## When a skill says "fetch the relevant ticket"
 
-Open the task in Notion and read its description and comments. Use the kanban URL above to access the board.
+Use `mcp__plugin_linear_linear__get_issue` or `mcp__plugin_linear_linear__list_issues` filtered to project "WHO SRHR".
+
+## Triage labels
+
+Triage labels (needs-triage, needs-info, etc.) are applied as Linear **labels** on issues, separate from workflow statuses. Create them in Linear if they don't exist yet.

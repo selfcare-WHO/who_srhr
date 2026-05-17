@@ -35,11 +35,11 @@ Yarn · Nuxt 3 · Vue 3 · TypeScript strict · Prisma/SQLite · Element Plus ·
 
 ### Issue tracker
 
-Issues live as local markdown files under `.scratch/<feature-slug>/`. See `docs/agents/issue-tracker.md`.
+Issues live in Linear under the WHO SRHR project (team: Advaita Software). See `docs/agents/issue-tracker.md`.
 
 ### Triage labels
 
-Default five-role vocabulary (needs-triage, needs-info, ready-for-agent, ready-for-human, wontfix). See `docs/agents/triage-labels.md`.
+Default canonical label names (needs-triage, needs-info, ready-for-agent, ready-for-human, wontfix) applied as Linear labels. See `docs/agents/triage-labels.md`.
 
 ### Domain docs
 
