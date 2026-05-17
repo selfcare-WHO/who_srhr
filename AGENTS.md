@@ -8,13 +8,13 @@ Yarn · Nuxt 3 · Vue 3 · TypeScript strict · Prisma/SQLite · Element Plus ·
 
 ## Commands
 
-| Purpose | Command |
-|---|---|
-| Dev (Nuxt + Prisma Studio) | `yarn dev` |
-| Build | `yarn build` |
-| Run migrations | `npx prisma migrate dev` |
-| Seed database | `npx prisma db seed` |
-| Format | `yarn format` |
+| Purpose                    | Command                  |
+| -------------------------- | ------------------------ |
+| Dev (Nuxt + Prisma Studio) | `yarn dev`               |
+| Build                      | `yarn build`             |
+| Run migrations             | `npx prisma migrate dev` |
+| Seed database              | `npx prisma db seed`     |
+| Format                     | `yarn format`            |
 
 ## Non-obvious conventions
 
@@ -30,3 +30,17 @@ Yarn · Nuxt 3 · Vue 3 · TypeScript strict · Prisma/SQLite · Element Plus ·
 - [Data & API](.claude/docs/data-api.md) — response structures, empty states, Prisma guidelines
 - [Testing](.claude/docs/testing.md) — Playwright workflow, what to verify
 - [Common Tasks](.claude/docs/common-tasks.md) — adding indicators, debugging, performance
+
+## Agent skills
+
+### Issue tracker
+
+Issues live as local markdown files under `.scratch/<feature-slug>/`. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Default five-role vocabulary (needs-triage, needs-info, ready-for-agent, ready-for-human, wontfix). See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context — one `CONTEXT.md` + `docs/adr/` at the repo root. See `docs/agents/domain.md`.
