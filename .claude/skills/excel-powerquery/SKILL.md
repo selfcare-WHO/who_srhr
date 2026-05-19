@@ -1,106 +1,82 @@
 ---
 name: excel-powerquery
-description: Refresh/recompute Power Query in Excel-for-Mac workbooks and read cells back, driving real Excel through the computer-use MCP (screenshots + clicks + clipboard). Use when the user wants to refresh prisma/data.xlsx, recompute Power Query / data connections, run an Excel refresh on macOS, or read values out of an .xlsx after a query refresh.
+description: Edit Excel-for-Mac workbooks (e.g. prisma/data.xlsx) with Python/openpyxl, and when Power Query needs to recompute, hand the file path back to the user to refresh manually. Use when the user wants to update cells in a .xlsx, change inputs feeding Power Query, or refresh prisma/data.xlsx.
 ---
 
-# Excel + Power Query (macOS, via computer-use MCP)
+# Excel + Power Query (Python edits + manual refresh)
 
-Drives **Excel for Mac** through the `computer-use` MCP: take a screenshot,
-click `Data → Refresh All` in the ribbon, wait for the engine to finish, save,
-close. Same code path Windows Excel uses for `RefreshAll`, just clicked instead
-of called. The M / Power Query engine ships only inside Excel — no pure library
-can recompute these queries, so we drive the real app.
+Two-mode skill:
 
-> Excel is computer-use tier **"full"** — clicks, typing, and `key` all work.
+- **Edit** cells / sheets with Python (`openpyxl`). Headless, scriptable, reproducible.
+- **Recompute** Power Query / data connections → **ask the user to do it manually** in Excel. The M engine ships only inside Excel; no Python lib can run it. Give the user the absolute file path and the exact steps.
 
-## Preconditions
+Do **not** drive Excel via computer-use for this skill. UI automation was unreliable; Python edits + a human click on Refresh All is faster and more honest.
 
-1. Computer-use MCP connected. Call `request_access` with
-   `["Microsoft Excel", "Finder"]` (Finder so the workbook can be opened via
-   `open_application` if needed). Excel must be installed.
-2. Excel display scaling reasonable — UI elements need to be findable in a
-   screenshot. If the user has a tiny window, resize first.
-3. Target file defaults to `prisma/data.xlsx` (16 internal Power Query queries,
-   `$Workbook$` connections).
+## When to use which mode
 
-## Workflow — refresh prisma/data.xlsx
+| Task | Mode |
+|---|---|
+| Change a cell value, add a row, write a new sheet | Python |
+| Read cached values out of the file | Python |
+| Recompute Power Query queries / `$Workbook$` connections | Ask user |
+| Verify a refresh happened (read post-refresh values) | Python (after user confirms) |
 
-1. **Open the workbook** with Bash (much faster than navigating the Open
-   dialog):
-   ```bash
-   open -a "Microsoft Excel" /Users/lucasbic/Lushomo/who_srhr/prisma/data.xlsx
-   ```
-   Then `mcp__computer-use__screenshot` to confirm the workbook is frontmost
-   and no modal is blocking (recovery prompt, "external links present",
-   "enable content"). Dismiss any modal before continuing.
+## Mode A — Edit with Python
 
-2. **Click `Data → Refresh All`** in the ribbon.
-   - Switch to the Data tab: `left_click` on the "Data" tab label, or press
-     the tab via keyboard. Screenshot to confirm.
-   - The **Refresh All** button is the leftmost group on the Data tab,
-     labelled "Refresh" with a small dropdown caret. Click the **icon body**,
-     not the caret — caret opens a menu.
-   - Screenshot immediately after — Excel shows a small "Querying…" indicator
-     in the status bar (bottom of window).
+1. Use the project's Python: `/Users/lucasbic/miniconda3/bin/python3` (has `openpyxl` 3.1.5).
+2. Write a short script under `scripts/` (or inline via `python3 -c`) that:
+   - Opens the workbook with `openpyxl.load_workbook(path, keep_vba=False, data_only=False)`.
+     - `data_only=False` keeps formulas; use `True` only when reading cached results.
+   - Mutates the target cells/sheets.
+   - Saves back to the **same path** (`wb.save(path)`).
+3. Prefer surgical edits — touch only the cells the task requires. openpyxl can drop styles / conditional formatting it doesn't understand, so don't rewrite whole sheets unless asked.
+4. After editing, if the change feeds Power Query, hand off to Mode B.
 
-3. **Wait for completion.** Poll by screenshot every ~2s using
-   `mcp__computer-use__wait` + `screenshot`. Refresh is done when the status
-   bar returns to "Ready" / "Calculate" goes away. For `data.xlsx` (16
-   queries) expect 10–60s on first run, faster on warm cache. Cap the wait at
-   ~120s; if still spinning, surface the state to the user instead of
-   guessing.
+Default target: `/Users/lucasbic/Lushomo/who_srhr/prisma/data.xlsx`.
 
-4. **Save and close.**
-   - `key` → `cmd+s` (in-place save; .xlsx is already the right format).
-   - Screenshot to confirm no "save as" dialog appeared. If one did, the file
-     was opened read-only — stop and report.
-   - `key` → `cmd+w` to close the workbook.
+## Mode B — Ask the user to refresh
 
-## Reading cells back (read-range)
+When Power Query must recompute, **stop and message the user** with the absolute path and the exact steps. Do not try to automate this.
 
-Use this both for verification after refresh and as a standalone read.
+Template (adapt the file path):
 
-1. Workbook must be open and on the target sheet — click the sheet tab if
-   needed.
-2. Select the range via the Name Box (top-left address field, left of the
-   formula bar):
-   - `left_click` the Name Box.
-   - `type` the range, e.g. `Sheet1!A1:C5` (sheet-qualified is safest).
-   - `key` → `return` to select.
-3. Copy: `key` → `cmd+c`.
-4. `mcp__computer-use__read_clipboard` — returns tab-separated rows, newline
-   between rows. Parse and sanity-check.
+```
+The file needs a Power Query refresh in Excel. Please:
 
-## Mandatory verification
+1. Open: /Users/lucasbic/Lushomo/who_srhr/prisma/data.xlsx
+2. Data tab → Refresh All
+3. Wait for the status bar to return to "Ready"
+4. Cmd+S to save, then close
+5. Tell me when it's done.
+```
 
-Mac Power Query refreshes are best-effort — unsupported external connectors
-no-op silently. Never report success on the screenshot alone:
+Then wait for confirmation before reading values back / proceeding.
 
-- **Read-back**: pull a known output range (see above) and confirm values
-  changed / are sane.
-- **Or downstream**: run `npx prisma db seed` and confirm it ingests cleanly
-  with no row-count regressions.
+## Verification (after user confirms refresh)
 
-State explicitly what you verified and the observed values.
+Use Python with `data_only=True` to read cached results post-refresh:
 
-## Workflow checklist
+```python
+from openpyxl import load_workbook
+wb = load_workbook("/Users/lucasbic/Lushomo/who_srhr/prisma/data.xlsx", data_only=True)
+ws = wb["Sheet1"]
+print([[c.value for c in row] for row in ws["A1:C5"]])
+```
 
-- [ ] `request_access` for Microsoft Excel granted
-- [ ] Workbook opened via `open -a "Microsoft Excel" <abs path>`
-- [ ] No modal blocking; Excel frontmost
-- [ ] Data tab → Refresh All clicked (icon body, not caret)
-- [ ] Polled until status bar returns to Ready (≤120s)
-- [ ] `cmd+s` succeeded with no Save-As dialog
-- [ ] Verified via read-range or `prisma db seed`
-- [ ] Reported: queries refreshed, cells/values observed
+Or run `npx prisma db seed` and check row counts — highest-fidelity end-to-end check.
+
+State explicitly what you verified.
+
+## Checklist
+
+- [ ] Identified mode: edit (Python) vs. refresh (ask user)
+- [ ] Edits done via `openpyxl`, saved in-place
+- [ ] If refresh needed: messaged user with absolute path + steps, waited for confirmation
+- [ ] Verified post-refresh values via Python (`data_only=True`) or `prisma db seed`
 
 ## When this skill is the wrong tool
 
-- Read-only extraction of **cached** values, no recompute needed → openpyxl
-  / SheetJS is faster and headless. Use this skill only when the M engine
-  must actually run.
-- Bulk programmatic Excel work → consider the Windows `sbroenne` MCP on a
-  Windows host; Mac has no equivalent headless path.
+- Pure read of cached values, no edit, no refresh → just call `openpyxl` directly; no need for this skill.
+- Bulk Power Query authoring / M code changes → edit `customXml/item1.xml` inside the .xlsx zip, then ask user to refresh. Outside the default scope here.
 
-See [REFERENCE.md](REFERENCE.md) for UI quirks, modal recovery, and the
-clipboard TSV format.
+See [REFERENCE.md](REFERENCE.md) for openpyxl gotchas and the data.xlsx structure.
