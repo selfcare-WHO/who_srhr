@@ -18,3 +18,4 @@ dist
 !.yarn/versions
 
 .playwright-mcp
+.worktrees/
