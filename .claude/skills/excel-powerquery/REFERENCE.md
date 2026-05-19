@@ -1,92 +1,127 @@
-# Reference — excel-powerquery
+# Reference — excel-powerquery (computer-use)
 
-## Why AppleScript, not a library
+## Why drive the UI, not a library
 
-`prisma/data.xlsx` has 16 internal Power Query queries (`Microsoft.Mashup.OleDb.1`,
-`$Workbook$`), M code in `customXml/item1.xml`, 14 query tables → sheets. The M
-engine ships only inside Excel/Power BI. openpyxl/SheetJS/ClosedXML read **cached**
-values only — they cannot recompute. So we drive real Excel for Mac via AppleScript
-through the `macos_automator` MCP.
+`prisma/data.xlsx` has 16 internal Power Query queries
+(`Microsoft.Mashup.OleDb.1`, `$Workbook$`), M code in `customXml/item1.xml`,
+14 query tables → sheets. The M engine ships only inside Excel / Power BI.
+openpyxl / SheetJS / ClosedXML read **cached** values only — they cannot
+recompute. AppleScript via `macos_automator` was the previous approach but
+hit permission walls (`-1743`) and silent no-ops on `refresh queryTable` for
+several of the workbook's connectors. Clicking **Data → Refresh All** in the
+ribbon hits the same code path as Windows `Workbook.RefreshAll`, which is the
+known-good full refresh — so we drive Excel through `computer-use`.
 
-## Calling the scripts via macos_automator MCP
+## Tools used
 
-The MCP `execute_script` tool runs a script by path and passes `arguments` to the
-AppleScript `on run argv` handler:
-
-- `scriptPath`: `.claude/skills/excel-powerquery/scripts/refresh.applescript`
-- `arguments`: `["/Users/lucasbic/Lushomo/who_srhr/prisma/data.xlsx"]`
-
-Paths must be absolute POSIX. Relative paths fail (Excel resolves CWD unpredictably).
-
-## AppleScript verb map (Excel for Mac 16.x)
-
-| Goal | AppleScript |
+| Step | Tool |
 |---|---|
-| Open | `open (POSIX file p)` then `set wb to active workbook` |
-| Refresh a query table | `refresh queryTable` |
-| Table→query | `refresh (query table of listObject)` |
-| Pivot cache | `refresh pivotCache` |
-| Full recalc | `calculate` |
-| Save in place | `save wb` |
-| Close no prompt | `close wb saving no` |
-| Read range | `value of (range "A1:C5" of worksheet "Sheet1" of wb)` |
+| Permission grant | `mcp__computer-use__request_access` (apps: `["Microsoft Excel"]`) |
+| Open workbook | Bash: `open -a "Microsoft Excel" <abs path>` |
+| Bring Excel forward (if needed) | `mcp__computer-use__open_application` `"Microsoft Excel"` |
+| See current state | `mcp__computer-use__screenshot` |
+| Click ribbon / cells | `mcp__computer-use__left_click` (coords from screenshot) |
+| Type into Name Box / dialogs | `mcp__computer-use__type` |
+| Keyboard shortcuts | `mcp__computer-use__key` (`cmd+s`, `cmd+c`, `cmd+w`, `return`) |
+| Polling wait | `mcp__computer-use__wait` |
+| Read selected range | `mcp__computer-use__read_clipboard` after `cmd+c` |
 
-No `do Visual Basic` on Mac Excel — arbitrary VBA strings can't be executed via
-AppleScript. `run VB macro "Name"` works only if the macro exists in an open
-`.xlsm`/add-in (see controller fallback).
+Excel is **tier "full"** — no restrictions on typing or clicks. (Contrast: the
+Chrome MCP is tier "read" for browsers, IDEs are tier "click".)
 
-## Error codes
+## Ribbon layout cues (Excel for Mac 16.x)
 
-| Code | Meaning | Fix |
-|---|---|---|
-| `-1743` | Not authorized to send Apple events to Excel | Grant Automation permission to terminal/Node; first run also pops a one-time OS dialog — allow it |
-| `-1728` | Object not found (e.g. no query tables on sheet) | Already guarded with `try`; benign |
-| `-600` / `-609` | Excel not running / connection invalidated | Ensure Excel installed; script `activate`s it |
-| Hang on open | Workbook prompting (recovery/links) | Open once manually, dismiss prompts, retry |
+The Refresh button lives on the **Data** tab, leftmost button group:
 
-## Mac Power Query limitations
+```
+[ Data ▼ ]   ⟨ribbon body⟩
+              [Refresh][▾]   [Get Data] [From Text/CSV] ...
+                ^icon ^caret
+```
 
-Mac Excel refreshes workbook-internal (`$Workbook$`) queries — the case `data.xlsx`
-uses — but **silently no-ops** unsupported external connectors. There is no Power
-Query editor on Mac. This is why verification is mandatory: read a known output
-range or run `npx prisma db seed` and confirm clean ingestion + sane values.
+- **Click the icon body** to refresh all queries.
+- **Click the caret** to get a menu (Refresh, Refresh All, Connection
+  Properties…). If you accidentally hit the caret, press `escape` and retry.
+- The label under the icon reads "Refresh" not "Refresh All" — the icon
+  defaults to refresh-all behaviour anyway when Power Query is present.
 
-`refresh.applescript` enumerates query tables / list objects / pivot caches. That
-covers sheet-loaded queries; connection-only upstream queries (e.g. `KPI_ID`) are
-recomputed transitively by the Mashup engine when a dependent loaded query refreshes.
+If the screenshot shows the ribbon collapsed, click the Data tab label once
+to expand it before locating the button.
 
-## Full-fidelity fallback: `.xlsm` controller (one-time, manual)
+## Detecting refresh completion
 
-For guaranteed dependency-ordered `ActiveWorkbook.RefreshAll`:
+The bottom status bar is the source of truth:
 
-1. In Excel for Mac, create a new macro-enabled workbook saved at
-   `~/.who_srhr_refresh_controller.xlsm`.
-2. Add a module with:
-   ```vba
-   Sub RefreshTarget()
-       Dim wb As Workbook
-       Set wb = Workbooks.Open("/Users/lucasbic/Lushomo/who_srhr/prisma/data.xlsx")
-       wb.RefreshAll
-       Application.CalculateUntilAsyncQueriesDone
-       wb.Save
-       wb.Close SaveChanges:=False
-   End Sub
-   ```
-3. Trust VBA: Excel → Settings → Security → enable macros.
-4. Run via macos_automator with this inline AppleScript:
-   ```applescript
-   tell application "Microsoft Excel"
-       activate
-       open (POSIX file "/Users/lucasbic/.who_srhr_refresh_controller.xlsm")
-       run VB macro "RefreshTarget"
-   end tell
-   ```
+- **Active**: `Calculating: (n%)` or `Running background query…`
+- **Done**: `Ready` (or the cell-mode indicator)
 
-This routes through Excel's real `RefreshAll`, the same code path as the Windows
-`sbroenne` MCP, but stays Mac-native. Still verify the result.
+Poll: `screenshot` → check status bar text → `wait 2s` → repeat. Cap at
+~120s. `data.xlsx` typically finishes in 10–60s.
+
+If the status bar shows `Ready` but a known output cell is empty / unchanged,
+a connector silently no-op'd — see verification in `SKILL.md`.
+
+## Reading values via clipboard
+
+After `cmd+c` on a selected range, the clipboard holds:
+
+- **Rows separated by `\n`**
+- **Columns separated by `\t`**
+- Cell text matches the displayed format (date strings, percent signs, etc.)
+  — not the underlying number. For raw numbers, format the range as General
+  before copying.
+
+`read_clipboard` returns the raw string; split on `\n` then `\t`.
+
+## Modal dismissal
+
+After `open -a "Microsoft Excel" …`, the first screenshot may show:
+
+| Modal | Action |
+|---|---|
+| "Document recovery" panel | Click **Close** to skip recovery |
+| "This workbook contains external links" | Click **Don't Update** for refresh-from-source workflows; **Update** is rarely what you want here since PQ handles its own connections |
+| "Enable Content" yellow banner | Click **Enable Content** |
+| "Sign in to your account" | Click **Maybe Later** or close — Power Query for `$Workbook$` connections does not need an account |
+
+Always screenshot **after** dismissing to confirm the modal is gone before
+proceeding.
+
+## Known gotchas
+
+- **Window must be visible.** Excel rendered off-screen (other Space, minimised)
+  will fail clicks silently. Use `open_application "Microsoft Excel"` to bring
+  it forward before screenshotting.
+- **Locale.** Ribbon labels are localised. If the user runs Excel in non-English,
+  identify buttons by position, not OCR'd text.
+- **AutoSave to OneDrive.** If `data.xlsx` is in a OneDrive folder, AutoSave
+  may interleave with the refresh. Toggle AutoSave off (top-left switch) once
+  per session.
+- **Save-As dialog after cmd+s.** Means the file was opened read-only — the
+  workbook is checked out by another user, sitting in a locked dir, or Excel
+  is in "Protected View." Stop and report; do **not** save under a new name.
+- **Caret vs. icon click on Refresh.** The button is split. Hitting the caret
+  opens a dropdown and your subsequent screenshot/click logic will be off
+  until the menu is dismissed.
+
+## Verification recipes
+
+After refresh, pick the cheapest verification that actually proves the data
+changed:
+
+1. **Known sentinel cell** — pick a cell whose value changes on each refresh
+   (e.g. a `DateTime.LocalNow()` formula in a hidden helper sheet). Read it
+   before and after; assert it advanced.
+2. **Row-count delta** — read e.g. `Sheet1!A1:A10000` and count non-empty
+   rows; compare to last seed.
+3. **Downstream truth** — `npx prisma db seed` and inspect the row counts
+   per table from its output. This is the highest-fidelity check because it
+   proves the Excel → DB pipeline still works end-to-end.
 
 ## Scope
 
-This skill is **project-scoped** — it lives in `who_srhr/.claude/skills/` and is
-only available inside this repo. The `macos_automator` MCP it depends on is
-likewise project-scoped via `who_srhr/.mcp.json`.
+This skill is **project-scoped** — it lives in `who_srhr/.claude/skills/` and
+is only available inside this repo. The `computer-use` MCP it depends on is
+user-global, not project-scoped (unlike the previous `macos_automator` MCP in
+`.mcp.json`, which is now unused by this skill but kept around in case other
+workflows still need it).
