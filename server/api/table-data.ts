@@ -1,5 +1,6 @@
 import type { H3Event } from 'h3'
 import prisma from '~/lib/prisma'
+import { dataYearCutoffFilter } from '~/server/utils/dataCutoff'
 
 export default defineEventHandler(async (event: H3Event) => {
   const query = getQuery(event)
@@ -11,6 +12,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
   try {
     const where: any = {}
+    where.NOT = dataYearCutoffFilter.NOT
 
     const countryWhere: any = {}
 

@@ -1,5 +1,6 @@
 import prisma from '~/lib/prisma'
 import isNullish from '~/utils/isNullish'
+import { dataYearCutoffFilter } from '~/server/utils/dataCutoff'
 import type { Prisma, Indicator, Subgroup } from '@prisma/client'
 
 type ChartFilters = {
@@ -38,6 +39,7 @@ export default defineEventHandler(async event => {
 
   try {
     const where: Prisma.DataPointWhereInput = {}
+    where.NOT = dataYearCutoffFilter.NOT
 
     if (filters.indicator?.length) {
       where.indicatorId = { in: filters.indicator }

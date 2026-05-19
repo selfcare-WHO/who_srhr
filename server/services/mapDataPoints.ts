@@ -1,4 +1,5 @@
 import prisma from '~/lib/prisma'
+import { dataYearCutoffFilter } from '~/server/utils/dataCutoff'
 
 export default async (
   indicatorId: string,
@@ -19,7 +20,8 @@ export default async (
             country: true
           },
           where: {
-            subgroupId: Number(subgroupId)
+            subgroupId: Number(subgroupId),
+            ...dataYearCutoffFilter
           }
         }
       }
