@@ -1,127 +1,100 @@
-# Reference — excel-powerquery (computer-use)
+# Reference — excel-powerquery (Python edits + manual refresh)
 
-## Why drive the UI, not a library
+## Why this split
 
 `prisma/data.xlsx` has 16 internal Power Query queries
 (`Microsoft.Mashup.OleDb.1`, `$Workbook$`), M code in `customXml/item1.xml`,
-14 query tables → sheets. The M engine ships only inside Excel / Power BI.
-openpyxl / SheetJS / ClosedXML read **cached** values only — they cannot
-recompute. AppleScript via `macos_automator` was the previous approach but
-hit permission walls (`-1743`) and silent no-ops on `refresh queryTable` for
-several of the workbook's connectors. Clicking **Data → Refresh All** in the
-ribbon hits the same code path as Windows `Workbook.RefreshAll`, which is the
-known-good full refresh — so we drive Excel through `computer-use`.
+14 query tables → sheets. The M / Power Query engine ships only inside Excel
+/ Power BI. `openpyxl` / SheetJS / ClosedXML read **cached** values only —
+they cannot recompute.
+
+Previous attempts to automate the refresh:
+
+- **AppleScript** (`macos_automator`) — permission walls (`-1743`), silent
+  no-ops on `refresh queryTable` for several connectors.
+- **computer-use MCP** (click Data → Refresh All in the ribbon) — works but
+  flaky (modal handling, off-screen windows, locale-dependent ribbon, save
+  dialogs on read-only opens). Slower and less reliable than asking the user
+  to click once.
+
+So: Python for edits (headless, deterministic), human for the refresh click.
 
 ## Tools used
 
 | Step | Tool |
 |---|---|
-| Permission grant | `mcp__computer-use__request_access` (apps: `["Microsoft Excel"]`) |
-| Open workbook | Bash: `open -a "Microsoft Excel" <abs path>` |
-| Bring Excel forward (if needed) | `mcp__computer-use__open_application` `"Microsoft Excel"` |
-| See current state | `mcp__computer-use__screenshot` |
-| Click ribbon / cells | `mcp__computer-use__left_click` (coords from screenshot) |
-| Type into Name Box / dialogs | `mcp__computer-use__type` |
-| Keyboard shortcuts | `mcp__computer-use__key` (`cmd+s`, `cmd+c`, `cmd+w`, `return`) |
-| Polling wait | `mcp__computer-use__wait` |
-| Read selected range | `mcp__computer-use__read_clipboard` after `cmd+c` |
+| Edit cells / sheets | Python + `openpyxl` (`/Users/lucasbic/miniconda3/bin/python3`) |
+| Read cached values | `openpyxl.load_workbook(path, data_only=True)` |
+| Recompute Power Query | **User**, manually in Excel (Data → Refresh All) |
+| End-to-end verification | `npx prisma db seed` |
 
-Excel is **tier "full"** — no restrictions on typing or clicks. (Contrast: the
-Chrome MCP is tier "read" for browsers, IDEs are tier "click".)
+No computer-use, no AppleScript, no MCP automation for Excel itself.
 
-## Ribbon layout cues (Excel for Mac 16.x)
+## openpyxl gotchas on this workbook
 
-The Refresh button lives on the **Data** tab, leftmost button group:
+- **`data_only` matters.** `False` (default) loads formula strings — needed
+  for editing without nuking formulas. `True` loads last-cached values —
+  needed for reading post-refresh results. You cannot do both at once; open
+  twice if you need both views.
+- **Styles can be lost.** openpyxl rewrites the file and may drop
+  conditional-formatting rules / styles it doesn't fully model. Edit narrow
+  ranges; avoid full-sheet rewrites.
+- **Power Query metadata is preserved** in `customXml/` — openpyxl passes it
+  through untouched. Editing a cell that feeds a query does not break the
+  query; it just leaves the cached output stale until the user refreshes.
+- **`keep_vba`** — set to `False` unless the workbook has macros (data.xlsx
+  doesn't).
+- **Saving over an open file** — if the user has the workbook open in Excel,
+  `wb.save(path)` will fail or Excel will overwrite the change on its next
+  save. Coordinate: either edit before asking the user to open it, or have
+  them close the file first.
+
+## Asking the user to refresh — script
+
+Use the absolute path. Be explicit about the steps so the user doesn't have
+to ask which button.
 
 ```
-[ Data ▼ ]   ⟨ribbon body⟩
-              [Refresh][▾]   [Get Data] [From Text/CSV] ...
-                ^icon ^caret
+Please refresh Power Query in Excel:
+
+1. Open: /Users/lucasbic/Lushomo/who_srhr/prisma/data.xlsx
+2. Data tab → Refresh All (the leftmost button group; click the icon body,
+   not the dropdown caret)
+3. Wait for the bottom status bar to return to "Ready" (10–60s for this file)
+4. Cmd+S to save in place, then Cmd+W to close
+5. Reply here when done.
 ```
 
-- **Click the icon body** to refresh all queries.
-- **Click the caret** to get a menu (Refresh, Refresh All, Connection
-  Properties…). If you accidentally hit the caret, press `escape` and retry.
-- The label under the icon reads "Refresh" not "Refresh All" — the icon
-  defaults to refresh-all behaviour anyway when Power Query is present.
-
-If the screenshot shows the ribbon collapsed, click the Data tab label once
-to expand it before locating the button.
-
-## Detecting refresh completion
-
-The bottom status bar is the source of truth:
-
-- **Active**: `Calculating: (n%)` or `Running background query…`
-- **Done**: `Ready` (or the cell-mode indicator)
-
-Poll: `screenshot` → check status bar text → `wait 2s` → repeat. Cap at
-~120s. `data.xlsx` typically finishes in 10–60s.
-
-If the status bar shows `Ready` but a known output cell is empty / unchanged,
-a connector silently no-op'd — see verification in `SKILL.md`.
-
-## Reading values via clipboard
-
-After `cmd+c` on a selected range, the clipboard holds:
-
-- **Rows separated by `\n`**
-- **Columns separated by `\t`**
-- Cell text matches the displayed format (date strings, percent signs, etc.)
-  — not the underlying number. For raw numbers, format the range as General
-  before copying.
-
-`read_clipboard` returns the raw string; split on `\n` then `\t`.
-
-## Modal dismissal
-
-After `open -a "Microsoft Excel" …`, the first screenshot may show:
-
-| Modal | Action |
-|---|---|
-| "Document recovery" panel | Click **Close** to skip recovery |
-| "This workbook contains external links" | Click **Don't Update** for refresh-from-source workflows; **Update** is rarely what you want here since PQ handles its own connections |
-| "Enable Content" yellow banner | Click **Enable Content** |
-| "Sign in to your account" | Click **Maybe Later** or close — Power Query for `$Workbook$` connections does not need an account |
-
-Always screenshot **after** dismissing to confirm the modal is gone before
-proceeding.
-
-## Known gotchas
-
-- **Window must be visible.** Excel rendered off-screen (other Space, minimised)
-  will fail clicks silently. Use `open_application "Microsoft Excel"` to bring
-  it forward before screenshotting.
-- **Locale.** Ribbon labels are localised. If the user runs Excel in non-English,
-  identify buttons by position, not OCR'd text.
-- **AutoSave to OneDrive.** If `data.xlsx` is in a OneDrive folder, AutoSave
-  may interleave with the refresh. Toggle AutoSave off (top-left switch) once
-  per session.
-- **Save-As dialog after cmd+s.** Means the file was opened read-only — the
-  workbook is checked out by another user, sitting in a locked dir, or Excel
-  is in "Protected View." Stop and report; do **not** save under a new name.
-- **Caret vs. icon click on Refresh.** The button is split. Hitting the caret
-  opens a dropdown and your subsequent screenshot/click logic will be off
-  until the menu is dismissed.
+If the user reports a Save-As dialog or "Enable Content" banner, that's a
+modal in Excel — they should dismiss it and retry; not your problem to
+automate.
 
 ## Verification recipes
 
-After refresh, pick the cheapest verification that actually proves the data
-changed:
+After the user confirms refresh:
 
-1. **Known sentinel cell** — pick a cell whose value changes on each refresh
-   (e.g. a `DateTime.LocalNow()` formula in a hidden helper sheet). Read it
-   before and after; assert it advanced.
-2. **Row-count delta** — read e.g. `Sheet1!A1:A10000` and count non-empty
-   rows; compare to last seed.
+1. **Known sentinel cell** — e.g. a `DateTime.LocalNow()` formula in a hidden
+   helper sheet. Read with `data_only=True` before/after and assert it
+   advanced.
+2. **Row-count delta** — read e.g. `Sheet1!A1:A10000` cached values, count
+   non-empty rows, compare to last seed.
 3. **Downstream truth** — `npx prisma db seed` and inspect the row counts
-   per table from its output. This is the highest-fidelity check because it
-   proves the Excel → DB pipeline still works end-to-end.
+   per table from its output. Highest fidelity.
+
+## Editing the M code itself
+
+If you need to change a Power Query (not just its inputs):
+
+1. `data.xlsx` is a zip. M code lives in `customXml/item1.xml`.
+2. Unzip → edit → rezip preserving structure. `zipfile` in Python works but
+   be careful with file order / metadata; testing required.
+3. After editing, hand to the user for refresh as usual.
+
+This is out of scope for routine use; prefer editing the input data when
+possible.
 
 ## Scope
 
-This skill is **project-scoped** — it lives in `who_srhr/.claude/skills/` and
-is only available inside this repo. The `computer-use` MCP it depends on is
-user-global, not project-scoped (unlike the previous `macos_automator` MCP in
-`.mcp.json`, which is now unused by this skill but kept around in case other
-workflows still need it).
+Project-scoped — lives in `who_srhr/.claude/skills/` and is only available
+inside this repo. No MCP dependencies — pure Python + a human at the
+keyboard.
