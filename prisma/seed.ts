@@ -1,6 +1,9 @@
 import { fileURLToPath } from 'url'
 import prisma from '@lib/prisma'
 import xlsx from 'xlsx'
+import { buildTargetMap, resolveChange } from './targetResolver'
+
+let targetMap: Map<string, string> = new Map()
 
 async function resetDatabase() {
   await prisma.dataPoint.deleteMany({})
@@ -99,7 +102,7 @@ async function seedDataPoint(row: Data.DataRow) {
       originalValue,
       parsedValue,
       value,
-      change: row.change,
+      change: resolveChange(row, targetMap),
       trend: row.trend_color
     }
   })
@@ -130,6 +133,13 @@ async function main() {
   const countriesRows = xlsx.utils.sheet_to_json(
     countriesSheet
   ) satisfies Data.CountryRow[]
+
+  const targetCodingSheet = workbook.Sheets['Target coding']
+  const targetCodingRows = xlsx.utils.sheet_to_json(targetCodingSheet, {
+    raw: false,
+    defval: null
+  }) satisfies Data.TargetCodingRow[]
+  targetMap = buildTargetMap(targetCodingRows)
 
   await seedCountries(countriesRows)
 
