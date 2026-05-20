@@ -115,6 +115,12 @@ export default defineNuxtConfig({
       include: ['tailwind.config.js']
     },
 
+    server: {
+      watch: {
+        ignored: ['**/.worktrees/**']
+      }
+    },
+
     css: {
       preprocessorOptions: {
         scss: {
