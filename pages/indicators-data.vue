@@ -21,7 +21,7 @@
         .data-availability-text(class="flex-1")
           h1 Data availability
 
-          p This country profile uses the latest data available that is less than 10 years old as of 30/09/2023 from reliable international data repositories. See endnotes for the year and source of each data point. “No data” means no data were available in the international data source used, but data may be available at the country level. It is acknowledged that intersectionality and people-centredness are not well reflected in available data, and that many categories of information currently collected are gender-binary.
+          p This country profile uses the latest data available that are less than 10 years old as of 31/07/2025 from reliable international data repositories. See endnotes for the year and source of each data point. “No data” means no data were available in the international data source used, but data may be available at the country level. It is acknowledged that intersectionality and people-centredness are not well reflected in available data, and that many categories of information currently collected are gender-binary.
 
       .targets-section-wrapper(class="bg-white py-8 px-10")
         .targets-section(class="")
