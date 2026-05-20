@@ -54,7 +54,7 @@ export const useTableColumns = () => {
       formatter: cell => {
         const dataPoint: Prisma.DataPoint = cell.getValue()
 
-        if (!dataPoint) return ''
+        if (!dataPoint) return 'No data'
 
         const element = document.createElement('div')
         element.className = 'indicator-cell-container flex items-center gap-2'
