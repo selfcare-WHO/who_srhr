@@ -22,6 +22,7 @@ Yarn · Nuxt 3 · Vue 3 · TypeScript strict · Prisma/SQLite · Element Plus ·
 - No semicolons — Prettier handles formatting
 - App runs on `http://localhost:3001/` (fallback from 3000)
 - Always use Playwright MCP **full-screen** for UI testing
+- Worktrees live under `.worktrees/<ADV-ID>`. Before running dev commands inside one, issue a **bare** `cd <worktree-path>` as its own Bash call to change the persistent cwd. Do **not** use `cd X && yarn dev` — that runs in a subshell, so the next command snaps back to the repo root and the dev server ends up watching the wrong tree.
 
 ## Further reading
 
