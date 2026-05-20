@@ -52,6 +52,16 @@ declare global {
       country_income_type?: string
     }
 
+    type TargetCodingRow = {
+      Country: string
+      'Country code': string
+      KPI: string
+      Split: string
+      Attribute?: string
+      'Target coding'?: string
+      'Target color': string
+    }
+
     interface IndicatorTooltipData {
       fullName?: string
       subheading?: string
