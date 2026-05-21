@@ -121,7 +121,10 @@ export const useMapConfiguration = (
     layout: {
       'text-font': ['Oswald Regular'],
       'text-size': 16,
-      'text-field': '{_name}',
+      // The basemap tileset bakes in country labels via `_name`; it still
+      // carries the outdated "Turkey". We can't edit the remote tileset, so
+      // override that one label client-side and pass every other through.
+      'text-field': ['match', ['get', '_name'], 'Turkey', 'Türkiye', ['get', '_name']],
       'text-optional': true
     },
     paint: {
