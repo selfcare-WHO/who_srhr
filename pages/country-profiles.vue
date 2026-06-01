@@ -15,10 +15,10 @@
       v-else
       id="tableau-viz"
       iframe-attribute-class="block w-full"
-      src="https://public.tableau.com/views/WHOSRHR/NewContext"
+      src="https://public.tableau.com/views/WHOSRHR2025_Updated25May2026/NewContext"
       tabs="no"
       toolbar="yes"
-      static-image="https://public.tableau.com/static/images/WH/WHOSRHR/NewContext/1.png"
+      static-image="https://public.tableau.com/static/images/WH/WHOSRHR2025_Updated25May2026/NewContext/1.png"
       animate-transition="yes"
       display-static-image="yes"
       display-spinner="yes"
