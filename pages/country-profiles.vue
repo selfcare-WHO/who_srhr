@@ -5,7 +5,7 @@
 
     p
       | This country snapshot provides an overview of national data relating to sexual and reproductive health and rights (SRHR) throughout the life course. By highlighting the national SRHR situation – including successes, areas for improvement, major challenges, and data gaps – this country profile can be used for determining priorities, planning of programmes, resource mobilization, and strengthening of health systems, service delivery and community engagement.
-    
+
     p.mb-8
       | This snapshot uses the latest data publicly available at the publication date, from reputable international sources (see endnotes for the year and source of each data point).
 
