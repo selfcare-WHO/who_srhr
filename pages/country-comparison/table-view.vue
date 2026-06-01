@@ -28,7 +28,7 @@
         div(ref="tableElement" :key="`table-${isCBFriendly}`")
 
       p(class="text-sm text-secondary mt-4 mb-0")
-        | The latest available data as of 31/07/2025 are used that are less than 10 years old and from reliable international data repositories. The source and year of each data point are available via the map view or the country profile.
+        | The data used are the latest available as of 31/07/2025 that are less than 10 years old and from reliable international data repositories. The source and year of each data point are available via the map view or the country profile.
 
     ElTooltip(
       virtual-triggering

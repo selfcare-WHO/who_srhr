@@ -88,6 +88,9 @@
           :nominal-legend="nominalLegend"
           :jenks-breaks="jenksBreaks"
         )
+
+    p(class="u-content text-sm text-secondary mt-4 mb-0")
+      | The data used are the latest available as of 31/07/2025 that are less than 10 years old and from reliable international data repositories.
 </template>
 
 <script lang="ts" setup>

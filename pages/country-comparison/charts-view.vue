@@ -27,6 +27,9 @@
 
       div(class="chart-wrapper relative min-h-[700px] flex flex-col items-center")
         ChartPaginated(class="w-full flex-1")
+
+      p(class="text-sm text-secondary mt-4 mb-0")
+        | The data used are the latest available as of 31/07/2025 that are less than 10 years old and from reliable international data repositories. The source and year of each data point are available via the map view or the country profile.
 </template>
 
 <script lang="ts" setup>
