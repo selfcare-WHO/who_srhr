@@ -43,6 +43,15 @@ export const useMapPopover = (
       { hover: false }
     )
 
+    // Territories absent from the dataset (e.g. Western Sahara) have no
+    // dataPointId — give them no hover tooltip, highlight, or pointer cursor.
+    if (!feature.properties?.dataPointId) {
+      hoveredFeatureId.value = featureId
+      showPopover.value = false
+      map.getCanvas().style.cursor = ''
+      return
+    }
+
     map.setFeatureState(
       {
         source: 'who-world-features',
