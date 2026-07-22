@@ -1,17 +1,17 @@
 <template lang="pug">
   .map-view(
-    class="min-h-[80vh] bg-page py-4 flex-1"
+    class="bg-page py-4 flex-1"
     @mousemove="onGlobalMouseMove"
   )
     div.u-content
       MapFilters
 
       .map-container(
-        class="relative h-full min-h-[80vh] w-full"
+        class="relative h-[940px] w-full"
         v-loading="isFetching || isInitializing || isMapRefreshing"
       )
         MapboxMap(
-          class="h-full min-h-[80vh] w-full rounded-lg transition-opacity duration-150"
+          class="h-full w-full rounded-lg transition-opacity duration-150"
           :class="{ 'opacity-0': isFetching || isInitializing || isMapRefreshing }"
           map-id="world-map"
           :options="mapOptions"
