@@ -1,96 +1,97 @@
 <template lang="pug">
   .map-view(
-    class=" min-h-[80vh] bg-page my-4 flex-1"
+    class="min-h-[80vh] bg-page py-4 flex-1"
     @mousemove="onGlobalMouseMove"
   )
-    MapFilters
+    div.u-content
+      MapFilters
 
-    .map-container(
-      class="relative h-full min-h-[80vh] w-full"
-      v-loading="isFetching || isInitializing || isMapRefreshing"
-    )
-      MapboxMap(
-        class="h-full min-h-[80vh] w-full rounded-lg transition-opacity duration-150"
-        :class="{ 'opacity-0': isFetching || isInitializing || isMapRefreshing }"
-        map-id="world-map"
-        :options="mapOptions"
-        @wheel.passive="onWheel"
-        @drag="showPopover = false"
-        @mouseleave="showPopover = false"
+      .map-container(
+        class="relative h-full min-h-[80vh] w-full"
+        v-loading="isFetching || isInitializing || isMapRefreshing"
       )
-        MapboxSource(
-          source-id="who-world-basemap"
-          :source="WHOWorldBasemapSource"
+        MapboxMap(
+          class="h-full min-h-[80vh] w-full rounded-lg transition-opacity duration-150"
+          :class="{ 'opacity-0': isFetching || isInitializing || isMapRefreshing }"
+          map-id="world-map"
+          :options="mapOptions"
+          @wheel.passive="onWheel"
+          @drag="showPopover = false"
+          @mouseleave="showPopover = false"
         )
-        MapboxSource(
-          source-id="who-world-features"
-          :source="linkedFeaturesSource"
-        )
+          MapboxSource(
+            source-id="who-world-basemap"
+            :source="WHOWorldBasemapSource"
+          )
+          MapboxSource(
+            source-id="who-world-features"
+            :source="linkedFeaturesSource"
+          )
 
-        MapboxLayer(:layer="backgroundLayer" before-layer="countries-hatch")
-        MapboxLayer(:layer="countriesHatchLayer" before-layer="countries")
-        MapboxLayer(
-          :layer="countriesLayer"
-          @mousemove="onMouseMove"
-          @mouseleave="onMouseLeave"
-          before-layer="countries-boundary"
-        )
-        MapboxLayer(:layer="countriesBoundaryLayer" before-layer="admin-0")
-        MapboxLayer(:layer="admin0Layer" before-layer="disputed-territories")
-        MapboxLayer(:layer="disputedTerritoriesLayer" before-layer="disputed-borders")
-        MapboxLayer(:layer="disputedBordersLayer" before-layer="country-names")
-        MapboxLayer(:layer="countryNamesLayer")
+          MapboxLayer(:layer="backgroundLayer" before-layer="countries-hatch")
+          MapboxLayer(:layer="countriesHatchLayer" before-layer="countries")
+          MapboxLayer(
+            :layer="countriesLayer"
+            @mousemove="onMouseMove"
+            @mouseleave="onMouseLeave"
+            before-layer="countries-boundary"
+          )
+          MapboxLayer(:layer="countriesBoundaryLayer" before-layer="admin-0")
+          MapboxLayer(:layer="admin0Layer" before-layer="disputed-territories")
+          MapboxLayer(:layer="disputedTerritoriesLayer" before-layer="disputed-borders")
+          MapboxLayer(:layer="disputedBordersLayer" before-layer="country-names")
+          MapboxLayer(:layer="countryNamesLayer")
 
-        MapDetailsPopover(
-          v-model="showPopover"
-          :popover-data="popoverData"
-          :current-indicator="currentIndicator"
-          :current-subgroup="currentSubgroup"
-          popper-class="!z-10"
-        )
+          MapDetailsPopover(
+            v-model="showPopover"
+            :popover-data="popoverData"
+            :current-indicator="currentIndicator"
+            :current-subgroup="currentSubgroup"
+            popper-class="!z-10"
+          )
 
-        div(
-          class="virtual-element absolute"
-          ref="virtualElementRef"
-          :style="coordinatesStyle"
-          :id="String(popoverData?.country?.id)"
-          :key="String(popoverData?.country?.id)"
-        )
+          div(
+            class="virtual-element absolute"
+            ref="virtualElementRef"
+            :style="coordinatesStyle"
+            :id="String(popoverData?.country?.id)"
+            :key="String(popoverData?.country?.id)"
+          )
 
-        MapboxAttributionControl(
-          class="z-10 hide-popover-on-hover"
-          :options="{ compact: true }"
-          position="top-right"
-        )
+          MapboxAttributionControl(
+            class="z-10 hide-popover-on-hover"
+            :options="{ compact: true }"
+            position="top-right"
+          )
 
-        MapboxNavigationControl(
-          class="z-10 hide-popover-on-hover"
-          :options="{ showCompass: false, visualizePitch: false }"
-          position="bottom-right"
-        )
+          MapboxNavigationControl(
+            class="z-10 hide-popover-on-hover"
+            :options="{ showCompass: false, visualizePitch: false }"
+            position="bottom-right"
+          )
 
-        ElButton(
-          class=`z-10 hide-popover-on-hover center-map-button absolute top-[10px] right-[10px] w-[29px] h-[29px]
-            shadow-[0_0_0_1px_rgba(0,0,0,0.1)]
-          `
-          plain
-          :icon="Aim"
-          @click="onCenterMap"
-        )
+          ElButton(
+            class=`z-10 hide-popover-on-hover center-map-button absolute top-[10px] right-[10px] w-[29px] h-[29px]
+              shadow-[0_0_0_1px_rgba(0,0,0,0.1)]
+            `
+            plain
+            :icon="Aim"
+            @click="onCenterMap"
+          )
 
-        MapLegend(
-          class="z-10 hide-popover-on-hover absolute bottom-[20px] left-[20px]"
-          :current-indicator="currentIndicator"
-          :current-subgroup="currentSubgroup"
-          :data-type="dataTypeFilterValue"
-          :has-other="hasOther"
-          :has-no-data="hasNoData"
-          :nominal-legend="nominalLegend"
-          :jenks-breaks="jenksBreaks"
-        )
+          MapLegend(
+            class="z-10 hide-popover-on-hover absolute bottom-[20px] left-[20px]"
+            :current-indicator="currentIndicator"
+            :current-subgroup="currentSubgroup"
+            :data-type="dataTypeFilterValue"
+            :has-other="hasOther"
+            :has-no-data="hasNoData"
+            :nominal-legend="nominalLegend"
+            :jenks-breaks="jenksBreaks"
+          )
 
-    p(class="u-content text-sm text-secondary mt-4 mb-0")
-      | The data used are the latest available as of 31/07/2025 that are less than 10 years old and from reliable international data repositories.
+      p(class="text-sm text-secondary mt-4 mb-0")
+        | The data used are the latest available as of 31/07/2025 that are less than 10 years old and from reliable international data repositories.
 </template>
 
 <script lang="ts" setup>
