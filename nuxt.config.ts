@@ -49,6 +49,13 @@ export default defineNuxtConfig({
   },
 
   routeRules: {
+    // Allow the WHO data portal to embed the app in an iframe
+    '/**': {
+      headers: {
+        'Content-Security-Policy':
+          "frame-ancestors 'self' https://platform.who.int https://test-cms.platform.who.int"
+      }
+    },
     '/': {
       redirect: '/country-comparison'
     },
