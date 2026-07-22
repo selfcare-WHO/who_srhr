@@ -26,6 +26,7 @@
 
 <script lang="ts" setup>
   definePageMeta({
+    layout: false,
     middleware: ['country-comparison']
   })
 
