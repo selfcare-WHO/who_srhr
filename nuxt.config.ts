@@ -49,6 +49,9 @@ export default defineNuxtConfig({
   },
 
   routeRules: {
+    '/': {
+      redirect: '/country-comparison'
+    },
     '/country-comparison': {
       redirect: '/country-comparison/map-view'
     }
