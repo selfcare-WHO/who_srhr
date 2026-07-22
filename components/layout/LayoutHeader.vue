@@ -28,6 +28,8 @@
               :key="item.path"
               :to="item.path"
               class="text-white text-lg"
+              target="_top"
+              external
             )
               | {{ item.name }}
 
