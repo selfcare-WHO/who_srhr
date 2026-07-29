@@ -24,7 +24,7 @@
 
       TableKeySection(:dataType="filterValues?.dataType")
 
-      div(class="table-wrapper relative min-h-[700px]")
+      div(class="table-wrapper relative min-h-[700px] overflow-x-auto")
         div(ref="tableElement" :key="`table-${isCBFriendly}`")
 
       p(class="text-sm text-secondary mt-4 mb-0")
