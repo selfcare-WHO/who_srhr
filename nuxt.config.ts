@@ -4,6 +4,8 @@ declare module '*.svg?raw' {
   const content: string
 }
 
+const mapViewActive = process.env.MAP_VIEW_ACTIVE === 'true'
+
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-14',
 
@@ -15,7 +17,8 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      comparisonFeatureActive: process.env.COMPARISON_FEATURE_ACTIVE === 'true'
+      comparisonFeatureActive: process.env.COMPARISON_FEATURE_ACTIVE === 'true',
+      mapViewActive
     }
   },
 
@@ -60,8 +63,17 @@ export default defineNuxtConfig({
       redirect: '/country-comparison'
     },
     '/country-comparison': {
-      redirect: '/country-comparison/map-view'
-    }
+      redirect: mapViewActive
+        ? '/country-comparison/map-view'
+        : '/country-comparison/table-view'
+    },
+    ...(mapViewActive
+      ? {}
+      : {
+          '/country-comparison/map-view': {
+            redirect: '/country-comparison/table-view'
+          }
+        })
   },
 
   alias: {

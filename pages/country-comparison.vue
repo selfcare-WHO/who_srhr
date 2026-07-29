@@ -9,7 +9,7 @@
       .flex.justify-between.items-center.gap-3(v-else)
         .flex.items-center.gap-3
           h2.text-secondary.mr-3 Select view:
-          NuxtLink(to="/country-comparison/map-view")
+          NuxtLink(v-if="mapViewActive" to="/country-comparison/map-view")
             ElButton.w-32(type="primary" :plain="!mapView") Map
           NuxtLink(to="/country-comparison/charts-view")
             ElButton.w-32(type="primary" :plain="!chartsView") Charts
@@ -29,6 +29,10 @@
     layout: false,
     middleware: ['country-comparison']
   })
+
+  const {
+    public: { mapViewActive }
+  } = useRuntimeConfig()
 
   const colorStore = useColorStore()
   const { isCBFriendly } = storeToRefs(colorStore)

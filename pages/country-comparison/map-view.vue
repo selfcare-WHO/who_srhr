@@ -99,6 +99,10 @@
 
   defineOptions({ name: 'CountryComparisonMap' })
 
+  definePageMeta({
+    middleware: ['map-view']
+  })
+
   const mapFiltersStore = useMapFiltersStore()
   const {
     dataTypeFilterValue,
