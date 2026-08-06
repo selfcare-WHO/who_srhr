@@ -6,15 +6,28 @@ import type { Page } from '@playwright/test'
  * context yields the same singleton — that's how we reach the live Map.
  */
 const ATTACH_MAP = `
-  const url = performance.getEntriesByType('resource')
+  const loaded = performance.getEntriesByType('resource')
     .map(e => e.name)
-    .find(n => /mapboxInstances\\.js/.test(n))
-  if (!url) return false
-  const mod = await import(url)
-  const entry = mod._useMapboxInstances().value['world-map']
-  if (!entry || !entry.map) return false
-  window.__map = entry.map
-  return true
+    .filter(n => /mapboxInstances\\.js/.test(n))
+
+  // The resource list is the fast path, but Vite's module graph changes shape
+  // (and the ?v= hash rotates) after a production build has rewritten .nuxt,
+  // so fall back to the module's canonical dev path.
+  const candidates = loaded.concat([
+    '/_nuxt/node_modules/nuxt-mapbox/dist/runtime/composables/mapboxInstances.js'
+  ])
+
+  for (const url of candidates) {
+    try {
+      const mod = await import(url)
+      if (typeof mod._useMapboxInstances !== 'function') continue
+      const entry = mod._useMapboxInstances().value['world-map']
+      if (!entry || !entry.map) continue
+      window.__map = entry.map
+      return true
+    } catch (e) { /* try the next candidate */ }
+  }
+  return false
 `
 
 /** Kill transitions/animations so a screenshot never catches a mid-fade frame. */
