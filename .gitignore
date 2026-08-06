@@ -19,3 +19,8 @@ dist
 
 .playwright-mcp
 .worktrees/
+
+# Playwright run output. Snapshot baselines under tests/**-snapshots/ ARE
+# committed — they are the visual-parity reference.
+test-results/
+playwright-report/

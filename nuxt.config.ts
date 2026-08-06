@@ -9,6 +9,11 @@ const mapViewActive = process.env.MAP_VIEW_ACTIVE === 'true'
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-14',
 
+  // Playwright writes screenshot baselines under tests/ while the browser is
+  // driving the app; without this the dev watcher full-reloads mid-run and
+  // destroys the page's execution context.
+  ignore: ['tests/**', 'test-results/**', 'playwright-report/**'],
+
   devtools: {
     enabled: false
   },

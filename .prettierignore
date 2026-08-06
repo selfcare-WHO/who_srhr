@@ -31,4 +31,9 @@ package-lock.json
 .env*
 
 # Git
-.git/ 
+.git/
+
+# Playwright snapshot baselines are byte-compared against the runner's own
+# output — reformatting them (even a trailing newline) breaks every diff.
+tests/**-snapshots/
+test-results/ 
