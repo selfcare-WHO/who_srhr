@@ -1,10 +1,46 @@
 {
   "kashmir": [
     {
-      "layer": "disputed-territories",
+      "layer": "Boundaries/DISPUTED BORDERS AND AREAS/DisputedBorderDots_P 9M",
+      "sourceLayer": "DisputedBorderDots_P 9M",
+      "symbol": null,
+      "name": null
+    },
+    {
+      "layer": "Boundaries/DISPUTED BORDERS AND AREAS/DISPUTED_AREAS/Golan; Jammu and Kashmir; Western Sahara; Abyei",
       "sourceLayer": "DISPUTED_AREAS",
       "symbol": 1,
       "name": "Jammu and Kashmir"
+    },
+    {
+      "layer": "Boundaries/GLOBAL_ADM_L_Merge_20201201/0",
+      "sourceLayer": "GLOBAL_ADM_L_Merge_20201201",
+      "symbol": 0,
+      "name": null
+    },
+    {
+      "layer": "Boundaries/GLOBAL_ADM_L_Merge_20201201/1",
+      "sourceLayer": "GLOBAL_ADM_L_Merge_20201201",
+      "symbol": 1,
+      "name": null
+    },
+    {
+      "layer": "countries-boundary",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "PAK"
+    },
+    {
+      "layer": "countries-boundary",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "IND"
+    },
+    {
+      "layer": "countries",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "PAK"
     },
     {
       "layer": "countries",
@@ -16,17 +52,35 @@
       "layer": "countries-hatch",
       "sourceLayer": null,
       "symbol": null,
+      "name": "PAK"
+    },
+    {
+      "layer": "countries-hatch",
+      "sourceLayer": null,
+      "symbol": null,
       "name": "IND"
     },
     {
-      "layer": "background",
-      "sourceLayer": "Background_VTP",
+      "layer": "Land (ADM0)/1",
+      "sourceLayer": "Land (ADM0)",
+      "symbol": null,
+      "name": null
+    },
+    {
+      "layer": "Land (ADM0)/1",
+      "sourceLayer": "Land (ADM0)",
       "symbol": null,
       "name": null
     }
   ],
   "aksai-chin": [
     {
+      "layer": "Boundaries/DISPUTED BORDERS AND AREAS/DISPUTED_AREAS/Aksai Chin_3",
+      "sourceLayer": "DISPUTED_AREAS",
+      "symbol": 0,
+      "name": "Aksai Chin"
+    },
+    {
       "layer": "countries",
       "sourceLayer": null,
       "symbol": null,
@@ -39,7 +93,13 @@
       "name": "CHN"
     },
     {
-      "layer": "background",
+      "layer": "Land (ADM0)/1",
+      "sourceLayer": "Land (ADM0)",
+      "symbol": null,
+      "name": null
+    },
+    {
+      "layer": "Background_VTP/1",
       "sourceLayer": "Background_VTP",
       "symbol": null,
       "name": null
@@ -47,9 +107,15 @@
   ],
   "kosovo": [
     {
-      "layer": "country-names",
+      "layer": "Country Names/label/English",
       "sourceLayer": "Country Names/label",
       "symbol": null,
+      "name": null
+    },
+    {
+      "layer": "Boundaries/GLOBAL_ADM_L_Merge_20201201/1",
+      "sourceLayer": "GLOBAL_ADM_L_Merge_20201201",
+      "symbol": 1,
       "name": null
     },
     {
@@ -65,7 +131,19 @@
       "name": "SRB"
     },
     {
-      "layer": "background",
+      "layer": "Land (ADM0)/1",
+      "sourceLayer": "Land (ADM0)",
+      "symbol": null,
+      "name": null
+    },
+    {
+      "layer": "Land (ADM0)/1",
+      "sourceLayer": "Land (ADM0)",
+      "symbol": null,
+      "name": null
+    },
+    {
+      "layer": "Background_VTP/1",
       "sourceLayer": "Background_VTP",
       "symbol": null,
       "name": null
@@ -73,6 +151,18 @@
   ],
   "sudan-egypt-halayib": [
     {
+      "layer": "Boundaries/DISPUTED BORDERS AND AREAS/DISPUTED_BORDERS/Aksai Chin (IND Claim); Arunachal Pradesh; Halayib Triangle (EGY Claim); Aksai Chin (CHN Claim); Bir Tawil (EGY Claim); Jammu and Kashmir; Western Sahara",
+      "sourceLayer": "DISPUTED_BORDERS",
+      "symbol": 2,
+      "name": null
+    },
+    {
+      "layer": "countries",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "SDN"
+    },
+    {
       "layer": "countries",
       "sourceLayer": null,
       "symbol": null,
@@ -85,7 +175,31 @@
       "name": "SDN"
     },
     {
-      "layer": "background",
+      "layer": "countries-hatch",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "SDN"
+    },
+    {
+      "layer": "Land (ADM0)/1",
+      "sourceLayer": "Land (ADM0)",
+      "symbol": null,
+      "name": null
+    },
+    {
+      "layer": "Land (ADM0)/1",
+      "sourceLayer": "Land (ADM0)",
+      "symbol": null,
+      "name": null
+    },
+    {
+      "layer": "Background_VTP/1",
+      "sourceLayer": "Background_VTP",
+      "symbol": null,
+      "name": null
+    },
+    {
+      "layer": "Background_VTP/1",
       "sourceLayer": "Background_VTP",
       "symbol": null,
       "name": null
@@ -93,6 +207,12 @@
   ],
   "ssudan-kenya-ilemi": [
     {
+      "layer": "Boundaries/DISPUTED BORDERS AND AREAS/DisputedBorderDots_P 9M",
+      "sourceLayer": "DisputedBorderDots_P 9M",
+      "symbol": null,
+      "name": null
+    },
+    {
       "layer": "countries",
       "sourceLayer": null,
       "symbol": null,
@@ -105,7 +225,13 @@
       "name": "SSD"
     },
     {
-      "layer": "background",
+      "layer": "Land (ADM0)/1",
+      "sourceLayer": "Land (ADM0)",
+      "symbol": null,
+      "name": null
+    },
+    {
+      "layer": "Background_VTP/1",
       "sourceLayer": "Background_VTP",
       "symbol": null,
       "name": null
@@ -113,9 +239,21 @@
   ],
   "lake-victoria": [
     {
-      "layer": "admin-0",
+      "layer": "Boundaries/DISPUTED BORDERS AND AREAS/DISPUTED_AREAS/Aral Sea; Great Lakes of NA; Lake Albert; Lake Malawi; Lake Tanganyika; Lake Titicaca; Lake Victoria",
+      "sourceLayer": "DISPUTED_AREAS",
+      "symbol": 2,
+      "name": "Lake Victoria"
+    },
+    {
+      "layer": "Boundaries/GLOBAL_ADM_L_Merge_20201201/0",
       "sourceLayer": "GLOBAL_ADM_L_Merge_20201201",
       "symbol": 0,
+      "name": null
+    },
+    {
+      "layer": "Boundaries/GLOBAL_ADM_L_Merge_20201201/1",
+      "sourceLayer": "GLOBAL_ADM_L_Merge_20201201",
+      "symbol": 1,
       "name": null
     },
     {
@@ -137,13 +275,37 @@
       "name": "UGA"
     },
     {
+      "layer": "countries",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "TZA"
+    },
+    {
       "layer": "countries-hatch",
       "sourceLayer": null,
       "symbol": null,
       "name": "UGA"
     },
     {
-      "layer": "background",
+      "layer": "countries-hatch",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "TZA"
+    },
+    {
+      "layer": "Land (ADM0)/1",
+      "sourceLayer": "Land (ADM0)",
+      "symbol": null,
+      "name": null
+    },
+    {
+      "layer": "Land (ADM0)/1",
+      "sourceLayer": "Land (ADM0)",
+      "symbol": null,
+      "name": null
+    },
+    {
+      "layer": "Background_VTP/1",
       "sourceLayer": "Background_VTP",
       "symbol": null,
       "name": null
@@ -151,10 +313,40 @@
   ],
   "golan": [
     {
-      "layer": "disputed-territories",
+      "layer": "Boundaries/DISPUTED BORDERS AND AREAS/DISPUTED_BORDERS/Aksai Chin (IND Claim); Arunachal Pradesh; Halayib Triangle (EGY Claim); Aksai Chin (CHN Claim); Bir Tawil (EGY Claim); Jammu and Kashmir; Western Sahara",
+      "sourceLayer": "DISPUTED_BORDERS",
+      "symbol": 2,
+      "name": null
+    },
+    {
+      "layer": "Boundaries/DISPUTED BORDERS AND AREAS/DISPUTED_AREAS/Golan; Jammu and Kashmir; Western Sahara; Abyei",
       "sourceLayer": "DISPUTED_AREAS",
       "symbol": 1,
       "name": "Golan"
+    },
+    {
+      "layer": "Boundaries/GLOBAL_ADM_L_Merge_20201201/0",
+      "sourceLayer": "GLOBAL_ADM_L_Merge_20201201",
+      "symbol": 0,
+      "name": null
+    },
+    {
+      "layer": "Boundaries/GLOBAL_ADM_L_Merge_20201201/1",
+      "sourceLayer": "GLOBAL_ADM_L_Merge_20201201",
+      "symbol": 1,
+      "name": null
+    },
+    {
+      "layer": "countries-boundary",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "SYR"
+    },
+    {
+      "layer": "countries-boundary",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "ISR"
     },
     {
       "layer": "countries",
@@ -163,24 +355,48 @@
       "name": "SYR"
     },
     {
+      "layer": "countries",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "ISR"
+    },
+    {
       "layer": "countries-hatch",
       "sourceLayer": null,
       "symbol": null,
       "name": "SYR"
     },
     {
-      "layer": "background",
-      "sourceLayer": "Background_VTP",
+      "layer": "countries-hatch",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "ISR"
+    },
+    {
+      "layer": "Land (ADM0)/1",
+      "sourceLayer": "Land (ADM0)",
+      "symbol": null,
+      "name": null
+    },
+    {
+      "layer": "Land (ADM0)/1",
+      "sourceLayer": "Land (ADM0)",
       "symbol": null,
       "name": null
     }
   ],
   "western-sahara": [
     {
-      "layer": "disputed-territories",
+      "layer": "Boundaries/DISPUTED BORDERS AND AREAS/DISPUTED_AREAS/Golan; Jammu and Kashmir; Western Sahara; Abyei",
       "sourceLayer": "DISPUTED_AREAS",
       "symbol": 1,
       "name": "Western Sahara"
+    },
+    {
+      "layer": "Boundaries/GLOBAL_ADM_L_Merge_20201201/1",
+      "sourceLayer": "GLOBAL_ADM_L_Merge_20201201",
+      "symbol": 1,
+      "name": null
     },
     {
       "layer": "countries",
@@ -195,7 +411,13 @@
       "name": "ESH"
     },
     {
-      "layer": "background",
+      "layer": "Land (ADM0)/1",
+      "sourceLayer": "Land (ADM0)",
+      "symbol": null,
+      "name": null
+    },
+    {
+      "layer": "Background_VTP/1",
       "sourceLayer": "Background_VTP",
       "symbol": null,
       "name": null
@@ -203,6 +425,12 @@
   ],
   "brazil-member-state": [
     {
+      "layer": "Boundaries/GLOBAL_ADM_L_Merge_20201201/1",
+      "sourceLayer": "GLOBAL_ADM_L_Merge_20201201",
+      "symbol": 1,
+      "name": null
+    },
+    {
       "layer": "countries",
       "sourceLayer": null,
       "symbol": null,
@@ -215,7 +443,13 @@
       "name": "BRA"
     },
     {
-      "layer": "background",
+      "layer": "Land (ADM0)/1",
+      "sourceLayer": "Land (ADM0)",
+      "symbol": null,
+      "name": null
+    },
+    {
+      "layer": "Background_VTP/1",
       "sourceLayer": "Background_VTP",
       "symbol": null,
       "name": null
@@ -223,10 +457,22 @@
   ],
   "aruba-non-member": [
     {
-      "layer": "country-names",
+      "layer": "Country Names/label/English",
       "sourceLayer": "Country Names/label",
       "symbol": null,
       "name": null
+    },
+    {
+      "layer": "Country Capitals/Capitals",
+      "sourceLayer": "Country Capitals",
+      "symbol": 0,
+      "name": null
+    },
+    {
+      "layer": "countries-boundary",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "ABW"
     },
     {
       "layer": "countries",
@@ -241,7 +487,13 @@
       "name": "ABW"
     },
     {
-      "layer": "background",
+      "layer": "Land (ADM0)/1",
+      "sourceLayer": "Land (ADM0)",
+      "symbol": null,
+      "name": null
+    },
+    {
+      "layer": "Background_VTP/1",
       "sourceLayer": "Background_VTP",
       "symbol": null,
       "name": null
@@ -249,6 +501,24 @@
   ],
   "philippines": [
     {
+      "layer": "Boundaries/GLOBAL_ADM_L_Merge_20201201/1",
+      "sourceLayer": "GLOBAL_ADM_L_Merge_20201201",
+      "symbol": 1,
+      "name": null
+    },
+    {
+      "layer": "Boundaries/GLOBAL_ADM_L_Merge_20201201/1",
+      "sourceLayer": "GLOBAL_ADM_L_Merge_20201201",
+      "symbol": 1,
+      "name": null
+    },
+    {
+      "layer": "countries",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "PHL"
+    },
+    {
       "layer": "countries",
       "sourceLayer": null,
       "symbol": null,
@@ -261,7 +531,31 @@
       "name": "PHL"
     },
     {
-      "layer": "background",
+      "layer": "countries-hatch",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "PHL"
+    },
+    {
+      "layer": "Land (ADM0)/1",
+      "sourceLayer": "Land (ADM0)",
+      "symbol": null,
+      "name": null
+    },
+    {
+      "layer": "Land (ADM0)/1",
+      "sourceLayer": "Land (ADM0)",
+      "symbol": null,
+      "name": null
+    },
+    {
+      "layer": "Background_VTP/1",
+      "sourceLayer": "Background_VTP",
+      "symbol": null,
+      "name": null
+    },
+    {
+      "layer": "Background_VTP/1",
       "sourceLayer": "Background_VTP",
       "symbol": null,
       "name": null

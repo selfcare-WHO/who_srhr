@@ -1,5 +1,11 @@
 import { test, expect } from '@playwright/test'
-import { CAPTURE_STATES, openMap, probeLayers, settle } from './helpers/map'
+import {
+  CAPTURE_STATES,
+  openMap,
+  probeLayers,
+  settle,
+  sourceLayersInView
+} from './helpers/map'
 
 /**
  * Visual-parity gates for the WHO map refactor.
@@ -33,6 +39,80 @@ test.describe('map view', () => {
     const probes = await probeLayers(page)
 
     expect(JSON.stringify(probes, null, 2)).toMatchSnapshot('layer-probes.json')
+
+    // Our choropleth must stay beneath WHO's cartography, not on top of it.
+    const brazil = probes['brazil-member-state'] as Array<{
+      layer: string | null
+    }>
+    const order = brazil.map(f => f.layer)
+    expect(order.indexOf('countries')).toBeLessThan(
+      order.indexOf('Land (ADM0)/1')
+    )
+  })
+
+  /**
+   * The cartography WHO's map SOP review flagged as missing. Asserted by name
+   * so a regression says which item broke rather than dumping a snapshot diff.
+   */
+  test('WHO disputed cartography renders', async ({ page }) => {
+    await openMap(page, CAPTURE_STATES[0].query)
+
+    const cases: Array<{
+      place: string
+      lngLat: [number, number]
+      zoom: number
+      expected: string
+    }> = [
+      {
+        place: 'kosovo',
+        lngLat: [20.9, 42.6],
+        zoom: 7,
+        expected: 'DISPUTED_BORDERS'
+      },
+      {
+        place: 'sudan-egypt',
+        lngLat: [34.5, 22.0],
+        zoom: 6,
+        expected: 'DISPUTED_BORDERS'
+      },
+      {
+        place: 'ssudan-kenya',
+        lngLat: [34.8, 4.9],
+        zoom: 7,
+        expected: 'DISPUTED_BORDERS'
+      },
+      {
+        place: 'kashmir',
+        lngLat: [77.0, 34.5],
+        zoom: 6,
+        expected: 'DISPUTED_BORDERS'
+      },
+      {
+        place: 'aksai-chin',
+        lngLat: [79.5, 35.2],
+        zoom: 6,
+        expected: 'DISPUTED_AREAS'
+      },
+      {
+        place: 'lake-victoria',
+        lngLat: [33.0, -1.0],
+        zoom: 6,
+        expected: 'DISPUTED_AREAS'
+      },
+      {
+        place: 'western-sahara',
+        lngLat: [-13.0, 24.5],
+        zoom: 5,
+        expected: 'DISPUTED_AREAS'
+      }
+    ]
+
+    for (const c of cases) {
+      const layers = await sourceLayersInView(page, c.lngLat, c.zoom)
+      expect(layers, `${c.place}: expected ${c.expected} in view`).toContain(
+        c.expected
+      )
+    }
   })
 
   test('philippines is rendered and hoverable', async ({ page }) => {

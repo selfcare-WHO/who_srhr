@@ -1,3 +1,22 @@
+/**
+ * The basemap — background, boundaries, disputed areas and borders, great
+ * lakes, labels — comes from WHO's published style via /api/who-basemap-style.
+ * Only the data layers below are ours.
+ */
+
+/**
+ * Where our data layers slot into WHO's stack. WHO order the style
+ * `Background_VTP/1` → `Land (ADM0)/1` → `Boundaries/*` → disputed areas and
+ * borders → labels, so anchoring at the first boundary layer puts the
+ * choropleth directly above the land fill and below everything WHO draws on
+ * top of it.
+ */
+export const WHO_BASEMAP_ANCHOR_LAYER =
+  'Boundaries/GLOBAL_ADM_L_Merge_20201201/2'
+
+/** WHO's English country-label layer, restyled at runtime for Türkiye. */
+export const WHO_COUNTRY_LABEL_LAYER = 'Country Names/label/English'
+
 export const useMapConfiguration = (
   countriesPaint: ComputedRef<mapboxgl.LayerSpecification['paint']>
 ) => {
@@ -7,12 +26,9 @@ export const useMapConfiguration = (
       [-200, -70],
       [200, 80]
     ],
-    style: {
-      version: 8,
-      sources: {},
-      layers: [],
-      glyphs: 'mapbox://fonts/mapbox/{fontstack}/{range}.pbf'
-    },
+    // Mapbox GL fetches this itself. The route serves absolute sprite, glyph
+    // and tile URLs, so nothing here needs resolving against a base.
+    style: '/api/who-basemap-style',
     zoom: 1.5,
     maxZoom: 6,
     minZoom: 0.5,
@@ -23,25 +39,6 @@ export const useMapConfiguration = (
     touchPitch: false,
     touchZoomRotate: false,
     dragRotate: false
-  }
-
-  const tilesUrl =
-    'https://tiles.arcgis.com/tiles/5T5nSi527N4F7luB/arcgis/rest/services/WHO_Polygon_Basemap_with_labels_VTP/VectorTileServer/tile/{z}/{y}/{x}.pbf'
-
-  const WHOWorldBasemapSource: mapboxgl.SourceSpecification = {
-    type: 'vector',
-    tiles: [tilesUrl]
-  }
-
-  // Base layer configurations
-  const backgroundLayer: mapboxgl.LayerSpecification = {
-    id: 'background',
-    type: 'fill',
-    source: 'who-world-basemap',
-    'source-layer': 'Background_VTP',
-    paint: {
-      'fill-color': '#ffffff'
-    }
   }
 
   const countriesLayer = computed<mapboxgl.LayerSpecification>(() => ({
@@ -68,82 +65,10 @@ export const useMapConfiguration = (
     }
   }
 
-  const admin0Layer: mapboxgl.LayerSpecification = {
-    id: 'admin-0',
-    type: 'line',
-    source: 'who-world-basemap',
-    'source-layer': 'GLOBAL_ADM_L_Merge_20201201',
-    filter: ['==', '_symbol', 0],
-    layout: {
-      'line-cap': 'round',
-      'line-join': 'round'
-    },
-    paint: {
-      'line-color': '#FFFFFF',
-      'line-width': 1
-    }
-  }
-
-  const disputedTerritoriesLayer: mapboxgl.LayerSpecification = {
-    id: 'disputed-territories',
-    type: 'fill',
-    source: 'who-world-basemap',
-    'source-layer': 'DISPUTED_AREAS',
-    filter: ['==', '_symbol', 1],
-    paint: {
-      'fill-color': '#E1E1E1'
-    }
-  }
-
-  const disputedBordersLayer: mapboxgl.LayerSpecification = {
-    id: 'disputed-borders',
-    type: 'line',
-    source: 'who-world-basemap',
-    'source-layer': 'DISPUTED_BORDERS',
-    layout: {
-      'line-cap': 'round',
-      'line-join': 'round'
-    },
-    filter: ['==', '_symbol', 1],
-    paint: {
-      'line-color': '#828282',
-      'line-dasharray': [0.1, 2.5],
-      'line-width': 1
-    }
-  }
-
-  const countryNamesLayer: mapboxgl.LayerSpecification = {
-    id: 'country-names',
-    type: 'symbol',
-    source: 'who-world-basemap',
-    'source-layer': 'Country Names/label',
-    minzoom: 3,
-    layout: {
-      'text-font': ['Oswald Regular'],
-      'text-size': 16,
-      // The basemap tileset bakes in country labels via `_name`; it still
-      // carries the outdated "Turkey". We can't edit the remote tileset, so
-      // override that one label client-side and pass every other through.
-      'text-field': ['match', ['get', '_name'], 'Turkey', 'Türkiye', ['get', '_name']],
-      'text-optional': true
-    },
-    paint: {
-      'text-color': '#686868',
-      'text-halo-color': '#FFFFFF',
-      'text-halo-width': 2
-    }
-  }
-
   return {
     mapOptions,
-    WHOWorldBasemapSource,
-    backgroundLayer,
     countriesLayer,
     countriesHatchLayer,
-    countriesBoundaryLayer,
-    admin0Layer,
-    disputedTerritoriesLayer,
-    disputedBordersLayer,
-    countryNamesLayer
+    countriesBoundaryLayer
   }
 }

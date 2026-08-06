@@ -189,18 +189,41 @@ export const useMapStyles = ({
     return { 'fill-color': 'rgba(0,0,0,0)' }
   })
 
-  // Register the hatch pattern image once on map load
+  /**
+   * Re-applied on every style load, not just once on `load`.
+   *
+   * The style now arrives over the network, and `useMapbox` already waits for
+   * the map to report loaded — which happens on `load` *or* `style.load`, so a
+   * nested `map.on('load')` can miss entirely. `setStyle` also discards every
+   * `addImage` registration, which would silently drop the "No data" hatch.
+   */
+  const applyStyleExtras = (map: mapboxgl.Map) => {
+    if (!map.hasImage('hatch-pattern')) {
+      loadSVGAsImage({
+        id: 'hatch-pattern',
+        map,
+        svgDataUri: hatchUri,
+        pixelRatio: 2
+      })
+    }
+
+    // WHO's basemap tileset bakes country labels into `_name` and still carries
+    // the outdated "Turkey". We can't edit the remote tileset, so override that
+    // one label on their layer and pass every other through.
+    if (map.getLayer(WHO_COUNTRY_LABEL_LAYER)) {
+      map.setLayoutProperty(WHO_COUNTRY_LABEL_LAYER, 'text-field', [
+        'match',
+        ['get', '_name'],
+        'Turkey',
+        'Türkiye',
+        ['get', '_name']
+      ])
+    }
+  }
+
   useMapbox('world-map', map => {
-    map.on('load', () => {
-      if (!map.hasImage('hatch-pattern')) {
-        loadSVGAsImage({
-          id: 'hatch-pattern',
-          map,
-          svgDataUri: hatchUri,
-          pixelRatio: 2
-        })
-      }
-    })
+    applyStyleExtras(map)
+    map.on('style.load', () => applyStyleExtras(map))
   })
 
   return {

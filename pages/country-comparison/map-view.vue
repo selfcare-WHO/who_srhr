@@ -20,27 +20,27 @@
           @mouseleave="showPopover = false"
         )
           MapboxSource(
-            source-id="who-world-basemap"
-            :source="WHOWorldBasemapSource"
-          )
-          MapboxSource(
             source-id="who-world-features"
             :source="linkedFeaturesSource"
           )
 
-          MapboxLayer(:layer="backgroundLayer" before-layer="countries-hatch")
-          MapboxLayer(:layer="countriesHatchLayer" before-layer="countries")
+          //- Mounted in draw order and all anchored at the same WHO layer, so
+            each one inserts directly before it: hatch, then choropleth, then
+            country outlines — all beneath WHO's boundaries and labels.
+          MapboxLayer(
+            :layer="countriesHatchLayer"
+            :before-layer="WHO_BASEMAP_ANCHOR_LAYER"
+          )
           MapboxLayer(
             :layer="countriesLayer"
             @mousemove="onMouseMove"
             @mouseleave="onMouseLeave"
-            before-layer="countries-boundary"
+            :before-layer="WHO_BASEMAP_ANCHOR_LAYER"
           )
-          MapboxLayer(:layer="countriesBoundaryLayer" before-layer="admin-0")
-          MapboxLayer(:layer="admin0Layer" before-layer="disputed-territories")
-          MapboxLayer(:layer="disputedTerritoriesLayer" before-layer="disputed-borders")
-          MapboxLayer(:layer="disputedBordersLayer" before-layer="country-names")
-          MapboxLayer(:layer="countryNamesLayer")
+          MapboxLayer(
+            :layer="countriesBoundaryLayer"
+            :before-layer="WHO_BASEMAP_ANCHOR_LAYER"
+          )
 
           MapDetailsPopover(
             v-model="showPopover"
@@ -156,15 +156,9 @@
 
   const {
     mapOptions,
-    WHOWorldBasemapSource,
-    backgroundLayer,
     countriesLayer,
     countriesHatchLayer,
-    countriesBoundaryLayer,
-    admin0Layer,
-    disputedTerritoriesLayer,
-    disputedBordersLayer,
-    countryNamesLayer
+    countriesBoundaryLayer
   } = useMapConfiguration(countriesPaint)
 
   const mapRef = useMapboxRef('world-map')

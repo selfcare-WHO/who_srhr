@@ -192,6 +192,36 @@ export const PROBES: ProbePoint[] = [
 ]
 
 /**
+ * Which source-layers paint anywhere in the viewport when centred on a place.
+ *
+ * Point and box probes are hostage to guessing a coordinate that sits exactly
+ * on a border stroke. For "is WHO's disputed border for Kosovo drawn at all?"
+ * the honest query is viewport-wide.
+ */
+export async function sourceLayersInView(
+  page: Page,
+  lngLat: [number, number],
+  zoom: number
+): Promise<string[]> {
+  await page.evaluate(
+    v => {
+      ;(window as any).__map.jumpTo({ center: v.lngLat, zoom: v.zoom })
+    },
+    { lngLat, zoom }
+  )
+  await settle(page, 12_000)
+
+  return page.evaluate(() => {
+    const map = (window as any).__map
+    const seen = new Set<string>()
+    for (const f of map.queryRenderedFeatures()) {
+      if (f.sourceLayer) seen.add(f.sourceLayer)
+    }
+    return Array.from(seen).sort()
+  })
+}
+
+/**
  * At each probe, record which layers paint. Order matters: this is what
  * catches the choropleth being stacked above WHO's disputed-area fills, which
  * a screenshot can hide.
@@ -207,9 +237,16 @@ export async function probeLayers(page: Page) {
 
     results[probe.name] = await page.evaluate(p => {
       const map = (window as any).__map
-      const point = map.project(p.lngLat)
+      const centre = map.project(p.lngLat)
+      // A box, not a point: disputed borders are line layers, and a single
+      // pixel only hits one if the coordinate sits exactly on the stroke.
+      const r = 12
+      const box = [
+        [centre.x - r, centre.y - r],
+        [centre.x + r, centre.y + r]
+      ]
       return map
-        .queryRenderedFeatures(point)
+        .queryRenderedFeatures(box)
         .slice(0, 12)
         .map((f: any) => ({
           layer: f.layer?.id ?? null,
