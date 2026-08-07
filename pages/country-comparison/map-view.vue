@@ -23,24 +23,45 @@
             source-id="who-world-features"
             :source="linkedFeaturesSource"
           )
-
-          //- Mounted in draw order and all anchored at the same WHO layer, so
-            each one inserts directly before it: hatch, then choropleth, then
-            country outlines — all beneath WHO's boundaries and labels.
-          MapboxLayer(
-            :layer="countriesHatchLayer"
-            :before-layer="WHO_BASEMAP_ANCHOR_LAYER"
+          MapboxSource(
+            source-id="who-country-labels"
+            :source="countryLabelsSource"
           )
+          MapboxSource(
+            source-id="who-disputed-borders"
+            :source="disputedBordersSource"
+          )
+          MapboxSource(
+            source-id="who-disputed-areas"
+            :source="disputedAreasSource"
+          )
+
+          //- Draw order matters and is asserted by tests/map-visual.spec.ts.
+            WHO's disputed cartography goes above the choropleth so Western
+            Sahara, Jammu and Kashmir and Abyei stay "Not applicable" whatever
+            the indicator, and so the great lakes read as water.
+          MapboxLayer(:layer="countriesHatchLayer" before-layer="countries")
           MapboxLayer(
             :layer="countriesLayer"
             @mousemove="onMouseMove"
             @mouseleave="onMouseLeave"
-            :before-layer="WHO_BASEMAP_ANCHOR_LAYER"
+            before-layer="countries-boundary"
           )
+          MapboxLayer(:layer="countriesBoundaryLayer" before-layer="disputed-areas-lakes")
+          MapboxLayer(:layer="disputedAreaLakesLayer" before-layer="disputed-areas-not-applicable")
+          MapboxLayer(:layer="disputedAreaNotApplicableLayer" before-layer="disputed-borders-dotted")
           MapboxLayer(
-            :layer="countriesBoundaryLayer"
-            :before-layer="WHO_BASEMAP_ANCHOR_LAYER"
+            v-for="layer in disputedAreaAksaiChinLayers"
+            :key="layer.id"
+            :layer="layer"
+            before-layer="disputed-borders-dotted"
           )
+          MapboxLayer(:layer="disputedBorderDottedLayer" before-layer="disputed-borders-kosovo")
+          MapboxLayer(:layer="disputedBorderKosovoLayer" before-layer="disputed-borders-solid")
+          MapboxLayer(:layer="disputedBorderSolidLayer" before-layer="disputed-borders-dashed-casing")
+          MapboxLayer(:layer="disputedBorderDashedCasingLayer" before-layer="disputed-borders-dashed")
+          MapboxLayer(:layer="disputedBorderDashedLayer" before-layer="country-names")
+          MapboxLayer(:layer="countryNamesLayer")
 
           MapDetailsPopover(
             v-model="showPopover"
@@ -70,8 +91,14 @@
             position="bottom-right"
           )
 
+          MapboxScaleControl(
+            class="z-10 hide-popover-on-hover"
+            :options="{ maxWidth: 120, unit: 'metric' }"
+            position="top-left"
+          )
+
           ElButton(
-            class=`z-10 hide-popover-on-hover center-map-button absolute top-[10px] right-[10px] w-[29px] h-[29px]
+            class=`z-10 hide-popover-on-hover center-map-button absolute top-[20px] right-[20px] w-[29px] h-[29px]
               shadow-[0_0_0_1px_rgba(0,0,0,0.1)]
             `
             plain
@@ -92,6 +119,18 @@
 
       p(class="text-sm text-secondary mt-4 mb-0")
         | The data used are the latest available as of 31/07/2025 that are less than 10 years old and from reliable international data repositories.
+
+      //- WHO map SOP 2.5 requires this disclaimer beneath the map, verbatim.
+        Do not paraphrase or shorten it.
+      .map-disclaimer(class="mt-4 flex items-start gap-4")
+        img(
+          src="@assets/images/WHO-Logo.png" alt="WHO Logo"
+          class="h-[40px] object-contain shrink-0"
+        )
+        p(class="text-xs text-secondary m-0")
+          | The designations employed and the presentation of the material in this publication do not imply the expression of any opinion whatsoever on the part of WHO concerning the legal status of any country, territory, city or area or of its authorities, or concerning the delimitation of its frontiers or boundaries. Dotted and dashed lines on maps represent approximate border lines for which there may not yet be full agreement.
+          br
+          | © WHO {{ copyrightYear }}. All rights reserved.
 </template>
 
 <script lang="ts" setup>
@@ -112,10 +151,13 @@
     currentIndicator
   } = storeToRefs(mapFiltersStore)
 
+  const copyrightYear = new Date().getFullYear()
+
   const {
     mapData,
     isFetching,
     linkedFeaturesSource,
+    countryLabelsSource,
     currentSubgroup,
     hasOther,
     hasNoData,
@@ -156,9 +198,20 @@
 
   const {
     mapOptions,
+    disputedBordersSource,
+    disputedAreasSource,
     countriesLayer,
     countriesHatchLayer,
-    countriesBoundaryLayer
+    countriesBoundaryLayer,
+    disputedAreaLakesLayer,
+    disputedAreaNotApplicableLayer,
+    disputedAreaAksaiChinLayers,
+    disputedBorderDottedLayer,
+    disputedBorderKosovoLayer,
+    disputedBorderSolidLayer,
+    disputedBorderDashedCasingLayer,
+    disputedBorderDashedLayer,
+    countryNamesLayer
   } = useMapConfiguration(countriesPaint)
 
   const mapRef = useMapboxRef('world-map')
@@ -286,6 +339,20 @@
   .map-view
     .mapboxgl-ctrl-logo
       display: none !important
+
+    // Mapbox insets its controls by 10px. Use 20px so they line up with
+    // .map-view-legend and the recentre button against the map frame.
+    .mapboxgl-ctrl-top-left .mapboxgl-ctrl
+      margin: 20px 0 0 20px
+
+    .mapboxgl-ctrl-top-right .mapboxgl-ctrl
+      margin: 20px 20px 0 0
+
+    .mapboxgl-ctrl-bottom-left .mapboxgl-ctrl
+      margin: 0 0 20px 20px
+
+    .mapboxgl-ctrl-bottom-right .mapboxgl-ctrl
+      margin: 0 20px 20px 0
 
     .center-map-button
       border-color: rgb(229, 231, 235) !important
