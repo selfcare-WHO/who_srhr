@@ -26,7 +26,7 @@
           div(
             v-if="status?.hatchPattern"
             class="h-4 w-6 min-h-4 min-w-6 border-2 flex items-center justify-center"
-            :style="{ background: `url(${hatchUri}) repeat`, backgroundSize: '6px' }"
+            :style="hatchSwatchStyle"
           )
 
           div(
@@ -49,6 +49,15 @@
 
           span(class="text-sm text-regular")
             | {{ status?.name }}
+
+        //- WHO map SOP 2.4 — see notApplicableStyle. Sits inside the grid so it
+          lines up with the other keys.
+        div(class="flex items-center gap-2")
+          div(
+            class="h-4 w-6 min-h-4 min-w-6 border-2"
+            :style="notApplicableStyle"
+          )
+          span(class="text-sm text-regular") Not applicable
 
     template(v-else)
       div(class="mt-2 h-3 w-[calc(100%-2rem)] mx-4 flex")
@@ -82,7 +91,7 @@
           div(
             v-if="legendItem?.hatchPattern"
             class="h-4 w-6 min-h-4 min-w-6 border-2"
-            :style="{ background: `url(${hatchUri}) repeat`, backgroundSize: '6px' }"
+            :style="hatchSwatchStyle"
           )
 
           div(
@@ -93,6 +102,15 @@
 
           span(class="text-sm text-regular")
             | {{ legendItem?.name }}
+
+        //- WHO map SOP 2.4 — see notApplicableStyle. Sits inside the grid so it
+          lines up with the other keys.
+        div(class="flex items-center gap-2")
+          div(
+            class="h-4 w-6 min-h-4 min-w-6 border-2"
+            :style="notApplicableStyle"
+          )
+          span(class="text-sm text-regular") Not applicable
 
     p(
       v-if="currentIndicator?.endnote"
@@ -116,6 +134,34 @@
   import { linkifyText } from '~/utils/linkifyText'
 
   const { hatchUri } = useHatchPattern()
+
+  /**
+   * Swatches sit on the legend's tinted panel, where the fills they stand for
+   * are near-invisible unaided: WHO's disputed-area grey is a shade off the
+   * panel, and the hatch SVG is transparent so the panel shows through it.
+   * A dark outline plus a white base makes each swatch read as the map does.
+   */
+  const SWATCH_BORDER = '#606266'
+
+  /** WHO's DISPUTED_AREAS fill for the "not applicable" territories (SOP 2.4). */
+  const notApplicableStyle = {
+    backgroundColor: '#E1E1E1',
+    borderColor: SWATCH_BORDER
+  }
+
+  /**
+   * Longhand, not the `background` shorthand — the shorthand would reset the
+   * white base to transparent. Tiled at the SVG's own 10px so the strokes stay
+   * a full pixel wide; scaling down to 6px rendered them at 0.6px and they
+   * washed out.
+   */
+  const hatchSwatchStyle = {
+    backgroundColor: '#ffffff',
+    backgroundImage: `url(${hatchUri})`,
+    backgroundRepeat: 'repeat',
+    backgroundSize: '10px',
+    borderColor: SWATCH_BORDER
+  }
 
   const props = defineProps<{
     currentIndicator?: Prisma.IndicatorWithSubgroups
