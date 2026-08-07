@@ -205,17 +205,19 @@ export const PROBES: ProbePoint[] = [
 ]
 
 /**
- * Which source-layers paint anywhere in the viewport when centred on a place.
+ * Which WHO disputed features paint anywhere in the viewport, as
+ * `layer id -> NAME[]`.
  *
  * Point and box probes are hostage to guessing a coordinate that sits exactly
  * on a border stroke. For "is WHO's disputed border for Kosovo drawn at all?"
- * the honest query is viewport-wide.
+ * the honest query is viewport-wide. Naming the feature rather than its source
+ * also means a failure says which SOP item broke.
  */
-export async function sourceLayersInView(
+export async function disputedFeaturesInView(
   page: Page,
   lngLat: [number, number],
   zoom: number
-): Promise<string[]> {
+): Promise<Record<string, string[]>> {
   await page.evaluate(
     v => {
       ;(window as any).__map.jumpTo({ center: v.lngLat, zoom: v.zoom })
@@ -226,11 +228,19 @@ export async function sourceLayersInView(
 
   return page.evaluate(() => {
     const map = (window as any).__map
-    const seen = new Set<string>()
-    for (const f of map.queryRenderedFeatures()) {
-      if (f.sourceLayer) seen.add(f.sourceLayer)
+    const byLayer: Record<string, string[]> = {}
+
+    for (const feature of map.queryRenderedFeatures()) {
+      const layer = feature.layer?.id ?? ''
+      const name = feature.properties?.NAME
+
+      if (!layer.startsWith('disputed-') || !name) continue
+      if (!byLayer[layer]) byLayer[layer] = []
+      if (!byLayer[layer].includes(name)) byLayer[layer].push(name)
     }
-    return Array.from(seen).sort()
+
+    for (const names of Object.values(byLayer)) names.sort()
+    return byLayer
   })
 }
 
