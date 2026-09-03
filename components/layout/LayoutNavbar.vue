@@ -6,6 +6,8 @@
         :key="item.path"
         :to="item.path"
         class="text-white"
+        target="_top"
+        external
       )
         | {{ item.name }}
 

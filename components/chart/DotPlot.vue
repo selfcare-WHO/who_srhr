@@ -17,9 +17,13 @@
   })
 
   const popoverValue = computed(() => {
+    const displayVal =
+      currentIndicator.value?.displayValue === 'original_value'
+        ? popover.originalValue ?? popover.value
+        : popover.value
     return formatData({
       indicator: currentIndicator.value,
-      value: popover.value
+      value: displayVal
     })
   })
 
@@ -74,6 +78,7 @@
     popover.show = true
     popover.country = dataPoint.countryName
     popover.value = dataPoint.value
+    popover.originalValue = dataPoint.originalValue
     popover.id = dataPoint.countryId
     popover.element = element
     d3.select(element).classed('-hovered', true)
@@ -216,12 +221,14 @@
     id: string
     country: string
     value?: string
+    originalValue?: string
   }>({
     show: false,
     element: null,
     id: '',
     country: '',
-    value: ''
+    value: '',
+    originalValue: ''
   })
 </script>
 

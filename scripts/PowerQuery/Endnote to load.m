@@ -1,6 +1,9 @@
 let
   Source = Excel.CurrentWorkbook(){[Name="Table19"]}[Content],
-  #"Replaced value" = Table.ReplaceValue(Source, null, " ", Replacer.ReplaceValue, {"endnotes_1", "endnotes_2", "endnotes_3", "endnotes_102"}),
+  EndnoteColumns = List.Select(Table.ColumnNames(Source), each Text.StartsWith(_, "endnotes_")),
+  #"Replaced errors" = Table.ReplaceErrorValues(Source, List.Transform(EndnoteColumns, each {_, null})),
+  #"Converted to text" = Table.TransformColumnTypes(#"Replaced errors", List.Transform(EndnoteColumns, each {_, type text})),
+  #"Replaced value" = Table.ReplaceValue(#"Converted to text", null, " ", Replacer.ReplaceValue, EndnoteColumns),
   #"Unpivoted other columns" = Table.UnpivotOtherColumns(#"Replaced value", {"Country"}, "Attribute", "Value"),
   #"Changed column type" = Table.TransformColumnTypes(#"Unpivoted other columns", {{"Value", type text}}),
   #"Inserted conditional column" = Table.AddColumn(#"Changed column type", "year sign", each if [Value] = " " then "" else ", "),

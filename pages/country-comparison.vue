@@ -1,5 +1,5 @@
 <template lang="pug">
-  .flex.flex-col.flex-1.min-h-0
+  .flex.flex-col.flex-1.min-h-0.min-w-0
     .country-comparison-page.u-content
       h1 Country comparison
       p Compare data across countries through maps, charts and tables. The chart view only shows numerical data, while the map and table views show numerical and categorical data.
@@ -9,7 +9,7 @@
       .flex.justify-between.items-center.gap-3(v-else)
         .flex.items-center.gap-3
           h2.text-secondary.mr-3 Select view:
-          NuxtLink(to="/country-comparison/map-view")
+          NuxtLink(v-if="mapViewActive" to="/country-comparison/map-view")
             ElButton.w-32(type="primary" :plain="!mapView") Map
           NuxtLink(to="/country-comparison/charts-view")
             ElButton.w-32(type="primary" :plain="!chartsView") Charts
@@ -26,8 +26,13 @@
 
 <script lang="ts" setup>
   definePageMeta({
+    layout: false,
     middleware: ['country-comparison']
   })
+
+  const {
+    public: { mapViewActive }
+  } = useRuntimeConfig()
 
   const colorStore = useColorStore()
   const { isCBFriendly } = storeToRefs(colorStore)

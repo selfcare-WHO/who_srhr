@@ -94,6 +94,37 @@ export const useMapData = () => {
     data: linkedGeoJSON.value
   }))
 
+  /**
+   * Country labels used to come from WHO's basemap tileset, which we no longer
+   * load. Place them at WHO's own published centroids instead: CENTER_LON /
+   * CENTER_LAT are set on every feature and are better placements than a
+   * computed centroid for archipelagos like the Philippines.
+   *
+   * ADM0_VIZ_NAME is already the display name, so the Turkey/Türkiye override
+   * the tileset needed is gone.
+   *
+   * Western Sahara (ESH) is drawn as a WHO disputed area and carries no label.
+   */
+  const countryLabelsSource = computed<mapboxgl.SourceSpecification>(() => ({
+    type: 'geojson',
+    data: {
+      type: 'FeatureCollection',
+      features: geoJSONFeatures.value
+        .filter(feature => feature.properties?.ISO_3_CODE !== 'ESH')
+        .map(feature => ({
+          type: 'Feature' as const,
+          geometry: {
+            type: 'Point' as const,
+            coordinates: [
+              feature.properties?.CENTER_LON,
+              feature.properties?.CENTER_LAT
+            ]
+          },
+          properties: { name: feature.properties?.ADM0_VIZ_NAME }
+        }))
+    }
+  }))
+
   const hasOther = computed(() => {
     return linkedGeoJSON.value.features.some(feature => {
       const value = feature.properties?.value
@@ -123,6 +154,7 @@ export const useMapData = () => {
     mapData,
     isFetching,
     linkedFeaturesSource,
+    countryLabelsSource,
     currentIndicator,
     currentSubgroup,
     dataTypeFilterValue,

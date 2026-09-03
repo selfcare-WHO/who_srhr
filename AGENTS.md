@@ -1,252 +1,47 @@
-# CLAUDE.md
+# WHO SRHR Data Portal
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Nuxt 3 SPA (SSR disabled) for WHO Sexual and Reproductive Health and Rights data visualization — maps, charts, and tables.
 
-## Development Commands
+## Stack
 
-```bash
-# Development server with Prisma Studio
-yarn dev
+Yarn · Nuxt 3 · Vue 3 · TypeScript strict · Prisma/SQLite · Element Plus · D3 · Mapbox · Pinia · Tailwind + SCSS
 
-# Separate development servers
-yarn dev:nuxt      # Nuxt dev server only
-yarn dev:prisma    # Prisma Studio only
+## Commands
 
-# Build for production
-yarn build
+| Purpose                    | Command                  |
+| -------------------------- | ------------------------ |
+| Dev (Nuxt + Prisma Studio) | `yarn dev`               |
+| Build                      | `yarn build`             |
+| Run migrations             | `npx prisma migrate dev` |
+| Seed database              | `npx prisma db seed`     |
+| Format                     | `yarn format`            |
 
-# Preview production build
-yarn preview
+## Non-obvious conventions
 
-# Generate static site
-yarn generate
+- Templates use **Pug** (not HTML)
+- No semicolons — Prettier handles formatting
+- App runs on `http://localhost:3001/` (fallback from 3000)
+- Always use Playwright MCP **full-screen** for UI testing
+- Worktrees live under `.worktrees/<ADV-ID>`. Before running dev commands inside one, issue a **bare** `cd <worktree-path>` as its own Bash call to change the persistent cwd. Do **not** use `cd X && yarn dev` — that runs in a subshell, so the next command snaps back to the repo root and the dev server ends up watching the wrong tree.
 
-# Code formatting
-yarn format
-yarn format:check
+## Further reading
 
-# Database management
-npx prisma migrate dev    # Run migrations
-npx prisma db seed        # Seed database
-npx prisma studio         # Open Prisma Studio
-```
+- [Architecture](.claude/docs/architecture.md) — stack details, component map, stores, API endpoints
+- [Code Style](.claude/docs/code-style.md) — TypeScript, naming conventions, component patterns
+- [Data & API](.claude/docs/data-api.md) — response structures, empty states, Prisma guidelines
+- [Testing](.claude/docs/testing.md) — Playwright workflow, what to verify
+- [Common Tasks](.claude/docs/common-tasks.md) — adding indicators, debugging, performance
 
-## Project Architecture
+## Agent skills
 
-This is a **Nuxt 3 SSR-disabled (SPA)** application for the WHO SRHR (Sexual and Reproductive Health and Rights) Data Portal - a data visualization dashboard featuring country comparisons through maps, charts, and tables.
+### Issue tracker
 
-### Core Technologies
+Issues live in Linear under the WHO SRHR project (team: Advaita Software). See `docs/agents/issue-tracker.md`.
 
-- **Nuxt 3** (SSR disabled - SPA mode)
-- **Vue 3** with Composition API
-- **TypeScript** with strict mode
-- **Prisma ORM** with SQLite database
-- **Element Plus** UI framework
-- **D3.js** for data visualizations
-- **Mapbox** for map visualizations
-- **Pinia** for state management
-- **Tailwind CSS** with Sass/SCSS
+### Triage labels
 
-### Data Architecture
+Default canonical label names (needs-triage, needs-info, ready-for-agent, ready-for-human, wontfix) applied as Linear labels. See `docs/agents/triage-labels.md`.
 
-**Database Structure** (`prisma/schema.prisma`):
+### Domain docs
 
-- **Country**: Country entities with metadata
-- **Indicator**: Health indicators with types (Numerical, Categorical, Nominal)
-- **Subgroup**: Optional subgroups for indicators
-- **DataPoint**: Actual data values linking countries, indicators, and subgroups
-- **Region**: Geographic regions for grouping countries
-
-**Data Management**:
-
-- SQLite database at `prisma/database.sqlite3`
-- Seed data from Excel files (`prisma/data.xlsx`)
-- Prisma migrations for schema evolution
-
-### Component Architecture
-
-**Layout Components** (`components/layout/`):
-
-- `LayoutHeader.vue`: Main site header with WHO branding
-- `LayoutNavbar.vue`: Navigation bar with section links
-- `MobileEmptyState.vue`: Mobile device warning
-
-**Chart Components** (`components/chart/`):
-
-- `DotPlot.vue`: D3-based dot plot visualization
-- `Paginated.vue`: Paginated chart container
-- `Key.vue`: Chart legend/key display
-
-**Map Components** (`components/map/`):
-
-- `Filters.vue`: Map-specific filter controls
-- `Legend.vue`: Map legend for data ranges
-- `DetailsPopover.vue`: Country detail popover
-
-**Table Components** (`components/table/`):
-
-- `KeySection.vue`: Table legend display
-
-**UI Components** (`components/ui/`):
-
-- `SwitchToggle.vue`: Custom toggle switch
-- `FilterItem.vue`: Reusable filter component
-
-### State Management (Pinia Stores)
-
-**Filter Stores** (`stores/`):
-
-- `filters.ts`: Global filter options
-- `chartFilters.ts`: Chart-specific filters
-- `mapFilters.ts`: Map-specific filters
-- `tableFilters.ts`: Table-specific filters
-- `color.ts`: Color blind friendly mode
-- `navigation.ts`: Navigation state
-
-### API Endpoints
-
-**Server Routes** (`server/api/`):
-
-- `/api/filter-options`: Available filter options
-- `/api/chart-data`: Paginated chart data with empty state handling
-- `/api/map-data`: Geographic data for map visualization
-- `/api/table-data`: Paginated table data
-
-### Key Technical Details
-
-**Styling**:
-
-- **Tailwind CSS** with custom SCSS modules in `assets/scss/`
-- Element Plus theming customizations
-- Tabulator table styling
-- Responsive design with mobile-first approach
-- Custom fonts: Source Sans 3 (Adobe Fonts)
-
-**Data Visualization**:
-
-- **D3.js** for custom chart components (dot plots)
-- **Mapbox GL** for interactive maps
-- **Tabulator** for complex data tables
-- SVG patterns for map hatching (missing data)
-
-**Performance**:
-
-- SSR disabled for SPA performance
-- Lazy loading for routes
-- Pagination for large datasets
-- Optimized SVG rendering
-
-### Development Guidelines
-
-**Code Style and Structure**:
-
-- Use TypeScript with strict mode enabled
-- Composition API with `<script setup>` syntax
-- No semicolons - prettier will handle formatting
-- Use arrow functions for methods and computed properties
-- Prefer types over interfaces in TypeScript
-- Use descriptive variable names (e.g., isLoading, hasError)
-
-**Component Conventions**:
-
-- Use Pug templates for cleaner markup
-- PascalCase for component names (e.g., `DotPlot.vue`)
-- camelCase for composables (e.g., `useChartData.ts`)
-- kebab-case for directories (e.g., `country-comparison/`)
-
-**State Management**:
-
-- Use Pinia stores for global state
-- Keep filter state synchronized with URL query params
-- Use composables for shared logic (`composables/`)
-
-**Data Handling**:
-
-- Always validate data from API responses
-- Handle empty states explicitly
-- Use proper TypeScript types for all data structures
-- Format large numbers appropriately (`formatLargeNumbers` utility)
-
-**Testing Workflow**:
-
-- Always use Playwright MCP on full-screen for UI testing
-- Test with multiple indicators and countries selected
-- Verify empty states appear correctly
-- Check responsive behavior on different screen sizes
-
-**UI/UX Guidelines**:
-
-- Use Element Plus components for consistency
-- Implement proper loading states
-- Show meaningful empty states when no data
-- Ensure color blind friendly visualizations
-- Mobile warning for complex visualizations
-
-**API Development**:
-
-- Return consistent response structures
-- Include pagination metadata
-- Handle missing data gracefully
-- Return placeholder data for empty indicators
-
-**Database Guidelines**:
-
-- Use Prisma migrations for schema changes
-- Keep seed data in Excel format for easy updates
-- Use transactions for complex operations
-- Index frequently queried columns
-
-### File Structure Notes
-
-**Key Utilities** (`utils/`):
-
-- `formatData.ts`: Format data based on indicator type
-- `formatLargeNumbers.ts`: Number formatting with units
-- `isNullish.ts`: Null/undefined checking
-- `getStatusColor.ts`: Color coding for data values
-
-**Key Composables** (`composables/`):
-
-- `useChartData.ts`: Chart data fetching and pagination
-- `useMapData.ts`: Map data management
-- `useSyncRouteFilters.ts`: URL query sync
-- `useMapStyles.ts`: Dynamic map styling
-
-**Type Definitions** (`types/`):
-
-- `chart.ts`: Chart data structures
-- `map.ts`: Map configuration types
-- `filter.ts`: Filter option types
-- `data.ts`: Core data types
-- `prisma.ts`: Serialized Prisma types
-
-### MCP Integration
-
-- Always assume the app is running on `http://localhost:3001/` (fallback from 3000)
-- Use Playwright MCP browser tools for testing and debugging
-- Always use full-screen mode for Playwright testing
-- Take screenshots after making UI changes
-- Use browser console to check for errors
-- Test navigation between map, charts, and table views
-
-### Common Tasks
-
-**Adding New Indicators**:
-
-1. Update Excel data file (`prisma/data.xlsx`)
-2. Run database seed: `npx prisma db seed`
-3. Test all three views (map, charts, table)
-
-**Debugging Empty States**:
-
-1. Check API response in Network tab
-2. Verify placeholder data is returned for missing indicators
-3. Ensure chart components handle empty dataPoints arrays
-4. Test with multiple indicators and countries
-
-**Performance Optimization**:
-
-1. Use pagination for large datasets
-2. Implement virtual scrolling for long lists
-3. Optimize D3 rendering with proper data binding
-4. Cache API responses where appropriate
+Single-context — one `CONTEXT.md` + `docs/adr/` at the repo root. See `docs/agents/domain.md`.

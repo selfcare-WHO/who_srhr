@@ -1,5 +1,6 @@
 import prisma from '~/lib/prisma'
 import isNullish from '~/utils/isNullish'
+import { dataYearCutoffFilter } from '~/server/utils/dataCutoff'
 import type { Prisma, Indicator, Subgroup } from '@prisma/client'
 
 export default defineEventHandler(async event => {
@@ -22,6 +23,7 @@ export default defineEventHandler(async event => {
 
   try {
     const where: Prisma.DataPointWhereInput = {}
+    where.NOT = dataYearCutoffFilter.NOT
 
     if (filters.indicator?.length) {
       where.indicatorId = { in: filters.indicator }
@@ -65,6 +67,7 @@ export default defineEventHandler(async event => {
           const subgroupDataPoints = dataPoints.filter(
             dp =>
               !isNullish(dp.value) &&
+              !isNaN(Number(dp.value)) &&
               dp.indicatorId === indicator.id &&
               dp.subgroupId === subgroup.id
           )
@@ -95,7 +98,10 @@ export default defineEventHandler(async event => {
         }
       } else {
         const indicatorDataPoints = dataPoints.filter(
-          dp => !isNullish(dp.value) && dp.indicatorId === indicator.id
+          dp =>
+            !isNullish(dp.value) &&
+            !isNaN(Number(dp.value)) &&
+            dp.indicatorId === indicator.id
         )
 
         const passesHighlight =
@@ -151,7 +157,10 @@ function hasHighlightedCountryData(
   highlightId: string
 ): boolean {
   return dataPoints.some(
-    dp => dp.countryId === Number(highlightId) && !isNullish(dp.value)
+    dp =>
+      dp.countryId === Number(highlightId) &&
+      !isNullish(dp.value) &&
+      !isNaN(Number(dp.value))
   )
 }
 
@@ -165,6 +174,7 @@ function createChartData(
     countryId: String(point.countryId),
     countryName: point.country.name,
     value: point.value ?? undefined,
+    originalValue: point.originalValue ?? undefined,
     isHighlighted: String(point.countryId) === highlightId
   }))
 
@@ -179,7 +189,7 @@ function createChartData(
     indicatorId: indicator.id,
     indicatorName: indicator.fullName,
     subheading: indicator.subheading || '',
-    subgroupName: subgroup?.name || '',
+    subgroupName: subgroup?.fullName || '',
     type: indicator.type as Data.IndicatorDataType,
     minValue,
     maxValue,

@@ -73,20 +73,19 @@ export const useChartFiltersStore = defineStore('ChartFilters', () => {
   )
 
   const highlightOptions = computed<Filter.Option[]>(() => {
-    const sourceOptions = countryFilterValue.value.length
-      ? flatCountryOptions.value.filter(option =>
-          countryFilterValue.value.includes(String(option.id))
-        )
-      : flatCountryOptions.value
+    const sourceOptions = (
+      countryFilterValue.value.length
+        ? flatCountryOptions.value.filter(option =>
+            countryFilterValue.value.includes(String(option.id))
+          )
+        : flatCountryOptions.value
+    )
+      .slice()
+      .sort((a, b) =>
+        (a.label ?? a.name ?? '').localeCompare(b.label ?? b.name ?? '')
+      )
 
-    return [
-      {
-        id: 'none',
-        name: 'None',
-        label: 'None'
-      },
-      ...sourceOptions
-    ]
+    return [{ id: 'none', name: 'None', label: 'None' }, ...sourceOptions]
   })
 
   const indicatorFilterValue = ref<string[]>([])
@@ -128,6 +127,7 @@ export const useChartFiltersStore = defineStore('ChartFilters', () => {
     value: highlightFilterValue,
     multiple: false,
     clearable: false,
+    filterable: true,
     options: highlightOptions
   })
 

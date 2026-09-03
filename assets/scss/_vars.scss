@@ -1,8 +1,15 @@
 :root {
   --container-max-width: 1328px;
   --narrow-container-max-width: 940px;
-  --content-width: min(100%, var(--container-max-width));
-  --narrow-content-width: min(100%, var(--narrow-container-max-width));
+  --content-gutter: 1.5rem;
+  --content-width: min(
+    100% - (2 * var(--content-gutter)),
+    var(--container-max-width)
+  );
+  --narrow-content-width: min(
+    100% - (2 * var(--content-gutter)),
+    var(--narrow-container-max-width)
+  );
 
   // colors
   --el-color-primary-cbf: #648fff;

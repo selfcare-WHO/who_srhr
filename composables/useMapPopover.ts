@@ -43,6 +43,17 @@ export const useMapPopover = (
       { hover: false }
     )
 
+    // Non-member territories (e.g. Western Sahara, Greenland, Puerto Rico) are
+    // basemap-only — give them no hover tooltip, highlight, or pointer cursor.
+    // Member states always get a tooltip ("No data" when the current indicator
+    // has no value), so gate on WHO_STATUS rather than per-indicator dataPointId.
+    if (feature.properties?.WHO_STATUS !== 'Member state') {
+      hoveredFeatureId.value = featureId
+      showPopover.value = false
+      map.getCanvas().style.cursor = ''
+      return
+    }
+
     map.setFeatureState(
       {
         source: 'who-world-features',

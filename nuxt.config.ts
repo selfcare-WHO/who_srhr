@@ -4,8 +4,15 @@ declare module '*.svg?raw' {
   const content: string
 }
 
+const mapViewActive = process.env.MAP_VIEW_ACTIVE === 'true'
+
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-14',
+
+  // Playwright writes screenshot baselines under tests/ while the browser is
+  // driving the app; without this the dev watcher full-reloads mid-run and
+  // destroys the page's execution context.
+  ignore: ['tests/**', 'test-results/**', 'playwright-report/**'],
 
   devtools: {
     enabled: false
@@ -15,7 +22,8 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      comparisonFeatureActive: process.env.COMPARISON_FEATURE_ACTIVE === 'true'
+      comparisonFeatureActive: process.env.COMPARISON_FEATURE_ACTIVE === 'true',
+      mapViewActive
     }
   },
 
@@ -49,9 +57,28 @@ export default defineNuxtConfig({
   },
 
   routeRules: {
+    // Allow the WHO data portal to embed the app in an iframe
+    '/**': {
+      headers: {
+        'Content-Security-Policy':
+          "frame-ancestors 'self' https://platform.who.int https://test-cms.platform.who.int"
+      }
+    },
+    '/': {
+      redirect: '/country-comparison'
+    },
     '/country-comparison': {
-      redirect: '/country-comparison/map-view'
-    }
+      redirect: mapViewActive
+        ? '/country-comparison/map-view'
+        : '/country-comparison/table-view'
+    },
+    ...(mapViewActive
+      ? {}
+      : {
+          '/country-comparison/map-view': {
+            redirect: '/country-comparison/table-view'
+          }
+        })
   },
 
   alias: {
@@ -113,6 +140,12 @@ export default defineNuxtConfig({
   vite: {
     optimizeDeps: {
       include: ['tailwind.config.js']
+    },
+
+    server: {
+      watch: {
+        ignored: ['**/.worktrees/**']
+      }
     },
 
     css: {

@@ -1,0 +1,306 @@
+{
+  "kashmir": [
+    {
+      "layer": "disputed-borders-dotted",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "J&K Line of Control"
+    },
+    {
+      "layer": "disputed-areas-not-applicable",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "Jammu and Kashmir"
+    },
+    {
+      "layer": "countries-boundary",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "PAK"
+    },
+    {
+      "layer": "countries-boundary",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "IND"
+    },
+    {
+      "layer": "countries",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "PAK"
+    },
+    {
+      "layer": "countries",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "IND"
+    },
+    {
+      "layer": "countries-hatch",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "PAK"
+    },
+    {
+      "layer": "countries-hatch",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "IND"
+    }
+  ],
+  "aksai-chin": [
+    {
+      "layer": "disputed-areas-aksai-chin_3",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "Aksai Chin"
+    },
+    {
+      "layer": "countries",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "CHN"
+    },
+    {
+      "layer": "countries-hatch",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "CHN"
+    }
+  ],
+  "kosovo": [
+    {
+      "layer": "countries",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "SRB"
+    },
+    {
+      "layer": "countries-hatch",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "SRB"
+    }
+  ],
+  "sudan-egypt-halayib": [
+    {
+      "layer": "disputed-borders-solid",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "Halayib Triangle (EGY Claim)"
+    },
+    {
+      "layer": "countries",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "SDN"
+    },
+    {
+      "layer": "countries",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "SDN"
+    },
+    {
+      "layer": "countries-hatch",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "SDN"
+    },
+    {
+      "layer": "countries-hatch",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "SDN"
+    }
+  ],
+  "ssudan-kenya-ilemi": [
+    {
+      "layer": "disputed-borders-dotted",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "Ilemi Triangle"
+    },
+    {
+      "layer": "countries",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "SSD"
+    },
+    {
+      "layer": "countries-hatch",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "SSD"
+    }
+  ],
+  "lake-victoria": [
+    {
+      "layer": "disputed-areas-lakes",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "Lake Victoria"
+    },
+    {
+      "layer": "countries-boundary",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "UGA"
+    },
+    {
+      "layer": "countries-boundary",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "TZA"
+    },
+    {
+      "layer": "countries",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "UGA"
+    },
+    {
+      "layer": "countries",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "TZA"
+    },
+    {
+      "layer": "countries-hatch",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "UGA"
+    },
+    {
+      "layer": "countries-hatch",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "TZA"
+    }
+  ],
+  "golan": [
+    {
+      "layer": "countries-boundary",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "SYR"
+    },
+    {
+      "layer": "countries-boundary",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "ISR"
+    },
+    {
+      "layer": "countries",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "SYR"
+    },
+    {
+      "layer": "countries",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "ISR"
+    },
+    {
+      "layer": "countries-hatch",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "SYR"
+    },
+    {
+      "layer": "countries-hatch",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "ISR"
+    }
+  ],
+  "western-sahara": [
+    {
+      "layer": "disputed-areas-not-applicable",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "Western Sahara"
+    },
+    {
+      "layer": "countries",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "ESH"
+    },
+    {
+      "layer": "countries-hatch",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "ESH"
+    }
+  ],
+  "brazil-member-state": [
+    {
+      "layer": "countries",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "BRA"
+    },
+    {
+      "layer": "countries-hatch",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "BRA"
+    }
+  ],
+  "aruba-non-member": [
+    {
+      "layer": "country-names",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": null
+    },
+    {
+      "layer": "countries-boundary",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "ABW"
+    },
+    {
+      "layer": "countries",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "ABW"
+    },
+    {
+      "layer": "countries-hatch",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "ABW"
+    }
+  ],
+  "philippines": [
+    {
+      "layer": "countries",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "PHL"
+    },
+    {
+      "layer": "countries",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "PHL"
+    },
+    {
+      "layer": "countries-hatch",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "PHL"
+    },
+    {
+      "layer": "countries-hatch",
+      "sourceLayer": null,
+      "symbol": null,
+      "name": "PHL"
+    }
+  ]
+}
