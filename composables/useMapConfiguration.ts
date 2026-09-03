@@ -164,10 +164,12 @@ export const useMapConfiguration = (
    * whichever indicator is selected. Hover is unaffected — it is bound to the
    * `countries` layer, not to whatever happens to be topmost.
    */
+  // WHO paint lakes #E8E9EC, which is also their ocean. Ours is white, so the
+  // lakes follow it — otherwise they read as "Not applicable" grey.
   const disputedAreaLakesLayer = disputedAreaLayer(
     'disputed-areas-lakes',
     'lakes',
-    { 'fill-color': '#E8E9EC' }
+    { 'fill-color': '#ffffff' }
   )
 
   const disputedAreaNotApplicableLayer = disputedAreaLayer(
