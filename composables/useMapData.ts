@@ -102,22 +102,26 @@ export const useMapData = () => {
    *
    * ADM0_VIZ_NAME is already the display name, so the Turkey/Türkiye override
    * the tileset needed is gone.
+   *
+   * Western Sahara (ESH) is drawn as a WHO disputed area and carries no label.
    */
   const countryLabelsSource = computed<mapboxgl.SourceSpecification>(() => ({
     type: 'geojson',
     data: {
       type: 'FeatureCollection',
-      features: geoJSONFeatures.value.map(feature => ({
-        type: 'Feature' as const,
-        geometry: {
-          type: 'Point' as const,
-          coordinates: [
-            feature.properties?.CENTER_LON,
-            feature.properties?.CENTER_LAT
-          ]
-        },
-        properties: { name: feature.properties?.ADM0_VIZ_NAME }
-      }))
+      features: geoJSONFeatures.value
+        .filter(feature => feature.properties?.ISO_3_CODE !== 'ESH')
+        .map(feature => ({
+          type: 'Feature' as const,
+          geometry: {
+            type: 'Point' as const,
+            coordinates: [
+              feature.properties?.CENTER_LON,
+              feature.properties?.CENTER_LAT
+            ]
+          },
+          properties: { name: feature.properties?.ADM0_VIZ_NAME }
+        }))
     }
   }))
 

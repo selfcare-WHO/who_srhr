@@ -219,12 +219,6 @@
   ],
   "western-sahara": [
     {
-      "layer": "country-names",
-      "sourceLayer": null,
-      "symbol": null,
-      "name": null
-    },
-    {
       "layer": "disputed-areas-not-applicable",
       "sourceLayer": null,
       "symbol": null,
