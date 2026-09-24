@@ -1,0 +1,38 @@
+# Exported from Render on 2026-09-23T00:11:25Z
+version: "1"
+projects:
+- name: srhr-dashboard
+  environments:
+  - name: Production
+    networking:
+      isolation: enabled
+    services:
+    - type: web
+      name: WHO SRHR - Production
+      runtime: node
+      repo: https://github.com/selfcare-WHO/who_srhr
+      branch: prod
+      plan: starter
+      envVars:
+      - key: VITE_MAPBOX_PUBLIC_KEY
+        sync: false
+      - key: MAP_VIEW_ACTIVE
+        sync: false
+      - key: NODE_VERSION
+        sync: false
+      - key: NODE_ENV
+        sync: false
+      - key: COMPARISON_FEATURE_ACTIVE
+        sync: false
+      - key: NUXT_PUBLIC_GTAG_ID
+        sync: false
+      region: frankfurt
+      buildCommand: yarn install; yarn build
+      startCommand: yarn start
+      domains:
+      scaling:
+        minInstances: 1
+        maxInstances: 4
+        targetCPUPercent: 75
+        targetMemoryPercent: 75
+      autoDeployTrigger: commit
