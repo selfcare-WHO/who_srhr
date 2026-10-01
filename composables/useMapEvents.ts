@@ -1,3 +1,20 @@
+/**
+ * WHO's "Not applicable" areas (Jammu and Kashmir, Western Sahara, Abyei) and
+ * the Aksai Chin hatch sit over member-state polygons. They belong to no one
+ * country, so hovering them must not surface India's, Pakistan's or China's
+ * tooltip.
+ */
+const NO_TOOLTIP_CLASSES = ['notApplicable', 'aksaiChin']
+
+const isOverNoTooltipArea = (map: mapboxgl.Map, point: mapboxgl.Point) =>
+  map
+    .queryRenderedFeatures(point)
+    .some(
+      f =>
+        f.source === 'who-disputed-areas' &&
+        NO_TOOLTIP_CLASSES.includes(f.properties?.symbolClass)
+    )
+
 export const useMapEvents = (
   mapRef: Ref<any>,
   popover: ReturnType<typeof useMapPopover>
@@ -29,7 +46,14 @@ export const useMapEvents = (
     const { length } = e?.features ?? []
     const isSameFeature = featureId === popover.hoveredFeatureId.value
 
-    if (length === 0 || !featureId || isSameFeature) return
+    if (length === 0 || !featureId) return
+
+    if (isOverNoTooltipArea(map, e.point)) {
+      clearHover(map)
+      return
+    }
+
+    if (isSameFeature) return
 
     popover.updatePopoverData(feature, map)
   }
@@ -40,10 +64,16 @@ export const useMapEvents = (
 
     if (features.some(f => f.layer?.id === 'countries')) return
 
-    map.setFeatureState(
-      { source: 'who-world-features', id: popover.hoveredFeatureId.value },
-      { hover: false }
-    )
+    clearHover(map)
+  }
+
+  const clearHover = (map: mapboxgl.Map) => {
+    if (popover.hoveredFeatureId.value) {
+      map.setFeatureState(
+        { source: 'who-world-features', id: popover.hoveredFeatureId.value },
+        { hover: false }
+      )
+    }
 
     popover.hoveredFeatureId.value = ''
     map.getCanvas().style.cursor = ''
