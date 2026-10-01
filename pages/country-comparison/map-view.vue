@@ -28,6 +28,10 @@
             :source="countryLabelsSource"
           )
           MapboxSource(
+            source-id="who-country-boundaries"
+            :source="countryBoundariesSource"
+          )
+          MapboxSource(
             source-id="who-disputed-borders"
             :source="disputedBordersSource"
           )
@@ -158,6 +162,7 @@
     isFetching,
     linkedFeaturesSource,
     countryLabelsSource,
+    countryBoundariesSource,
     currentSubgroup,
     hasOther,
     hasNoData,

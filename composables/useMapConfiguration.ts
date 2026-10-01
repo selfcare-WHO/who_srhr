@@ -151,7 +151,7 @@ export const useMapConfiguration = (
   const countriesBoundaryLayer: mapboxgl.LayerSpecification = {
     id: 'countries-boundary',
     type: 'line',
-    source: 'who-world-features',
+    source: 'who-country-boundaries',
     paint: {
       'line-color': '#ffffff',
       'line-width': 1
