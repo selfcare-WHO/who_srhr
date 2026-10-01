@@ -125,6 +125,54 @@ export const useMapData = () => {
     }
   }))
 
+  /**
+   * Russia and Fiji are split at the antimeridian, so their outlines would
+   * draw a white line down the cut. Outline from the rings instead, skipping
+   * any segment that runs along ±180°.
+   */
+  const countryBoundariesSource = computed<mapboxgl.SourceSpecification>(
+    () => ({
+      type: 'geojson',
+      data: {
+        type: 'FeatureCollection',
+        features: geoJSONFeatures.value.map(feature => {
+          const geometry = feature.geometry as
+            | GeoJSON.Polygon
+            | GeoJSON.MultiPolygon
+          const polygons =
+            geometry.type === 'Polygon'
+              ? [geometry.coordinates]
+              : geometry.coordinates
+          const lines: GeoJSON.Position[][] = []
+
+          for (const ring of polygons.flat()) {
+            let line: GeoJSON.Position[] = [ring[0]]
+
+            for (let i = 1; i < ring.length; i++) {
+              const [a, b] = [ring[i - 1][0], ring[i][0]]
+              const onAntimeridian = a === b && Math.abs(a) >= 179.999
+
+              if (onAntimeridian) {
+                if (line.length > 1) lines.push(line)
+                line = []
+              }
+
+              line.push(ring[i])
+            }
+
+            if (line.length > 1) lines.push(line)
+          }
+
+          return {
+            type: 'Feature' as const,
+            geometry: { type: 'MultiLineString' as const, coordinates: lines },
+            properties: {}
+          }
+        })
+      }
+    })
+  )
+
   const hasOther = computed(() => {
     return linkedGeoJSON.value.features.some(feature => {
       const value = feature.properties?.value
@@ -155,6 +203,7 @@ export const useMapData = () => {
     isFetching,
     linkedFeaturesSource,
     countryLabelsSource,
+    countryBoundariesSource,
     currentIndicator,
     currentSubgroup,
     dataTypeFilterValue,
